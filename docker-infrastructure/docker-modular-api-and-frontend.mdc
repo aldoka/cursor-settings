@@ -1,0 +1,252 @@
+---
+description: Docker Environment - quick reference commands
+globs: *.yml,*.env
+alwaysApply: false
+---
+
+# Docker - quick reference commands
+
+## 🏗️ Architecture
+
+### Production Services (internal networks)
+- **backend** (FastAPI) - HTTP API
+- **frontend**(React/Nginx) - UI  
+- **postgres** - Database
+- **redis** - Cache
+- **rabbitmq** - Message queues
+- **ollama** - LLM models
+
+### Development Additional Services
+- **admin-init** - Administrator initialization (runs once)
+- **pgadmin** - Web UI for DB (:5050)
+- All ports are exposed for debugging
+
+## ⚡ Commands to run
+
+### Development
+```
+# Full stack
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Only infrastructure (without application)
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis rabbitmq pgadmin
+
+# Restart service
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart backend
+
+# Rebuild service
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build backend
+
+# Logs
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f backend
+```
+
+### Production
+```
+# Deployment
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# Health checks status
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml ps
+
+# Update service
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull backend
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d backend
+
+# Rolling update (without dependencies)
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps backend
+```
+
+## 🔧 Debugging and maintenance
+
+### Connecting to containers
+```
+# Backend shell
+docker-compose exec backend bash
+
+# PostgreSQL
+docker-compose exec postgres psql -U postgres -d [application_name]_dev_db
+
+# Redis CLI
+docker-compose exec redis redis-cli
+
+# RabbitMQ management UI
+# http://localhost:15672 (dev: guest/guest)
+```
+
+### Monitoring
+```
+# Health checks and resources
+docker-compose ps
+docker-compose top
+docker stats --no-stream
+
+# Detailed information
+docker inspect [application_name]-backend-1
+```
+
+### Database Operations
+```
+# Backup DB
+docker-compose exec postgres pg_dump -U postgres [application_name]_dev_db > backup.sql
+
+# Restore DB
+docker-compose exec -T postgres psql -U postgres -d [application_name]_dev_db < backup.sql
+
+# Connect to pgAdmin
+# http://localhost:5050 (dev only)
+```
+
+## 🧹 Cleaning
+
+```
+# Stop
+docker-compose down
+
+# With volume removal (CAUTION - will delete data!)
+docker-compose down -v
+
+# Cleaning unused resources
+docker system prune -f
+docker volume prune -f
+
+# Full project cleanup
+docker-compose down -v --remove-orphans
+docker system prune -a -f
+```
+
+## 🌐 Networks and Volumes
+
+### Docker Networks
+```bash
+# Production (all internal: true)
+- backend-network     # postgres access
+- queue-network       # rabbitmq exchange
+- cache-network       # redis access  
+- ai-network          # ollama isolated
+
+# Development (external access)
+- frontend-api-external-dev  # external access for debugging
+```
+
+### Persistent Volumes
+```bash
+# Production data
+- postgres-production-data
+- redis-data
+- rabbitmq-production-data
+- ollama-data
+
+# Development data
+- postgres-development-data
+- pgadmin-data
+- frontend-node-modules
+```
+
+## ⚙️ Environment Configuration
+
+### File Loading
+```yaml
+# Development
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.development.env
+
+# Production  
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.production.env
+    environment:
+      - SECRET_KEY=${SECRET_KEY}  # From host environment
+```
+
+### Common Environment Variables
+```bash
+# Development
+ENV=development
+DEBUG=true
+
+# Production
+ENV=production
+DEBUG=false
+SECRET_KEY=${SECRET_KEY}
+DB_PASSWORD=${DB_PASSWORD}
+```
+
+## 🚀 Deployment Patterns
+
+### First Time Setup
+```
+# 1. Createenvironment files
+cp configs/env/backend.development.env.example configs/env/backend.development.env
+
+# 2. Start infrastructure
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis rabbitmq
+
+# 3. Wait for DB to be ready
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs postgres
+
+# 4. Start application
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+### Hot Reload Development
+```
+# Backend deployed with volume mounting
+# Changes in code automatically reload the application
+
+# Frontend with hot reload
+# http://localhost:3000 - automatically updates
+```
+
+### Production Deployment
+```
+# 1. Prepare secrets
+export SECRET_KEY="production-secret-32-chars"
+export DB_PASSWORD="secure-db-password"
+
+# 2. Pull latest images
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
+
+# 3. Deploy
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# 4. Verify health
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml ps
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+```
+# Port conflicts
+netstat -tulpn | grep :8000
+lsof -i :8000
+
+# Volume permissions
+docker-compose exec backend ls -la /app
+docker-compose exec postgres ls -la /var/lib/postgresql/data
+
+# Network connectivity
+docker-compose exec backend ping postgres
+docker-compose exec backend ping redis
+
+# Container logs
+docker-compose logs backend | tail -50
+docker-compose logs postgres | grep ERROR
+```
+
+### Health Check Debugging
+```
+# Check health status
+docker-compose ps
+
+# Manual health check
+docker-compose exec backend curl -f http://localhost:8000/health
+docker-compose exec postgres pg_isready -U postgres
+
+# Health check logs
+docker inspect [application_name]-backend-1 | grep -A 10 Health
+```
