@@ -1,0 +1,161 @@
+---
+description: FastAPI Router Pattern - API Endpoints Layer
+globs: router.py,**/routes/**.py
+alwaysApply: false
+---
+# FastAPI Router Pattern
+
+## Responsibility
+Router is responsible for **ONLY** HTTP processing. Validation of incoming data, routing, conversion of DTO to response schemas.
+
+## Implementation Rules
+
+### **DO:**
+- Use `APIRouter` with `prefix` and `tags`
+- Follow the flow: `API Schema → DTO → Service → DTO → API Schema`
+- Use `ResponseBuilder` for unified responses
+- Use Pydantic-schema for request parameters, for example, `Get{Entity}Request`, for query parameters (through `Depends()`)
+- Use FastAPI DI for all dependencies
+- Handle exceptions with correct HTTP codes
+- Document endpoints with `summary` and `description`
+
+### **DON'T:**
+- DO NOT add business logic to router
+- DO NOT work with repository directly (only through service)
+- DO NOT return SQLAlchemy models
+- DO NOT manage transactions
+
+## Code Example
+
+```python
+"""
+API endpoints for managing {entities}.
+
+Demonstrates the correct use of ResponseBuilder with unified schemas:
+HTTP Request → API Schema → DTO → Service → DTO → API Schema
+"""
+
+from fastapi import APIRouter, Depends, Query
+from fastapi.responses import JSONResponse
+
+from api.dependencies.auth import get_current_user
+from api.dependencies.request import get_request_id
+from api.schemas.common import DataResponse, PaginatedData, PaginationMeta
+from api.schemas.{entities} import (
+    {Entity}CreateRequest,
+    {Entity}Response,
+    {Entity}UpdateRequest,
+    Get{Entity}Request,
+)
+from api.utils.responses import ResponseBuilder
+
+from core.shared.dto.{entity} import {Entity}CreateDTO
+from core.shared.exceptions import DuplicateResourceError, EntityNotFoundError, ErrorCode
+from core.{entities}.service import {Entity}ServiceDep
+
+router = APIRouter(prefix="/{entities}", tags=["{entities}"])
+
+
+@router.post(
+    "/",
+    summary="Create {entity}",
+    description="Creates a new {entity} in the system with data validation",
+    response_model=DataResponse[{Entity}Response]
+)
+async def create_{entity}(
+    {entity}_request: {Entity}CreateRequest,
+    service: {Entity}ServiceDep,
+    current_user: UserResponseDTO = Depends(get_current_user)
+):
+    """
+    Demonstration of the correct data flow with ResponseBuilder.
+    """
+    # API Schema has already validated the HTTP data
+    # Convert to DTO for core layer
+    create_dto = {Entity}CreateDTO.model_validate({entity}_request)
+
+    # Service creates {entity}; exceptions are passed and handled globally
+    {entity}_dto = await service.create_{entity}(
+        {entity}=create_dto,
+        owner_id=current_user.id
+    )
+    
+    return ResponseBuilder.created(data={entity}_dto)
+
+
+@router.get(
+    "/",
+    summary="Get list of {entities}",
+    description="Returns a paginated list of {entities}",
+    response_model=PaginatedData[{Entity}Response]
+)
+async def get_{entities}(
+    service: {Entity}ServiceDep,
+    current_user: UserResponseDTO = Depends(get_current_user),
+    pagination: PaginationMeta = Depends(get_pagination_meta),
+    query: Get{Entity}Request = Depends(),
+):
+    """
+    Demonstration of the correct data retrieval with ResponseBuilder.
+    """
+    # Service returns a list of DTO; exceptions are handled globally
+    {entities}_dto = await service.list_{entities}(
+        owner_id=current_user.id,
+        skip=pagination.skip,
+        limit=pagination.limit,
+        search=query.search,
+        active_only=query.active_only,
+    )
+    pagination.total = await service.count_{entities}(
+        owner_id=current_user.id,
+        search=query.search,
+        active_only=query.active_only,
+    )
+    return ResponseBuilder.paginated(items={entities}_dto, pagination=pagination)
+
+```
+
+## Query Parameters Pattern
+
+```python
+from typing import Optional
+from pydantic import BaseModel, Field
+from fastapi import Depends
+
+
+class Get{Entity}Request(BaseModel):
+    search: Optional[str] = Field(None, description="Search by name")
+    active_only: bool = Field(True, description="Only active records")
+
+
+@router.get("/")
+async def get_{entities}(
+    query: Get{Entity}Request = Depends(),
+    pagination: PaginationMeta = Depends(get_pagination_meta),
+):
+    # Access to parameters through query.search, query.active_only
+    ...
+```
+
+## Error Handling
+
+Global exception handler converts domain exceptions to API responses.
+In routers, we do not manually catch business errors.
+
+## Template Replacements
+
+When creating a new router, replace:
+- `{Entity}` → model name (e.g. `User`)
+- `{entity}` → entity name in lowercase (e.g. `user`)
+- `{entities}` → plural (e.g. `users`)
+
+## Key Points
+
+✅ **Router = HTTP Layer Only**
+✅ **API Schema → DTO → Service flow**
+✅ **ResponseBuilder for all responses**
+✅ **Security through dependencies**
+✅ **Query parameters through Pydantic. For example, `Get{Entity}Request`**
+✅ **PaginationMeta for pagination**
+✅ **No error handling in router, unless it is required to change exception flow**
+✅ **OpenAPI documentation automatically**
