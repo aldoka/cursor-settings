@@ -1,0 +1,312 @@
+---
+description: Pydantic DTO Pattern - Data Transfer Objects
+globs: *_dto.py,dto.py
+alwaysApply: false
+---
+# Pydantic DTO Pattern
+
+## Responsibility
+DTOs responsible for **typed data transfer** between layers. Validation, serialization, conversion.
+
+## Implementation Rules
+
+### **DO:**
+- Inherit from `BaseDTO`
+- Use `Field` with validation and description
+- Add `@field_validator` for custom validation
+- Create separate DTO: Create, Update, Response, Summary
+- Use `ConfigDict(from_attributes=True)` for Response DTO
+- Group related fields with comments
+
+### **DON'T:**
+- DO NOT add business logic to DTO
+- DO NOT use SQLAlchemy models as DTO
+- DO NOT mix different types of operations in one DTO
+- DO NOT forget to validate input data
+
+## Code Example
+
+```python
+"""
+{Entity} Domain DTOs for inter-layer interaction.
+
+Contains all DTOs for working with {entities}:
+- {Entity}CreateDTO - creation of {entity}
+- {Entity}UpdateDTO - update of {entity}  
+- {Entity}ResponseDTO - response API
+- {Entity}SummaryDTO - short information about {entity}
+"""
+
+from datetime import datetime
+from typing import Optional, Dict, Any, List
+from pydantic import Field, ConfigDict, field_validator
+
+from .base import BaseDTO
+
+
+class {Entity}CreateDTO(BaseDTO):
+    """DTO for creation of {entity}"""
+    # Main fields
+    name: str = Field(..., min_length=1, max_length=200, description="Name of {entity}")
+    description: Optional[str] = Field(None, max_length=1000, description="Description of {entity}")
+    
+    # JSON fields for flexible storage
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Metadata of {entity}")
+    settings: Optional[Dict[str, Any]] = Field(None, description="Settings of {entity}")
+    
+    # Relationships
+    owner_id: int = Field(..., description="Owner ID of {entity}")
+    category_id: Optional[int] = Field(None, description="Category ID")
+
+    @field_validator('name')
+    @classmethod
+    def validate_name(cls, value: str) -> str:
+        """Validation of name of {entity}"""
+        if not value or not value.strip():
+            raise ValueError("Name of {entity} cannot be empty")
+        return value.strip()
+
+    @field_validator('description')
+    @classmethod
+    def validate_description(cls, value: Optional[str]) -> Optional[str]:
+        """Validation of description"""
+        if value is not None:
+            value = value.strip()
+            if not value:
+                return None
+        return value
+
+    @field_validator('metadata', 'settings')
+    @classmethod
+    def validate_json_fields(cls, value: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """Validation of JSON fields"""
+        if value is not None and not isinstance(value, dict):
+            raise ValueError("JSON field must be a dictionary")
+        return value
+
+
+class {Entity}UpdateDTO(BaseDTO):
+    """DTO for updating {entity}"""
+    # All fields are optional for partial update
+    name: Optional[str] = Field(None, min_length=1, max_length=200, description="Name of {entity}")
+    description: Optional[str] = Field(None, max_length=1000, description="Description of {entity}")
+    
+    # JSON fields
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Metadata of {entity}")
+    settings: Optional[Dict[str, Any]] = Field(None, description="Settings of {entity}")
+    
+    # Relationships
+    category_id: Optional[int] = Field(None, description="Category ID")
+
+    @field_validator('name')
+    @classmethod
+    def validate_name(cls, value: Optional[str]) -> Optional[str]:
+        """Validation of name when updating"""
+        if value is not None:
+            if not value or not value.strip():
+                raise ValueError("Name of {entity} cannot be empty")
+            return value.strip()
+        return value
+
+    @field_validator('description')
+    @classmethod
+    def validate_description(cls, value: Optional[str]) -> Optional[str]:
+        """Validation of description"""
+        if value is not None:
+            value = value.strip()
+            if not value:
+                return None
+        return value
+
+
+class {Entity}ResponseDTO(BaseDTO):
+    """DTO for response API with data of {entity}"""
+    # Required fields
+    id: int = Field(..., description="Unique identifier of {entity}")
+    name: str = Field(..., description="Name of {entity}")
+    description: Optional[str] = Field(None, description="Description of {entity}")
+    
+    # JSON fields
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Metadata of {entity}")
+    settings: Optional[Dict[str, Any]] = Field(None, description="Settings of {entity}")
+    
+    # Relationships
+    owner_id: int = Field(..., description="Owner ID of {entity}")
+    category_id: Optional[int] = Field(None, description="Category ID")
+    
+    # Timestamps
+    created_at: datetime = Field(..., description="Creation time")
+    updated_at: datetime = Field(..., description="Last update time")
+    deleted_at: Optional[datetime] = Field(None, description="Deletion time")
+
+    # Configuration for conversion from SQLAlchemy models
+    model_config = ConfigDict(from_attributes=True)
+
+
+class {Entity}SummaryDTO(BaseDTO):
+    """DTO for short information about {entity}"""
+    id: int = Field(..., description="Unique identifier of {entity}")
+    name: str = Field(..., description="Name of {entity}")
+    owner_id: int = Field(..., description="Owner ID of {entity}")
+    created_at: datetime = Field(..., description="Creation time")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class {Entity}FilterDTO(BaseDTO):
+    """DTO for filtering {entities}"""
+    # Search and filters
+    search: Optional[str] = Field(None, description="Search by name")
+    owner_id: Optional[int] = Field(None, description="Filter by owner")
+    category_id: Optional[int] = Field(None, description="Filter by category")
+    
+    # Pagination
+    skip: int = Field(0, ge=0, description="Number of skipped records")
+    limit: int = Field(20, ge=1, le=100, description="Maximum number of records")
+    
+    # Sorting
+    order_by: str = Field("created_at", description="Field for sorting")
+    desc: bool = Field(True, description="Sorting by descending")
+
+    @field_validator('search')
+    @classmethod
+    def validate_search(cls, value: Optional[str]) -> Optional[str]:
+        """Validation of search string"""
+        if value is not None:
+            value = value.strip()
+            if len(value) < 2:
+                raise ValueError("Search string must contain at least 2 characters")
+        return value
+
+
+class {Entity}BulkCreateDTO(BaseDTO):
+    """DTO for bulk creation of {entities}"""
+    {entities}: List[{Entity}CreateDTO] = Field(
+        ..., 
+        min_length=1, 
+        max_length=100, 
+        description="List of {entities} for creation"
+    )
+    
+    @field_validator('{entities}')
+    @classmethod
+    def validate_{entities}_uniqueness(cls, v):
+        """Validation of uniqueness of names within one request"""
+        names = [item.name.lower() for item in v if item.name]
+        if len(names) != len(set(names)):
+            raise ValueError('Names of {entities} in the request must be unique')
+        return v
+
+
+class {Entity}BulkUpdateDTO(BaseDTO):
+    """DTO for bulk update of {entities}"""
+    updates: List[Dict[str, Any]] = Field(
+        ..., 
+        min_length=1, 
+        max_length=100,
+        description="List of updates: [{{'id': 1, 'name': 'new_name'}}, ...]"
+    )
+
+    @field_validator('updates')
+    @classmethod
+    def validate_updates(cls, v):
+        """Validation of bulk updates"""
+        for update in v:
+            if 'id' not in update:
+                raise ValueError('Each update must contain the id field')
+            if not isinstance(update['id'], int):
+                raise ValueError('The id field must be a number')
+        return v
+
+
+class {Entity}StatsDTO(BaseDTO):
+    """DTO for statistics of {entities}"""
+    total_count: int = Field(..., description="Total number of {entities}")
+    active_count: int = Field(..., description="Number of active {entities}")
+    categories_distribution: Dict[str, int] = Field(..., description="Distribution by categories")
+    created_this_month: int = Field(..., description="Created this month")
+
+    model_config = ConfigDict(from_attributes=True)
+```
+
+## Validation Patterns
+
+### Custom Field Validators
+```python
+@field_validator('email')
+@classmethod
+def validate_email(cls, value: str) -> str:
+    """Validation of email address"""
+    import re
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_pattern, value):
+        raise ValueError('Invalid email format')
+    return value.lower()
+
+@field_validator('phone')
+@classmethod 
+def validate_phone(cls, value: Optional[str]) -> Optional[str]:
+    """Validation of phone"""
+    if value is not None:
+        # Remove all non-digits
+        digits = ''.join(c for c in value if c.isdigit())
+        if len(digits) < 10:
+            raise ValueError('Phone number must contain at least 10 digits')
+        return digits
+    return value
+```
+
+### Root Validators
+```python
+from pydantic import model_validator
+
+@model_validator(mode='after')
+def validate_dates(self):
+    """Validation of related fields"""
+    if self.start_date and self.end_date:
+        if self.start_date >= self.end_date:
+            raise ValueError('Start date must be before end date')
+    return self
+```
+
+## JSON Field Patterns
+
+```python
+# Typed JSON fields
+contact_info: Optional[Dict[str, str]] = Field(
+    None,
+    description="Contact information",
+    examples=[{"email": "test@example.com", "phone": "+1234567890"}]
+)
+
+# Settings with enumeration
+settings: Optional[Dict[str, Any]] = Field(
+    None,
+    description="Settings of object",
+    examples=[{"theme": "dark", "notifications": True, "language": "ru"}]
+)
+
+# Arrays in JSON
+tags: Optional[List[str]] = Field(
+    None,
+    description="Tags",
+    examples=[["python", "fastapi", "async"]]
+)
+```
+
+## Template Replacements
+
+When creating new DTOs, replace:
+- `{Entity}` → model name (e.g. `User`)
+- `{entity}` → entity name in lowercase (e.g. `user`)
+- `{entities}` → plural (e.g. `users`)
+
+## Key Points
+
+✅ **DTO = Data Transfer Only**  
+✅ **Field with description everywhere**  
+✅ **Custom validation through field_validator**  
+✅ **Different DTOs for different operations**  
+✅ **ConfigDict(from_attributes=True) for Response**  
+✅ **JSON fields with correct typing**  
+✅ **Bulk operations for performance**
