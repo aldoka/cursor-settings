@@ -1,0 +1,54 @@
+---
+globs: repository.py,service.py,router.py,**/routes/**.py,error_handler.py,error_codes.py
+alwaysApply: false
+---
+# Errors & Exceptions Standards
+
+## Responsibility
+
+- Core (Domain Services/Repositories): generate domain exceptions, populate `detail/source/meta` where there is context, translate low-level infrastructure errors to domain.
+- API (Global Error Handler): accepts domain exceptions, performs mapping of exception type → `ErrorCode`, builds `ErrorResponse` through `ResponseBuilder.error(...)`, sets HTTP status from `ErrorCode`, adds `request_id`.
+- Routers: do not generate errors and do not catch business exceptions; return only successful models. Exceptions are passed to the handler.
+- Conversion Rules: fields from the exception are in `ErrorResponse` — `detail` (description of the incident), `source` (pointer to the cause: pointer/parameter/header), `meta` (safe meta information). `code/title/status` are taken from `ErrorCode` on the API layer.
+
+## Model
+
+- Core exceptions carry the incident context: `detail`, `source`, `meta`.
+  - `detail`: specific human-readable description of the incident (without implementation details).
+  - `source`: pointer to the cause of the error (e.g. `{"pointer": "/data/email"}` or `{"parameter": "email"}` or `{"header": "Authorization"}`).
+  - `meta`: machine-readable data for debugging and client (without secrets/PII).
+- On the API boundary, the global error handler maps domain exception types → `ErrorCode` and builds the response through `ResponseBuilder.error(...)` with the correct HTTP status.
+- Routers do not generate errors and do not catch domain exceptions — they are passed to the handler.
+
+## DO
+
+- In core services/repositories:
+  - Throw domain exceptions (`ValidationError`, `EntityNotFoundError`, `DuplicateResourceError`, `BusinessRuleViolationError`, etc.).
+  - Populate `detail/source/meta` where there is context (validation, unique constraints, access).
+  - Wrap low-level infrastructure exceptions (DB, external services) in domain (`DatabaseError`, `ExternalServiceError`) with safe `meta`.
+- In the API layer:
+  - Support one `ErrorCode` registry as a public contract (code/status/title).
+  - Use the global error handler to convert exceptions to responses.
+  - Always include `request_id` in error responses (middleware + fallback in the handler).
+- Security and logging:
+  - Mask sensitive data in `detail/source/meta` and logs (passwords, tokens, keys, full email/phone and etc.).
+  - Log structured: `request_id`, path, user (if any), exception type, selected `ErrorCode`, HTTP status and safe `meta`.
+
+## DON'T
+
+- Do not put HTTP/`ErrorCode` in core — the domain should not depend on the API.
+- Do not use `HTTPException` for business exceptions in routers and services.
+- Do not disclose internal implementations (SQL, stack traces, configs, hosts) and PII/secrets in `detail`/`meta`.
+- Do not duplicate error handling in each router — use the global error handler.
+
+## Mapping (Core → API)
+
+- The mapping is determined in the global exception handler.
+- Multiple `ErrorCode` for one base exception type are allowed — differentiate
+
+## Key Points
+
+- One public `ErrorCode` registry on the API. Core — only exception types and context (`detail/source/meta`).
+- `detail` — specific incident; `title`/`code` — type of error (stable in `ErrorCode`).
+- Sanitization: mask/trim values; do not return binary data; truncate long strings.
+- Tracing: `request_id` is mandatory for errors; add it to headers and body responses using the used tools.
