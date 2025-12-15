@@ -1,0 +1,143 @@
+---
+description: Alembic Migration Standards - Safe Database Changes
+globs: alembic/**/*.py,db/migrations/*.py
+alwaysApply: false
+---
+# Alembic Migration Standards
+
+## 📁 Migration File Conventions
+
+### Naming Pattern
+```python
+# Format of migration files
+{revision}_{slug}.py  # 001a_add_user_table.py
+{revision}_{slug}.py  # 002b_add_user_indexes.py
+{revision}_{slug}.py  # 003c_alter_user_constraints.py
+```
+
+### Standard Migration Structure
+```python
+"""Add user table with indexes
+
+Revision ID: 001a
+Revises: 
+Create Date: 2024-01-15 10:30:00.000000
+
+"""
+from typing import Sequence, Union
+from alembic import op
+import sqlalchemy as sa
+
+# revision identifiers
+revision: str = '001a'
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+def upgrade() -> None:
+    """Forward migration"""
+    # Create table
+    op.create_table('users',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('email', sa.String(length=255), nullable=False),
+        sa.Column('username', sa.String(length=50), nullable=False),
+        sa.Column('created_at', sa.DateTime(timezone=True), 
+                  server_default=sa.text('now()'), nullable=False),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('email'),
+        sa.UniqueConstraint('username')
+    )
+    
+    # Create indexes
+    op.create_index('idx_users_email', 'users', ['email'])
+    op.create_index('idx_users_created_at', 'users', ['created_at'])
+
+def downgrade() -> None:
+    """Reverse migration"""
+    # Drop indexes first
+    op.drop_index('idx_users_created_at')
+    op.drop_index('idx_users_email')
+    
+    # Drop table
+    op.drop_table('users')
+```
+
+## 🛡️ Safe Migration Patterns
+
+### Adding Columns Safely
+```python
+def upgrade() -> None:
+    # ✅ Safe: nullable column first
+    op.add_column('users', 
+        sa.Column('new_field', sa.String(50), nullable=True)
+    )
+    
+    # ✅ Safe: concurrent index creation (PostgreSQL)
+    op.create_index('idx_users_new_field', 'users', ['new_field'], 
+                    postgresql_concurrently=True)
+```
+
+### Modifying Columns Safely
+```python
+def upgrade() -> None:
+    # ✅ Safe: extend varchar length
+    op.alter_column('users', 'username',
+                    existing_type=sa.String(50),
+                    type_=sa.String(100),
+                    existing_nullable=False)
+    
+    # ✅ Safe: make column nullable
+    op.alter_column('users', 'middle_name',
+                    existing_type=sa.String(50),
+                    nullable=True)
+```
+
+## ⚠️ Dangerous Migration Patterns
+
+### Operations to Avoid in Production
+```python
+def upgrade() -> None:
+    # ❌ DANGEROUS: Non-nullable column without default
+    op.add_column('users', 
+        sa.Column('required_field', sa.String(50), nullable=False)
+    )
+    
+    # ❌ DANGEROUS: Drop column without cleanup
+    op.drop_column('users', 'old_field')
+    
+    # ❌ DANGEROUS: Rename column (breaks app immediately)
+    op.alter_column('users', 'old_name', new_column_name='new_name')
+```
+
+## 🧪 Testing Migrations
+
+### Local Testing
+```bash
+# Test upgrade
+alembic upgrade head
+
+# Test downgrade
+alembic downgrade -1
+
+# Check current revision
+alembic current
+
+# Show migration history
+alembic history --verbose
+```
+
+## ✅ Best Practices
+
+### **DO:**
+- Use descriptive revision messages
+- Create indexes concurrently in production
+- Add nullable columns first, then populate
+- Test both upgrade and downgrade paths
+- Keep migrations small and focused
+
+### **DON'T:**
+- Drop columns immediately after code deploy
+- Add required columns without defaults
+- Create blocking indexes on large tables
+- Mix schema and data changes in one migration
+- Skip testing downgrade scenarios
