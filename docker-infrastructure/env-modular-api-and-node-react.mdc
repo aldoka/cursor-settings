@@ -1,0 +1,197 @@
+---
+description: Environment Configuration - Quick reference guide
+globs: *.env,*.yml,*.conf
+alwaysApply: false
+---
+
+# Environment Configuration - Quick reference guide
+
+## 🗂️ Configuration for modular and layered architecture
+
+### File structure
+```
+configs/env/
+├── backend.development.env     # All backend settings for development
+├── backend.production.env      # All backend settings for production  
+├── frontend.development.env    # Frontend settings for development
+├── frontend.production.env     # Frontend settings for production
+```
+
+### Architectural layers with prefixes
+```bash
+COMMON_*        # Common settings for all layers
+API_*           # HTTP API, Auth, CORS
+CORE_*          # Database, Cache, Email, Services  
+TASKS_*         # Queues, Background Jobs
+AI_ENGINE_*     # LLM, Embeddings, RAG
+```
+
+## ⚙️ API Environment Variables
+
+### Development Example (backend.development.env)
+```bash
+# Common Settings
+COMMON_ENVIRONMENT=development
+COMMON_LOG_LEVEL=DEBUG
+
+# API Layer
+API_APP_NAME=[application_name]
+API_PREFIX=
+API_DOCS_URL=/docs
+API_CORS_ORIGINS='["*"]'
+
+# Core Layer - Database
+CORE_DB_HOST=postgres
+CORE_DB_PORT=5432  
+CORE_DB_NAME=[application_name]_dev_db
+CORE_DB_USER=[application_name]_app_user
+CORE_DB_PASSWORD=[application_name]_app_password
+CORE_DB_POOL_SIZE=20
+CORE_DB_ECHO=False
+
+# Core Layer - Cache (Redis)
+CORE_REDIS_HOST=redis
+CORE_REDIS_PORT=6379
+CORE_REDIS_DB=0
+CORE_REDIS_PASSWORD=
+
+# Core Layer - JWT
+CORE_JWT_SECRET_KEY=dev_secret_key_change_in_production
+CORE_JWT_ALGORITHM=HS256
+CORE_JWT_ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Admin User (auto-created)
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin-password-change-in-production
+ADMIN_EMAIL=admin@[application_name].com
+
+# Tasks Layer - RabbitMQ
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+
+# AI Engine Layer
+AI_ENGINE_OLLAMA_API_URL=http://ollama:11434
+AI_ENGINE_LANGCHAIN_VERBOSE=true
+
+# Core Layer - Email
+CORE_EMAIL_PROVIDER=sendgrid
+CORE_EMAIL_FROM=no-reply@[application_name].com
+CORE_EMAIL_ENABLED=true
+CORE_EMAIL_DEBUG_MODE=true
+```
+
+### Production Overrides (backend.production.env)
+```bash
+# Security
+COMMON_ENVIRONMENT=production
+COMMON_LOG_LEVEL=INFO
+CORE_JWT_SECRET_KEY=${JWT_SECRET_KEY}  # From secrets
+
+# API Security
+API_WORKERS=4
+API_CORS_ORIGINS=["https://[application_name].com"]
+API_SSL_REDIRECT=true
+
+# Database - increased pool
+CORE_DB_HOST=${DB_HOST}
+CORE_DB_PASSWORD=${DB_PASSWORD}
+CORE_DB_POOL_SIZE=50
+CORE_DB_MAX_OVERFLOW=100
+
+# Cache - with password
+CORE_REDIS_PASSWORD=${REDIS_PASSWORD}
+
+# AI Engine - production URLs
+AI_ENGINE_OLLAMA_URL=${OLLAMA_URL}
+AI_ENGINE_LANGCHAIN_VERBOSE=false
+
+# Email
+CORE_EMAIL_DEBUG_MODE=false
+CORE_EMAIL_DRY_RUN=false
+```
+
+## 🌐 Frontend Environment Variables
+
+### Development (frontend.development.env)
+```bash
+NODE_ENV=development
+PORT=3000
+
+# API Connection
+REACT_APP_API_URL=http://backend:8000
+REACT_APP_WS_URL=ws://backend:8000/ws
+
+# Development
+REACT_APP_ENABLE_DEBUG=true
+REACT_APP_DEVTOOLS=true
+GENERATE_SOURCEMAP=true
+```
+
+### Production (frontend.production.env)
+```bash
+NODE_ENV=production
+REACT_APP_API_URL=https://api.[application_name].com
+REACT_APP_WS_URL=wss://api.[application_name].com/ws
+REACT_APP_ENABLE_DEBUG=false
+GENERATE_SOURCEMAP=false
+```
+
+## 🔧 Configuration Best Practices
+
+### Security Patterns
+```bash
+# ✅ Development - direct values
+CORE_JWT_SECRET_KEY=dev_secret_key_change_in_production
+
+# ✅ Production - links to secrets
+CORE_JWT_SECRET_KEY=${JWT_SECRET_KEY}
+CORE_DB_PASSWORD=${DB_PASSWORD}
+CORE_REDIS_PASSWORD=${REDIS_PASSWORD}
+```
+
+### Layer Separation
+```bash
+# ✅ Correct - layer in prefix
+CORE_DB_HOST=postgres
+API_CORS_ORIGINS='["*"]'
+TASKS_DEFAULT_QUEUE=default
+
+# ❌ Incorrect - without layer
+DB_HOST=postgres
+CORS_ORIGINS='["*"]'
+```
+
+### Environment Inheritance
+```yaml
+# docker-compose.yml
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.${ENV:-development}.env
+```
+
+## 📂 File Organization
+
+### Environment Loading Order
+```yaml
+# docker-compose.dev.yml
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.development.env
+      - ./configs/postgres/postgres.development.env
+      - ./configs/redis/redis.development.env
+```
+
+### Secrets Management
+```bash
+# Development - in files
+configs/env/backend.development.env
+
+# Production - environment variables
+export JWT_SECRET_KEY="production-secret-32-chars"
+export DB_PASSWORD="secure-production-password"
+```
+
