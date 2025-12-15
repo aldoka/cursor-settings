@@ -1,0 +1,153 @@
+---
+description: Environment settings Usage Standards in Python code
+globs: service.py,router.py
+alwaysApply: false
+---
+# Settings Usage Standards
+
+## Principles of working with settings
+
+### ✅ Correct - FastAPI Dependency Injection
+
+```python
+# In endpoints use typed dependencies
+from backend.api.config import APISettingsDep, JWTSettingsDep
+
+@app.get("/health")
+async def health_check(settings: APISettingsDep) -> dict:
+    return {"environment": settings.common.environment}
+
+@app.post("/auth/login") 
+async def login(jwt_settings: JWTSettingsDep):
+    # FastAPI automatically injects settings
+    token_expire = jwt_settings.access_token_expire_minutes
+```
+
+```python
+# In services use direct call of dependency functions
+from backend.core.config import get_core_settings
+
+class UserService:
+    def __init__(self):
+        self.settings = get_core_settings()
+    
+    async def create_user(self):
+        # Access to nested settings through cached_property
+        db_url = self.settings.database.async_url
+        cache_ttl = self.settings.cache.user_ttl
+```
+
+### ❌ Incorrect - global variables and direct imports
+
+```python
+# DO NOT DO THIS
+from some_global_settings import GLOBAL_SETTINGS  # ❌
+
+def endpoint():
+    database_url = GLOBAL_SETTINGS.DATABASE_URL  # ❌
+    
+# DO NOT CREATE SETTINGS EVERY TIME
+def service_method():
+    settings = CoreSettings()  # ❌ A new instance is created
+```
+
+## Settings Architecture
+
+### Layered Structure
+- **API Layer** (`backend/api/config.py`) - HTTP, Auth, CORS, JWT
+- **Core Layer** (`backend/core/config.py`) - Business Logic, Database, Cache  
+- **AI Engine Layer** (`backend/ai_engine/config.py`) - LLM, Embeddings
+- **Tasks Layer** (`backend/tasks/config.py`) - RabbitMQ, Background processing
+
+### Creating new layer settings
+
+```python
+# 1. Create a settings class with composition through cached_property
+from core.shared.config.config import BackendSettings, create_layer_settings_dependency
+
+class MyLayerSettings(BackendSettings):
+    """Settings for MyLayer."""
+    
+    @cached_property
+    def database(self) -> MyDatabaseSettings:
+        return MyDatabaseSettings()
+    
+    @cached_property
+    def custom_feature(self) -> MyFeatureSettings:
+        return MyFeatureSettings()
+
+# 2. Create a FastAPI dependency with @lru_cache
+get_my_layer_settings = create_layer_settings_dependency(MyLayerSettings)
+
+# 3. Create a typed dependency
+MyLayerSettingsDep = Annotated[MyLayerSettings, Depends(get_my_layer_settings)]
+```
+
+### Creating group settings
+
+```python
+class MyFeatureSettings(BaseSettings):
+    """Settings for a specific feature."""
+    feature_enabled: bool = Field(default=True)
+    max_retries: int = Field(default=3)
+    timeout_seconds: int = Field(default=30)
+    
+    model_config = SettingsConfigDict(env_prefix="MY_FEATURE_")
+```
+
+## Testing with settings
+
+### ✅ Correct - dependency overrides
+
+```python
+def test_endpoint_with_settings():
+    # Create mock settings
+    mock_settings = Mock(spec=CoreSettings)
+    mock_settings.database.async_url = "sqlite+aiosqlite:///:memory:"
+    
+    # Override dependency
+    app.dependency_overrides[get_core_settings] = lambda: mock_settings
+    
+    try:
+        client = TestClient(app)
+        response = client.get("/api/test")
+        assert response.status_code == 200
+    finally:
+        app.dependency_overrides.clear()  # Must be done!
+```
+
+### ❌ Incorrect - changing global state
+
+```python
+def test_bad_settings():
+    # DO NOT CHANGE GLOBAL VARIABLES
+    original_url = GLOBAL_SETTINGS.DATABASE_URL  # ❌
+    GLOBAL_SETTINGS.DATABASE_URL = "test_url"    # ❌
+    # Forgot to restore - broke other tests
+```
+
+## Key rules
+
+1. **Use @lru_cache dependencies** - create settings once at startup
+2. **Typed dependencies** - `APISettingsDep`, `CoreSettingsDep` for autocompletion
+3. **cached_property for composition** - grouping related settings
+4. **env_prefix for isolation** - each group has its own prefix of variables
+5. **dependency_overrides for tests** - clean override without side effects
+6. **clear_cache utilities** - for resetting state in tests
+
+## Integration between layers
+
+```python
+# If the layer needs settings from another layer
+class APISettings(BackendSettings):
+    @cached_property
+    def core_settings(self) -> CoreSettings:
+        # Get through dependency function
+        return get_core_settings()
+    
+    def get_database_url(self) -> str:
+        # Reuse core layer settings
+        return self.core_settings.database.async_url
+```
+
+The settings system follows the principles of SOLID and FastAPI best practices, ensuring modularity, testability, and performance.
