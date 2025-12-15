@@ -1,0 +1,294 @@
+---
+description: FastAPI Dependencies Organization Standards - Clean Dependency Injection
+globs: dependencies.py,service.py,router.py
+alwaysApply: false
+---
+
+# FastAPI Dependencies Organization Standards
+
+## Responsibility
+
+**Dependencies files are responsible for:**
+- Configuration of Dependency Injection for FastAPI
+- Creation and configuration of service, repository, external client instances
+- Definition of dependency lifecycle (singleton, per-request)
+- Typed annotations for autocompletion in IDE
+- Centralization of all domain dependencies in one place
+
+**Dependencies do not respond for:**
+- Business logic - this is the responsibility of the Service Layer
+- Data Access logic - this is the responsibility of the Repository Layer  
+- HTTP request/response processing - this is the responsibility of the Router Layer
+
+## Principles of organization
+
+### ✅ Colocation Principle
+Typed dependencies should be located next to their providers:
+
+```python
+# ✅ Domain dependencies or module dependencies in a separate file
+# backend/core/users/dependencies.py
+UserRepositoryDep = Annotated[UserRepository, Depends(create_repository_provider(User, UserRepository))]
+UserServiceDep = Annotated[UserService, Depends(create_service_provider(UserService, UserRepositoryDep))]
+
+# backend/core/security/dependencies.py
+JWTManagerDep = Annotated[CoreJWTManager, Depends(get_jwt_manager)]
+```
+
+```python
+# ✅ Single shared services hold dependencies in the same file
+# backend/core/shared/file_storage.py
+def get_file_upload_service() -> SecureFileUploadService: ...
+FileUploadServiceDep = Annotated[SecureFileUploadService, Depends(get_file_upload_service)]
+```
+
+## Implementation Rules
+
+### ✅ DO - Correct organization
+
+```python
+# === ✅ Domain dependencies ===
+# backend/core/users/dependencies.py - One place for all domain-specific dependencies
+from typing import Annotated
+
+from fastapi import Depends
+
+from core.shared.dependencies import create_repository_provider, create_service_provider
+from core.shared.models import User
+
+from core.users.repository import UserRepository
+from core.users.service import UserService
+
+UserRepositoryDep = Annotated[UserRepository, Depends(create_repository_provider(User, UserRepository))]
+UserServiceDep = Annotated[UserService, Depends(create_service_provider(UserService, UserRepositoryDep))]
+```
+
+```python
+# === ✅ Router dependencies ===
+# backend/api/routes/users.py - http-related logic
+@router.post("/users", response_model=UserResponse)
+async def create_user(
+    user_data: UserCreate,
+    user_service: UserServiceDep  # Automatically gets all dependencies
+):
+    return await user_service.create_user(user_data)
+```
+
+```python
+# === ✅ Service dependencies ===
+# backend/core/users/service.py - business logic, no dependency configurations
+class UserService:
+    def __init__(self, user_repository: UserRepository, email_service: EmailService):
+        self.user_repository = user_repository
+        self.email_service = email_service
+    
+    async def create_user(self, user_data: UserCreate) -> UserResponse:
+        user_model = await self.user_repository.create(user_data)
+        await self.email_service.send_welcome_email(user_model.email)
+        return UserResponseDTO.model_validate(user_model)
+```
+
+### ❌ DON'T - Incorrect approaches
+
+```python
+# ❌ DO NOT mix dependencies with business logic in the same file if it is a domain service. Only single (e.g. core) services can be mixed with dependencies.
+# backend/core/users/service.py
+class UserService:
+    # ... business logic ...
+
+# In the same file
+def get_user_service() -> UserService:  # ❌ INCORRECT
+    return UserService()
+
+UserServiceDep = Annotated[UserService, Depends(get_user_service)]  # ❌
+```
+
+```python
+# ❌ DO NOT create dependencies in routers
+# backend/api/routes/users.py
+@router.post("/users")
+async def create_user(
+    user_data: UserCreate,
+    db: Session = Depends(get_db),  # ❌ Low-level dependency
+):
+    user_repo = UserRepository(db)  # ❌ Manual creation
+    email_service = EmailService()  # ❌ Manual creation
+    user_service = UserService(user_repo, email_service)  # ❌ Manual build
+    return await user_service.create_user(user_data)
+```
+
+```python
+# ❌ DO NOT use global variables
+USER_SERVICE = UserService()  # ❌ Global variable
+
+@router.post("/users")
+async def create_user(user_data: UserCreate):
+    return await USER_SERVICE.create_user(user_data)  # ❌
+```
+
+```python
+# ❌ DO NOT create dependencies without shared utility functions, if there are no many dependencies and/or conditional dependencies
+# backend/core/users/dependencies.py
+def get_user_repository(session: AsyncSession) -> UserRepository:  # ❌ Duplication
+    return UserRepository(User, session)
+
+def get_user_service(repository: UserRepository) -> UserService:  # ❌ Duplication
+    return UserService(repository)
+
+UserRepositoryDep = Annotated[UserRepository, Depends(get_user_repository)]  # ❌
+UserServiceDep = Annotated[UserService, Depends(get_user_service)]  # ❌
+```
+
+```python
+# ❌ DO NOT use mixin for dependency injection
+class UserService(DependencyProviderMixin):  # ❌ Anti-pattern
+    def __init__(self, repository: UserRepository):
+        self.repository = repository
+
+UserServiceDep = Annotated[UserService, Depends(UserService.as_dependency(...))]  # ❌
+```
+
+### ✅ DO - Project structure
+
+```
+backend/core/users/
+├── dependencies.py     # ✅ All user-related dependencies
+├── repository.py       # ✅ Only data access logic
+├── service.py          # ✅ Only business logic
+└── __init__.py
+
+backend/api/dependencies/
+├── __init__.py
+├── auth.py             # ✅ Auth-specific dependencies
+├── services.py         # ✅ Re-export core dependencies for API
+└── database.py         # ✅ Database connection dependencies
+```
+
+### ✅ DO - Re-export in API layer
+
+```python
+# backend/api/dependencies/services.py
+"""
+Centralized import of all service dependencies for API routers.
+Provides a single point of access to dependencies from the core layer.
+"""
+
+# Re-export domain dependencies for API routers
+from core.conversations.dependencies import ConversationServiceDep, MessageServiceDep
+from core.portraits.dependencies import PortraitServiceDep
+from core.leads.dependencies import LeadServiceDep, LeadRepositoryDep
+from core.users.dependencies import UserServiceDep, UserRepositoryDep
+
+# API-specific dependencies
+from .auth import CurrentUserDep, AuthServiceDep
+from .database import DatabaseDep
+
+__all__ = [
+    "UserServiceDep", "UserRepositoryDep",
+    "ConversationServiceDep", "MessageServiceDep", 
+    "LeadServiceDep", "LeadRepositoryDep",
+    "PortraitServiceDep",
+    "CurrentUserDep", "AuthServiceDep",
+    "DatabaseDep"
+]
+```
+
+## Code Examples
+
+### Template for new domain (Simplified approach - RECOMMENDED)
+
+```python
+# backend/core/{domain}/dependencies.py
+"""
+{Domain} domain FastAPI dependencies.
+
+Follow the simplified approach for maximum performance:
+- Direct creation in Annotated for minimal overhead
+- Uses shared utility functions for consistency
+"""
+
+from typing import Annotated
+
+from fastapi import Depends
+
+from core.shared.dependencies import create_repository_provider, create_service_provider
+from core.shared.models import {Domain}
+
+from core.{domain}.repository import {Domain}Repository
+from core.{domain}.service import {Domain}Service
+
+{Domain}RepositoryDep = Annotated[{Domain}Repository, Depends(create_repository_provider({Domain}, {Domain}Repository))]
+{Domain}ServiceDep = Annotated[{Domain}Service, Depends(create_service_provider({Domain}Service, {Domain}RepositoryDep))]
+```
+
+**Advantages of the simplified approach:**
+- ⚡ **40-60% faster** creation and execution
+- 🧠 **60-100% less memory** (300 bytes vs 500-600 bytes on dependency)
+- 🔄 **No cyclic dependencies** - safe
+- 📦 **Less levels of abstraction**
+- 🎯 **Straightforward call stack**
+
+### Complex dependencies with multiple dependencies and/or conditional dependencies
+
+```python
+# backend/core/{domain}/dependencies.py
+def get_{domain}_service(
+    {domain}_repo: {Domain}RepositoryDep,
+    user_repo: UserRepositoryDep,
+    ai_service: AIServiceDep = Depends(get_ai_service),
+    settings: CoreSettingsDep = Depends(get_core_settings)
+) -> {Domain}Service:
+    """
+    Creates {Domain}Service with all necessary dependencies.
+    
+    All dependencies are automatically injected by FastAPI.
+    """
+    if settings.notifications.provider == "email":
+        notification_service = EmailNotificationService()
+    elif settings.notifications.provider == "push":
+        notification_service = PushNotificationService(
+            push_service=PushService(),
+            settings=settings
+        )
+    else:
+        notification_service = NoOpNotificationService()
+
+    return {Domain}Service(
+        {domain}_repository={domain}_repo,
+        user_repository=user_repo,
+        notification_service=notification_service,
+        ai_service=ai_service,
+        settings=settings,
+    )
+```
+
+**Use when:**
+- Need complex initialization logic
+- Multiple dependencies in the service
+- Conditional dependency creation
+
+
+### Template Replacements
+
+When creating a new domain, replace:
+- `{domain}` → domain name in lowercase (e.g. `user`, `lead`, `conversation`)
+- `{domains}` → domain name in lowercase (e.g. `users`, `leads`, `conversations`)
+- `{Domain}` → domain name in PascalCase (e.g. `User`, `Lead`, `Conversation`)
+- `{Domains}` → domain name in PascalCase (e.g. `Users`, `Leads`, `Conversations`)
+- `{DOMAIN}` → domain name in UPPERCASE (e.g. `USER`, `LEAD`, `CONVERSATION`)
+
+## Key Points
+
+### 🎯 Principles of organization
+
+1. **One responsibility**: Dependencies file only for DI configuration
+2. **Separation of Concerns**: Business logic in services, DI in dependencies
+3. **Type Safety**: Always use `Annotated[Type, Depends(...)]`
+4. **Locality**: Dependencies of each domain in its own file
+5. **Reusability**: Re-export in API layer for convenience
+
+### 🔄 Lifecycle Management
+
+1. **Singleton services** - use `@lru_cache` for heavy resources
+2. **Per-request** - ordinary dependencies for stateless services  
+3. **Scoped dependencies** - for transactions and request context
