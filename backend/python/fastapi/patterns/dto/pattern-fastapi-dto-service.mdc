@@ -1,0 +1,371 @@
+---
+description: FastAPI Service Pattern - Business Logic Layer
+globs: service.py
+alwaysApply: false
+---
+# FastAPI Service Pattern
+
+## Responsibility
+Service contains **ONLY business logic**. Validation of data, checking business rules, orchestration of repository calls.
+
+## Implementation Rules
+
+### **DO:**
+- Work with DTOs on input and output (NOT SQLAlchemy models)
+- Check business rules before operations
+- Use `safe_gather` for parallel operations
+- Log all operations
+- Throw domain exceptions with filled `detail/source/meta` (do not form HTTP errors)
+- Use typed access to repository
+- Manage transactions through repository, call `self.repository.commit()`, pass parameter `flush=True`
+
+### **DON'T:**
+- DO NOT work with HTTP request/response directly
+- DO NOT return SQLAlchemy models from service
+- DO NOT add UI/API logic
+- DO NOT work with database fields directly, do not import from `core.shared.models`
+
+## Code Example
+
+```python
+"""
+{Domain} Service for business logic.
+
+Contains only safe operations, adhering to business rules.
+"""
+
+import logging
+from typing import Annotated, cast
+
+from fastapi import Depends
+
+from core.shared.utilities import safe_gather
+from core.shared.dto.{entity} import {Entity}CreateDTO, {Entity}UpdateDTO, {Entity}ResponseDTO
+from core.shared.exceptions import DuplicateResourceError, EntityNotFoundError
+from core.shared.models import {Entity}
+from core.{entities}.repository import {Entity}Repository
+
+logger = logging.getLogger(__name__)
+
+class {Entity}Service():
+    """
+    Service for working with {entities}.
+
+    Contains only safe operations, adhering to business rules.
+    """
+
+    def __init__(self, repository: {Entity}Repository):
+        """Initialization of the service."""
+        super().__init__(repository)
+        logger.debug("Created {Entity}Service")
+
+    @property
+    def {entity}_repository(self) -> {Entity}Repository:
+        """Typed access to the repository."""
+        return cast({Entity}Repository, self.repository)
+
+    async def create_{entity}(self, create_data: {Entity}CreateDTO) -> {Entity}ResponseDTO:
+        """
+        Creation of a new {entity}.
+
+        Args:
+            create_data: Data for creation
+
+        Returns:
+            DTO of the created {entity}
+
+        Raises:
+            DuplicateResourceError: If {entity} already exists
+        """
+        # Business validation
+
+        self._validate_business_rules(create_data)
+
+        email_exists, name_exists = await safe_gather(
+            self.{entity}_repository.email_exists(create_data.email),
+            self.{entity}_repository.name_exists(create_data.name),
+            return_exceptions=False
+        )
+
+        if email_exists:
+            raise DuplicateResourceError("{Entity}", f"email '{create_data.email}'")
+            # example: source={"parameter": "email"}, meta={"value": mask_email(create_data.email)}
+
+        if name_exists:
+            raise DuplicateResourceError("{Entity}", f"name '{create_data.name}'")
+
+        # Create {entity}
+        {entity}_data = create_data.model_dump()
+        {entity} = await self.repository.create({entity}_data, flush=True)
+
+        logger.info(f"Created {entity}: {{entity}.id}")
+        return {Entity}ResponseDTO.model_validate({entity})
+
+    async def list_{entities}(
+        self, 
+        owner_id: Optional[int] = None,
+        skip: int = 0, 
+        limit: int = 100,
+        search: Optional[str] = None
+    ) -> list[{Entity}ResponseDTO]:
+        """
+        Getting a list of {entities}.
+
+        Args:
+            owner_id: ID of the owner (for filtering)
+            skip: Number of skipped records
+            limit: Maximum number of records
+            search: Search by name
+
+        Returns:
+            List of DTO {entities}
+        """
+        if owner_id:
+            {entities} = await self.{entity}_repository.search_user_{entities}(
+                owner_id=owner_id,
+                search=search,
+                skip=skip,
+                limit=limit
+            )
+        else:
+            {entities} = await self.{entity}_repository.get_{entities}(
+                search=search,
+                skip=skip,
+                limit=limit
+            )
+
+        return [{Entity}ResponseDTO.model_validate({entity}) for {entity} in {entities}]
+
+    async def delete_{entity}(
+        self, 
+        {entity}_id: int,
+        owner_id: Optional[int] = None
+    ) -> bool:
+        """
+        Deletion of {entity}.
+
+        Args:
+            {entity}_id: ID {entity}
+            owner_id: ID of the owner (for checking rights)
+
+        Returns:
+            True if {entity} is deleted
+
+        Raises:
+            EntityNotFoundError: If {entity} is not found
+        """
+        success = await self.{entity}_repository.soft_delete({entity}_id, owner_id)
+            
+        if not success:
+            raise EntityNotFoundError("{Entity}", {entity}_id)
+
+        logger.info(f"Deleted {entity}: {{entity}_id}")
+        return True
+
+    async def _validate_business_rules(self, data: {Entity}CreateDTO) -> None:
+        """
+        Centralized validation of business rules.
+        
+        Args:
+            data: Data for validation
+            
+        Raises:
+            ValueError: If business rules are violated
+        """
+        # Example business rules
+        if len(data.name) < 2:
+            raise ValueError("Name of {entity} must contain at least 2 characters")
+            
+        if data.some_field and data.some_field < 0:
+            raise ValueError("The value of the field cannot be negative")
+
+## Template Replacements
+
+When creating a new service, replace:
+- `{Entity}` → model name (e.g. `User`)
+- `{entity}` → entity name in lowercase (e.g. `user`)
+- `{entities}` → plural (e.g. `users`)
+- `{Domain}` → domain name (e.g. `User`)
+
+## Key Points
+
+✅ **Service = Business Logic Only**  
+✅ **DTOs on input and output**  
+✅ **Business rules validation**  
+✅ **Parallel operations with safe_gather**  
+✅ **Typed access to repository**  
+✅ **FastAPI DI integration**  
+✅ **Exception handling (domain only)**  
+✅ **Logging operations**
+
+## Isolated Services
+
+For background tasks and operations with isolated sessions:
+
+```python
+from core.users import IsolatedUserService, IsolatedUserServiceDep
+
+async def background_user_creation(
+    create_data: CreateUserDTO,
+    isolated_service: IsolatedUserServiceDep
+) -> UserResponseDTO:
+    """
+    Background task creation of a user with an isolated session.
+    
+    Isolated services are used:
+    - In background tasks (RabbitMQ workers)
+    - In operations outside the HTTP context  
+    - When a separate database session is needed
+    """
+    try:
+        user = await isolated_service.create_user_background(create_data)
+        return user
+    finally:
+        # IMPORTANT: Always clean up the session in isolated services
+        await isolated_service.cleanup_session()
+```
+
+### When to use Isolated Services:
+- ✅ **Background tasks** (RabbitMQ, Celery)
+- ✅ **Operations outside the HTTP context**
+- ✅ **Long operations** requiring a separate session
+- ✅ **Scheduled jobs** and cron tasks
+
+### Features of Isolated Services:
+- 🔄 **Own database session** (not related to HTTP request)
+- 🧹 **Manual session management** (cleanup_session is mandatory)
+- 🚫 **Not used in HTTP endpoints**
+
+## Administrative Operations
+
+For administrative operations, use services from the API layer:
+
+```python
+from api.admin.services.users import AdminUserService, AdminUserServiceDep
+
+class AdminUserService(BaseAdminService[User]):
+    """
+    Administrative service with extended rights.
+    
+    Contains force methods, bulk operations and administrative functions.
+    Requires administrator rights check.
+    """
+
+    async def force_create_user(
+        self, 
+        admin_user: UserCreateDTO,
+        user_data: dict, 
+        bypass_validation: bool = False
+    ) -> UserResponseDTO:
+        """
+        Force creation of a user (only for administrators).
+        
+        Args:
+            admin_user: Administrator user
+            user_data: User data
+            bypass_validation: Skip validation
+            
+        Returns:
+            Data of the created user
+        """
+        # Checking administrative rights
+        self._ensure_admin_rights(admin_user)
+        
+        if not bypass_validation:
+            self._validate_admin_operation(user_data)
+        
+        # Force creation without standard checks
+        user = await self.repository.force_create(user_data)
+        
+        logger.warning(f"Admin {admin_user.id} force created user {user.id}")
+        return UserResponseDTO.model_validate(user)
+
+    async def bulk_update_users(
+        self,
+        admin_user: UserUpdateDTO,
+        user_ids: list[int],
+        update_data: dict
+    ) -> list[UserResponseDTO]:
+        """
+        Bulk update of users (only for administrators).
+        
+        Args:
+            admin_user: Administrator user  
+            user_ids: List of user IDs
+            update_data: Data for updating
+            
+        Returns:
+            List of updated users
+        """
+        self._ensure_admin_rights(admin_user)
+        
+        # Bulk operation with a transaction
+        updated_users = await self.repository.bulk_update(user_ids, update_data)
+        
+        logger.warning(f"Admin {admin_user.id} bulk updated {len(user_ids)} users")
+        return [UserResponseDTO.model_validate(user) for user in updated_users]
+
+    def _ensure_admin_rights(self, user: UserUpdateDTO) -> None:
+        """Checking administrative rights."""
+        if not user.is_admin:
+            raise PermissionDeniedError("Administrator rights are required")
+    
+    def _validate_admin_operation(self, data: dict) -> None:
+        """Validation of administrative operation."""
+        # Additional checks for administrative operations
+        pass
+
+# Dependency injection for administrative services
+from typing import Annotated
+from fastapi import Depends
+from core.shared.dependencies import create_service_provider
+from api.admin.services.users import AdminUserService
+from core.users.repository import UserRepository
+
+AdminUserServiceDep = Annotated[AdminUserService, Depends(create_service_provider(AdminUserService, UserRepository))]
+
+### Responsibility separation
+
+#### Core Services (Clean domain operations)
+```python
+# core/users/service.py
+class UserService():
+    """Safe operations, adhering to all business rules."""
+    
+    async def create_user(self, data: CreateUserDTO) -> UserResponseDTO:
+        # Full validation, checking duplicates, business rules
+        pass
+        
+    async def update_user(self, user_id: int, data: UpdateUserDTO) -> UserResponseDTO:
+        # Safe update with checks
+        pass
+```
+
+#### Admin Services (Administrative operations)
+```python
+# api/admin/services/users.py  
+class AdminUserService(BaseAdminService[User]):
+    """Administrative operations with extended rights."""
+    
+    async def force_create_user(self, admin: UserSummaryDTO, data: dict) -> dict:
+        # Force creation without standard checks
+        pass
+        
+    async def bulk_delete_users(self, admin: UserSummaryDTO, user_ids: list[int]) -> bool:
+        # Bulk deletion with minimal checks
+        pass
+```
+
+### When to use Administrative Operations:
+- ✅ **Bulk operations** (bulk create/update/delete)
+- ✅ **Force operations** (force create/update)
+- ✅ **Administrative functions** (import data, migration)
+- ✅ **Operations with skipping validation**
+- ✅ **System operations** (cleanup, archiving)
+
+### Security of Administrative Operations:
+- 🔐 **Required administrator rights check**
+- 📝 **Detailed logging** of all administrative operations  
+- ⚠️ **Warning level logs** for force operations
+- 🚫 **Not available for regular users**
+- 🔒 **Only in API layer** (not in Core)
