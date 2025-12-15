@@ -1,0 +1,279 @@
+---
+description: git workflow, branches, naming, commit messages, troubleshooting, code review, conflicts resolution
+alwaysApply: false
+---
+# Git Workflow Standards - Quick Reference
+
+## 🔄 Core Principles
+
+### Workflow Strategy
+- **Feature Branch Workflow** - work in feature branches
+- **Code Review First** - mandatory code review
+- **Meaningful Commits** - meaningful commits  
+- **Linear History** - linear history through rebase
+- **Atomic Commits** - atomic changes
+
+## 🌿 Branch Naming
+
+### Branch Types
+```bash
+# Feature branches
+feature/entity-scoring-engine
+feature/TRACKER_SECTION-123-implement-ai-analysis
+
+# Bugfix branches  
+bugfix/entity-card-display-issue
+bugfix/TRACKER_SECTION-456-fix-email-validation
+
+# Hotfix branches
+hotfix/security-vulnerability-fix
+hotfix/TRACKER_SECTION-789-critical-memory-leak
+
+# Chore branches
+chore/update-dependencies
+chore/refactor-api-layer
+
+# Release branches
+release/v2.1.0
+release/v2.2.0-beta
+```
+
+### Naming Structure
+```bash
+# Format: <type>/<ticket-id>-<description>
+feature/TRACKER_SECTION-123-implement-entity-scoring
+bugfix/TRACKER_SECTION-456-fix-email-validation
+
+# Without ticket
+feature/add-redis-caching
+docs/update-api-documentation
+```
+
+## 📝 Commit Messages
+
+### Conventional Commits
+```bash
+# Формат: <type>(<scope>): <description>
+feat(scoring): implement multi-factor scoring algorithm
+fix(auth): resolve JWT token expiration handling
+docs(api): add OpenAPI specifications
+refactor(services): extract entity scoring logic
+test(components): add unit tests for EntityCard
+perf(database): add indexes for entity queries
+chore(deps): update FastAPI to version 0.104.0
+```
+
+### 🔍 Change Analysis Before Commit
+
+**Before creating a commit, LLM should:**
+
+1. **Study changes**: Analyze what was changed in the files using `git diff`
+2. **Understand purpose**: Determine why the changes were made
+3. **Add brief points**: Include a brief description of what was done in the commit message
+4. **Clean imports**: Remove unused imports
+
+**Example of correct commit message:**
+```bash
+fix(database): resolve connection leaks and improve session management
+
+- Add session_scope context manager for automatic cleanup
+- Implement proper connection lifecycle management
+- Add connection pool monitoring and health checks
+- Fix concurrent connection errors with pre-connection validation
+- Add comprehensive error handling and logging
+
+Closes #TRACKER_SECTION-456 [Optional: if the commit is related to a specific ticket]
+```
+
+**Commit message structure:**
+```bash
+<type>(<scope>): <description>
+
+- <brief point about what was done>
+- <another point about key changes>
+- <additional important details>
+```
+
+### Commit Types
+- **feat**: new functionality
+- **fix**: bug fix
+- **docs**: documentation changes
+- **style**: code formatting
+- **refactor**: refactoring without changing functionality
+- **test**: adding or modifying tests
+- **chore**: updating dependencies, infrastructure setup
+- **perf**: performance improvement
+
+### Breaking changes
+```bash
+feat(api)!: redesign entity API response format
+
+BREAKING CHANGE: The entity API now returns paginated results
+in a different format. Migration guide in CHANGELOG.md
+
+Closes #TRACKER_SECTION-200 [Optional: if the commit is related to a specific ticket]
+```
+
+## 🔄 Workflow Process
+
+### Standard Flow
+```bash
+# 1. Create feature branch
+git checkout main
+git pull origin main
+git checkout -b feature/TRACKER_SECTION-123-new-feature
+
+# 2. Work with commits
+git add .
+git commit -m "feat(scoring): add basic framework"
+git commit -m "test(scoring): add unit tests"
+
+# 3. Sync with main
+git checkout main
+git pull origin main
+git checkout feature/TRACKER_SECTION-123-new-feature
+git rebase main
+
+# 4. Push and PR
+git push -u origin feature/TRACKER_SECTION-123-new-feature
+
+# 5. After merge
+git checkout main
+git pull origin main
+git branch -d feature/TRACKER_SECTION-123-new-feature
+```
+
+### Quick Commands
+```bash
+# Fix last commit
+git commit --amend
+
+# Interactive rebase
+git rebase -i HEAD~3
+
+# Reset changes
+git reset --hard HEAD
+
+# Stash changes
+git stash push -m "work in progress"
+git stash pop
+
+# Squash commits
+git rebase -i HEAD~3  # Select squash to combine
+```
+
+## 🔍 Code Review
+
+### PR Checklist
+```bash
+# ✅ PR ready for review:
+- [ ] PR title describes changes
+- [ ] Description contains context
+- [ ] All tests pass
+- [ ] No conflicts with target branch
+- [ ] PR size is reasonable (up to 400 lines)
+- [ ] Documentation updated
+- [ ] Breaking changes documented
+```
+
+### PR Template
+```markdown
+## Description
+Brief description of changes and their context.
+
+## Type of Changes
+- [ ] Bug fix
+- [ ] New feature  
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+- [ ] Unit tests added/updated
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+
+## Checklist
+- [ ] Code follows project standards
+- [ ] Self-review completed
+- [ ] Documentation updated
+```
+
+## 📊 Git Settings
+
+### Useful Aliases
+```bash
+# ~/.gitconfig
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --all
+    last = log -1 HEAD
+    unstage = reset HEAD --
+    
+    # Advanced aliases
+    lol = log --graph --decorate --pretty=oneline --abbrev-commit
+    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+    pom = push origin main
+    poh = push origin HEAD
+    amend = commit --amend --no-edit
+```
+
+### Git Hooks
+```bash
+# .git/hooks/pre-commit
+#!/bin/sh
+# Run linter before commit
+npm run lint
+python -m flake8 backend/
+
+# .git/hooks/commit-msg  
+#!/bin/sh
+# Check commit message format
+grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .{1,50}" "$1"
+```
+
+## 🚫 Forbidden Practices
+
+- ❌ **Direct commits to main**
+- ❌ **Force push** to shared branches
+- ❌ **Large commits** with multiple changes
+- ❌ **Meaningless commit messages** ("fix", "update", "wip")
+- ❌ **Merge commits** instead of rebase
+- ❌ **Commits without testing**
+- ❌ **Describe in commit message the whole file functionality instead of changed functionality**
+- ❌ **Describe imagined changes in commit messageinstead of actual changes (diff)**
+
+## 🔧 Troubleshooting
+
+### Common Issues
+```bash
+# Undo last commit (keep changes)
+git reset --soft HEAD~1
+
+# Cancel merge
+git merge --abort
+
+# Restore deleted branch
+git checkout -b feature/recovered origin/feature/lost-branch
+
+# Clean untracked files
+git clean -fd
+
+# Restore file
+git checkout HEAD -- filename.py
+```
+
+### Resolving Conflicts
+```bash
+# During rebase conflicts
+git rebase --continue  # After resolution
+git rebase --abort     # Cancel rebase
+git rebase --skip      # Skip conflicting commit
+
+# Merge conflicts
+git mergetool          # Open merge tool
+git add .              # After resolution
+git commit             # Complete merge
+```
