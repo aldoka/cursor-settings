@@ -1,0 +1,44 @@
+---
+description: Windows command line, PowerShell, line endings fix
+alwaysApply: false
+---
+# Windows Development Environment
+
+## 🎯 PowerShell Commands
+
+### File Operations
+```powershell
+# Copy/move files
+Copy-Item "source\*" -Destination "dest\" -Recurse
+Remove-Item "folder\" -Recurse -Force
+New-Item -ItemType Directory -Path "new\folder"
+
+# Line endings fix for Docker scripts
+Get-Content "file.sh" | Set-Content -Encoding UTF8 -Path "file.sh"
+```
+
+### Process & Network
+```powershell
+# Kill process by name
+Get-Process | Where-Object {$_.ProcessName -eq "python"} | Stop-Process
+
+# Check port usage
+Get-NetTCPConnection -LocalPort 8000
+
+# Environment variables
+$env:DATABASE_URL = "postgresql://localhost/{application_name}"
+```
+
+## ⚠️ Line Endings Issue
+
+**Problem**: CRLF line endings cause Docker script failures
+**Files affected**: `*.sh`, `*.sql` in `configs/postgres/`, `db/migrations/`
+
+**Solution**:
+```powershell
+# Fix line endings before Docker operations
+Get-Content configs/postgres/postgresql_setup.sh | Set-Content -Encoding UTF8 -Path configs/postgres/postgresql_setup.sh
+Get-Content db/migrations/init_db.sh | Set-Content -Encoding UTF8 -Path db/migrations/init_db.sh
+
+# Git auto-fix
+git config --global core.autocrlf input
