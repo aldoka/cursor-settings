@@ -1,0 +1,265 @@
+---
+description: FastAPI Repository Pattern - Data Access Layer
+globs: repository.py
+alwaysApply: false
+---
+
+# FastAPI Repository Pattern
+
+## Responsibility
+Repository is responsible for **ONLY** data access. No business logic - only CRUD operations, complex queries and filtering.
+
+## Implementation Rules
+
+### **DO:**
+- Inherit from `AsyncBaseRepository[ModelType]`
+- Use FastAPI DI: `session: AsyncSession` through `SessionDep`
+- Add security-first methods with ownership check (`owner_id`)
+- Return typed SQLAlchemy models
+ - Pass domain exceptions as is (`EntityNotFoundError`, `DuplicateResourceError`)
+ - Wrap only low-level database exceptions in domain (`DatabaseError`)
+- When generating exceptions, fill `meta` and optionally `source` (for example, conflicting fields)
+- Use SQLAlchemy 2.0 syntax (`select()`, `update()`, `delete()`)
+- Support soft delete automatically
+- Use methods `get_all`, `get_by_id`, `get_by_id_or_raise`, `create`, `update`, `delete`, `soft_delete`, `count`, `exists` from `AsyncBaseRepository`
+- Add `deleted_at` check in queries
+
+### **DON'T:**
+- DO NOT add business logic to repository
+- DO NOT make automatic commit/flush (transaction management at the service level)
+- DO NOT return DTO from repository (only SQLAlchemy models)
+- DO NOT validate business rules
+- DO NOT manage transactions (this is done by service)
+
+## Query Optimization Best Practices
+
+### Preloading relationships (avoid N+1)
+```python
+# ✅ Correct - preloading relationships
+async def get_{entities}_with_related_entities(self, user_id: int) -> List[{ModelName}]:
+    stmt = (
+        select({ModelName})
+        .options(selectinload({ModelName}.related_entities))
+        .where({ModelName}.user_id == user_id, {ModelName}.deleted_at.is_(None))
+    )
+    result = await self.session.execute(stmt)
+    return list(result.scalars().all())
+
+# ❌ Incorrect - N+1 queries
+async def get_{entities}_bad(self, user_id: int) -> List[{ModelName}]:
+    stmt = select({ModelName}).where({ModelName}.user_id == user_id)
+    {entities} = await self.session.execute(stmt)
+    # Each access to {ModelName}.related_entities will cause a separate request!
+    return list({entities}.scalars().all())
+```
+
+### Correct pagination
+```python
+async def get_paginated_{entities}(
+    self, 
+    user_id: int, 
+    offset: int = 0, 
+    limit: int = 25
+) -> List[{ModelName}]:
+    stmt = (
+        select({ModelName})
+        .where({ModelName}.user_id == user_id, {ModelName}.deleted_at.is_(None))
+        .order_by({ModelName}.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+    )
+    result = await self.session.execute(stmt)
+    return list(result.scalars().all())
+```
+
+### Optimized search
+```python
+async def search_with_filters(
+    self,
+    user_id: int,
+    search_term: Optional[str] = None,
+    status: Optional[str] = None,
+    offset: int = 0,
+    limit: int = 25
+) -> List[{ModelName}]:
+    stmt = select({ModelName}).where(
+        {ModelName}.user_id == user_id,
+        {ModelName}.deleted_at.is_(None)
+    )
+    
+    # Add filters only if they are set
+    if search_term:
+        stmt = stmt.where({ModelName}.name.ilike(f"%{search_term}%"))
+    
+    if status:
+        stmt = stmt.where({ModelName}.status == status)
+    
+    # Pagination and sorting
+    stmt = stmt.order_by({ModelName}.updated_at.desc()).offset(offset).limit(limit)
+    
+    result = await self.session.execute(stmt)
+    return list(result.scalars().all())
+```
+
+## Code Example
+
+```python
+"""
+{Domain} Repository for data access.
+
+Implements the Repository pattern with async/await support.
+Contains methods for specific operations and complex queries.
+"""
+
+import logging
+from typing import List, Optional
+
+from sqlalchemy import update, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from core.shared.repository import AsyncBaseRepository
+from core.shared.models import {ModelName}
+from core.shared.exceptions import EntityNotFoundError, DatabaseError
+
+logger = logging.getLogger(__name__)
+
+class {ModelName}Repository(AsyncBaseRepository[{ModelName}]):
+    """
+    Repository for working with {domain}
+    
+    Features:
+    - Async/await operations
+    - Typed methods
+    - Optimized queries with preloading
+    - Support for complex filtering
+    - Ownership check at the query level (security-first)
+    """
+    
+    def __init__(self, model: type[{ModelName}], session: AsyncSession):
+        super().__init__(model, session)
+    
+    # === METHODS WITH OWNERSHIP CHECK (SECURITY FIRST) ===
+
+    async def update_{entity}(
+        self, 
+        {entity}_id: int, 
+        owner_id: int, 
+        data: dict,
+        flush: bool = False
+    ) -> {ModelName}:
+        """
+        Update {entity} user with ownership check.
+        
+        Args:
+            {entity}_id: ID {entity}
+            owner_id: ID owner
+            data: Data for update
+            flush: Immediate flush to DB
+            
+        Returns:
+            Updated {entity}
+            
+        Raises:
+            EntityNotFoundError: If {entity} is not found or does not belong to the user
+        """
+        try:
+            stmt = (
+                update({ModelName})
+                .where(
+                    {ModelName}.id == {entity}_id,
+                    {ModelName}.owner_id == owner_id,
+                    {ModelName}.deleted_at.is_(None)
+                )
+                .values(**data)
+                .returning({ModelName})
+            )
+            
+            result = await self.session.execute(stmt)
+            {entity} = result.scalar_one_or_none()
+            
+            if not {entity}:
+                raise EntityNotFoundError("{ModelName}", {entity}_id)
+            
+            if flush:
+                await self.session.flush()
+                await self.session.refresh({entity})
+            
+            return {entity}
+        except EntityNotFoundError:
+            # Domain exceptions are not wrapped here and are handled above the stack
+            raise
+        except Exception as e:
+            logger.error(f"Error updating {entity} user with ownership check: {e}")
+            raise DatabaseError(
+                f"Update {entity} user with ownership check",
+                {"entity_id": {entity}_id, "owner_id": owner_id, "error": str(e)}
+            )
+    
+    # === DOMAIN-SPECIFIC METHODS ===
+    
+    async def search_by_name_optimized(
+        self, 
+        name: str,
+        owner_id: Optional[int] = None,
+        skip: int = 0,
+        limit: int = 10
+    ) -> List[{ModelName}]:
+        """
+        Optimized search {entities} by name with preloading relationships.
+        
+        Args:
+            name: Name for search
+            owner_id: ID owner (optional for admin)
+            skip: Skip records
+            limit: Limit records
+            
+        Returns:
+            List of found {entities}
+        """
+        try:
+            stmt = (
+                select({ModelName})
+                .options(selectinload({ModelName}.related_entities))  # Preloading relationships
+                .where(
+                    {ModelName}.name.ilike(f"%{name}%"),
+                    {ModelName}.deleted_at.is_(None)
+                )
+            )
+            
+            if owner_id:
+                stmt = stmt.where({ModelName}.owner_id == owner_id)
+            
+            stmt = stmt.offset(skip).limit(limit).order_by({ModelName}.updated_at.desc())
+            
+            result = await self.session.execute(stmt)
+            return list(result.scalars().all())
+        except Exception as e:
+            logger.error(f"Error searching {entities} by name: {e}")
+            raise DatabaseError(f"Search {entities} by name", {"name": name, "error": str(e)})
+```
+
+## Template Replacements
+
+When creating a new repository, replace:
+- `{ModelName}` → model name (e.g. `User`)
+- `{entity}` → entity name in lowercase (e.g. `user`)
+- `{entities}` → plural (e.g. `users`)
+- `{domain}` → domain name (e.g. `users`)
+
+## Key Points
+
+✅ **Repository = Data Access Only**  
+✅ **Security-First with owner_id checks**  
+✅ **SQLAlchemy 2.0 syntax everywhere**  
+✅ **Typing with Generic[ModelType]**  
+✅ **FastAPI DI integration**  
+✅ **Query optimization with preloading**  
+✅ **Handle exceptions**  
+✅ **Logging of errors**
+✅ **Uses `select()` instead of `session.query()`**
+✅ **Uses `.where()` instead of `.filter()`**
+✅ **Typing with Generic[ModelType]**  
+✅ **FastAPI DI integration**  
+✅ **Handle exceptions**  
+✅ **Logging of errors**
