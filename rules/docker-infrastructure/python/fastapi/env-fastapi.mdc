@@ -1,0 +1,157 @@
+---
+description: Environment Configuration - Quick reference guide
+globs: *.env,*.yml,*.conf
+alwaysApply: false
+---
+
+# Environment Configuration - Quick reference guide
+
+## 🗂️ Configuration for FastAPI project
+
+### File structure
+```
+configs/env/
+├── backend.ci.dev.env  # CI/CD settings for development
+├── backend.ci.prod.env # CI/CD settings for production  
+├── backend.dev.env     # All backend settings for development
+├── backend.prod.env    # All backend settings for production 
+├── db.shared.dev.env   # Shared between docker services database settings for development
+├── db.shared.prod.env  # Shared between docker services database settings for production  
+├── postgresql.dev.env  # Postgres specific settings for development
+├── postgresql.prod.env # Postgres specific settings for production  
+├── redis.dev.env       # Redis specific settings for development
+├── redis.prod.env      # Redis specific settings for production 
+├── rabbitmq.dev.env    # RabbitMQ specific settings for development
+├── rabbitmq.prod.env   # RabbitMQ specific settings for production
+```
+
+## ⚙️ API Environment Variables
+
+### Development Example (backend.dev.env)
+```bash
+# Common Settings
+ENVIRONMENT=development
+LOG_LEVEL=DEBUG
+
+# API Layer
+API_APP_NAME=[application_name]
+API_PREFIX=
+API_DOCS_URL=/docs
+API_CORS_ORIGINS='["*"]'
+
+# Core Layer - JWT
+CORE_JWT_SECRET_KEY=dev_secret_key_change_in_production
+CORE_JWT_ALGORITHM=HS256
+CORE_JWT_ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Admin User
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin-password-change-in-production
+ADMIN_EMAIL=admin@[application_name].com
+
+# Email settings 
+EMAIL_PROVIDER=sendgrid
+EMAIL_FROM=no-reply@[application_name].com
+EMAIL_ENABLED=true
+EMAIL_DEBUG_MODE=true
+```
+
+### Database settings (db.shared.dev.env)
+```bash
+DB_HOST=postgres
+DB_PORT=5432  
+DB_NAME=[application_name]_dev_db
+DB_USER=[application_name]_app_user
+DB_PASSWORD=[application_name]_app_password
+DB_POOL_SIZE=20
+DB_ECHO=False
+```
+### Redis settings (redis.dev.env)
+```bash
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
+```
+
+### RabbitMQ settings (rabbitmq.dev.env)
+```bash
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+```
+
+### Production Overrides (backend.prod.env)
+```bash
+# Security
+ENVIRONMENT=production
+LOG_LEVEL=INFO
+JWT_SECRET_KEY=${JWT_SECRET_KEY}  # From secrets
+
+# API Security
+WORKERS=4
+CORS_ORIGINS=["https://[application_name].com"]
+SSL_REDIRECT=true
+
+# Cache - with password
+REDIS_PASSWORD=${REDIS_PASSWORD}
+
+# Email
+EMAIL_DEBUG_MODE=false
+EMAIL_DRY_RUN=false
+```
+
+### Production Database settings (postgresql.prod.env)
+```bash
+# Database - increased pool
+DB_HOST=${DB_HOST}
+DB_PASSWORD=${DB_PASSWORD}
+DB_POOL_SIZE=50
+DB_MAX_OVERFLOW=100
+```
+
+## 🔧 Configuration Best Practices
+
+### Security Patterns
+```bash
+# ✅ Development - direct values
+JWT_SECRET_KEY=dev_secret_key_change_in_production
+
+# ✅ Production - links to secrets
+JWT_SECRET_KEY=${JWT_SECRET_KEY}
+DB_PASSWORD=${DB_PASSWORD}
+REDIS_PASSWORD=${REDIS_PASSWORD}
+```
+
+### Environment Inheritance
+```yaml
+# docker-compose.yml
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.${ENV:-dev}.env
+```
+
+## 📂 File Organization
+
+### Environment Loading Order
+```yaml
+# docker-compose.dev.yml
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.dev.env
+      - ./configs/env/postgres.dev.env
+      - ./configs/env/redis.dev.env
+```
+
+### Secrets Management
+```bash
+# Development - in files
+configs/env/backend.development.env
+
+# Production - environment variables
+export JWT_SECRET_KEY="production-secret-32-chars"
+export DB_PASSWORD="secure-production-password"
+```

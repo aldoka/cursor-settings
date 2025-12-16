@@ -1,0 +1,116 @@
+---
+description: Environment Configuration - Quick reference guide
+globs: *.env,*.yml,*.conf
+alwaysApply: false
+---
+
+# Environment Configuration - Quick reference guide
+
+## 🗂️ Configuration for Django project
+
+### File structure
+```
+configs/env/
+├── backend.ci.dev.env  # CI/CD settings for development
+├── backend.ci.prod.env # CI/CD settings for production  
+├── backend.dev.env     # All backend settings for development
+├── backend.prod.env    # All backend settings for production 
+├── db.shared.dev.env   # Shared between docker services database settings for development
+├── db.shared.prod.env  # Shared between docker services database settings for production  
+├── postgresql.dev.env  # Postgres specific settings for development
+├── postgresql.prod.env # Postgres specific settings for production  
+├── redis.dev.env       # Redis specific settings for development
+├── redis.prod.env      # Redis specific settings for production  
+```
+
+## ⚙️ Backend Environment Variables
+
+### Development Example (backend.dev.env)
+```bash
+ENVIRONMENT=development
+LOG_LEVEL=DEBUG
+APP_NAME=[application_name]
+
+# Admin
+BACKEND_ADMIN_USERNAME=admin
+BACKEND_ADMIN_PASSWORD=admin-password-change-in-production
+BACKEND_ADMIN_EMAIL=admin@[application_name].com
+```
+### Shared between docker services database settings (db.shared.dev.env)
+```bash
+DB_HOST=postgres
+DB_PORT=5432  
+DB_NAME=[application_name]_dev_db
+DB_USER=[application_name]_app_user
+DB_PASSWORD=[application_name]_app_password
+DB_POOL_SIZE=20
+DB_ECHO=False
+```
+
+### PostgreSQL settings (postgresql.dev.env)
+```bash
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
+```
+
+### Production Overrides (backend.production.env)
+```bash
+# Security
+ENVIRONMENT=production
+LOG_LEVEL=INFO
+
+# Backend settings
+BACKEND_WORKERS=4
+BACKEND_CORS_ORIGINS=["https://[application_name].com"]
+BACKEND_SSL_REDIRECT=false
+
+# Cache settings - with password
+BACKEND_REDIS_PASSWORD=${REDIS_PASSWORD}
+```
+
+## 🔧 Configuration Best Practices
+
+### Security Patterns
+```bash
+# ✅ Development - direct values
+BACKEND_SECRET_VAR=dev_secret_value_change_in_production
+
+# ✅ Production - links to secrets
+BACKEND_SECRET_VAR=${SECRET_VAR}
+BACKEND_DB_PASSWORD=${DB_PASSWORD}
+BACKEND_REDIS_PASSWORD=${REDIS_PASSWORD}
+```
+
+### Environment Inheritance
+```yaml
+# docker-compose.yml
+services:
+  backend:
+    env_file:
+      - ./configs/env/backend.${ENV:-development}.env
+```
+
+## 📂 File Organization
+
+### Environment Loading Order
+```yaml
+# docker-compose.dev.yml
+services:
+  backend:
+    env_file:
+      - ./configs/env/db.shared.dev.env
+      - ./configs/env/backend.dev.env
+```
+
+### Secrets Management
+```bash
+# Development - in files
+configs/env/backend.dev.env
+
+# Production - environment variables
+export SECRET_VAR="production-secret-32-chars"
+export DB_PASSWORD="secure-production-password"
+```
+

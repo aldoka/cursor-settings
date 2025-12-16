@@ -1,2 +1,2 @@
-# cursor-rules
-Reusable rules for Cursor IDE
+# cursor-settings
+Reusable rules and commandsfor Cursor IDE
