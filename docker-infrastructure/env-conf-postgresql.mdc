@@ -340,4 +340,5 @@ autovacuum_vacuum_cost_limit = 2000
 - [ ] Connection pooling configured
 - [ ] Replication configured (if needed)
 
+
 ---
