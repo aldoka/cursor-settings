@@ -53,7 +53,7 @@ docs/update-api-documentation
 
 ### Conventional Commits
 ```bash
-# Формат: <type>(<scope>): <description>
+# Format: <type>(<scope>): <description>
 feat(scoring): implement multi-factor scoring algorithm
 fix(auth): resolve JWT token expiration handling
 docs(api): add OpenAPI specifications
