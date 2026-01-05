@@ -18,6 +18,12 @@ fi
 # Check if selected-paths.txt exists
 if [ ! -f "$SELECTED_PATHS" ]; then
     echo "Error: selected-paths.txt not found at $SELECTED_PATHS"
+    echo ""
+    echo "To fix this:"
+    echo "  1. Copy the example file: cp selected-paths.txt.example selected-paths.txt"
+    echo "  2. Edit selected-paths.txt and add paths to the rules and commands you need"
+    echo "  3. Run this script again"
+    echo ""
     exit 1
 fi
 

@@ -3,6 +3,10 @@
 # Rules are .mdc files in rules/ directory, commands are .md files in commands/ directory
 # Paths are relative to the cursor-rules repository root
 
+# Base files
+update-settings.sh
+selected-paths.txt.example
+
 # Rules
 # Example: rules/utilities/git-workflow-standards.mdc
 # TODO Provide the list of paths to required rules
