@@ -1,6 +1,6 @@
 # command
 
-Creating a new cursor command following standards from [commands.mdc](../../rules/documentation/commands.mdc).
+Creating a new cursor command following standards from [commands.mdc](../rules/documentation/commands.mdc).
 
 ## Instructions
 
