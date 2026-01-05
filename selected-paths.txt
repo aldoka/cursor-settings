@@ -1,0 +1,13 @@
+# Selected Cursor Rules and Commands Paths
+# This file lists which rules and commands to include from cursor-rules repository
+# Rules are .mdc files in rules/ directory, commands are .md files in commands/ directory
+# Paths are relative to the cursor-rules repository root
+
+# Rules
+# Example: rules/utilities/git-workflow-standards.mdc
+# TODO Provide the list of paths to required rules
+
+
+# Commands
+# Example: commands/utilities/commit.md
+# TODO Provide the list of paths to required commands
