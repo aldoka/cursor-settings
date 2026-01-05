@@ -1,0 +1,334 @@
+---
+description: Guide for creating cursor commands - standards and best practices
+alwaysApply: false
+---
+
+# Guide for Creating Cursor Commands
+
+## 📋 Overview
+
+Cursor Commands (`.md` files) are reusable AI prompts stored in `.cursor/commands/` or `commands/` directories that can be invoked via slash commands in Cursor IDE. Commands simplify execution of repetitive tasks.
+
+## 📁 File Structure
+
+### File Format
+
+Commands are simple Markdown files (`.md`) without frontmatter. They contain instructions for AI.
+
+### Basic Structure
+
+```markdown
+# command-name
+
+Brief description of the command's purpose.
+
+## Instructions
+
+Detailed instructions for AI...
+
+## Execution Steps
+
+1. Step 1
+2. Step 2
+3. Step 3
+
+## Checklist
+
+- [ ] Criterion 1
+- [ ] Criterion 2
+```
+
+## ✅ Best Practices (DO)
+
+### 1. Name and Description
+
+- ✅ **Descriptive name**: Command name should clearly describe its purpose
+  - ✅ `commit.md` - creating git commit
+  - ✅ `code-review.md` - code review
+  - ✅ `add-error-handling.md` - adding error handling
+  - ❌ `cmd1.md`, `test.md`
+
+- ✅ **Kebab-case for file names**: Use kebab-case
+  - ✅ `create-command.md`
+  - ✅ `refactor-service.md`
+  - ❌ `createCommand.md`, `refactor_service.md`
+
+- ✅ **Brief description**: First paragraph should briefly describe the command's purpose
+
+### 2. Command Structure
+
+- ✅ **H1 heading**: Start with H1 heading with command name
+- ✅ **Clear instructions**: Give specific, clear instructions
+- ✅ **Sequential steps**: Break complex tasks into steps
+- ✅ **Checklist**: Include checklist for verification
+
+**Example structure:**
+
+```markdown
+# commit
+
+Creating git commit following project standards.
+
+**Before creating commit, AI should:**
+
+1. Study changes through `git diff`
+2. Understand purpose of changes
+3. Create meaningful commit message
+4. Clean unused imports
+```
+
+### 3. Context and Links
+
+- ✅ **Links to rules**: Reference related rules (`.mdc` files)
+  ```markdown
+  Follow standards from [git-workflow-standards.mdc](../../rules/utilities/git-workflow-standards.mdc)
+  ```
+
+- ✅ **Project context**: Consider project structure and standards
+- ✅ **Explicit requirements**: Clearly specify what needs to be done
+
+### 4. Instructions for AI
+
+- ✅ **Imperative style**: Use imperative mood
+  - ✅ "Analyze changes"
+  - ✅ "Create commit with message"
+  - ❌ "You can analyze changes"
+
+- ✅ **Specific actions**: Specify concrete actions, not abstractions
+  - ✅ "Use `git diff` to analyze changes"
+  - ❌ "Check changes"
+
+- ✅ **Conditions and constraints**: Specify what to do and what not to do
+  ```markdown
+  - DO NOT push to remote repository
+  - DO NOT create merge commits
+  - DO NOT use force push
+  ```
+
+### 5. Command Organization
+
+- ✅ **Logical directory structure**: Group commands by categories
+  - `commands/utilities/` - utilities (commit, lint, format)
+  - `commands/development/` - development (create-component, refactor)
+  - `commands/testing/` - testing (add-tests, run-tests)
+
+- ✅ **Versioning**: Store commands in repository for team access
+  - Project commands: `.cursor/commands/` or `commands/`
+  - Personal commands: `~/.cursor/commands/` (not in repository)
+
+### 6. Length and Readability
+
+- ✅ **Brevity**: Commands should be brief and to the point
+- ✅ **Focus**: One command = one task
+- ✅ **Readability**: Use formatting to improve readability
+
+### 7. Command Updates
+
+- ✅ **Regular review**: Periodically review and update commands
+- ✅ **Currency**: Update commands when project practices change
+
+## ❌ Anti-patterns (DON'T)
+
+### 1. Avoid
+
+- ❌ **Too general commands**: Don't create commands like "improve code"
+- ❌ **Multiple tasks**: One command should perform one task
+- ❌ **Unclear instructions**: Avoid vague formulations
+- ❌ **Missing context**: Don't assume AI knows everything about the project
+
+### 2. Structure
+
+- ❌ **Missing heading**: Always start with H1 heading
+- ❌ **Too long commands**: Avoid commands longer than 100-150 lines
+- ❌ **Nested structures**: Don't complicate structure unnecessarily
+
+### 3. Instructions
+
+- ❌ **Abstract formulations**: Avoid "do well", "improve"
+- ❌ **Contradictory instructions**: Ensure instructions don't contradict each other
+- ❌ **Missing constraints**: Specify what not to do
+
+### 4. Organization
+
+- ❌ **Flat structure**: Don't put all commands in one directory
+- ❌ **Unclear names**: Avoid abbreviations
+
+## 📐 Standard Command Structure
+
+```markdown
+# command-name
+
+Brief description of the command's purpose (1-2 sentences).
+
+[Optional: Link to related rules or context]
+
+## Main Instructions
+
+Detailed instructions for AI on what needs to be done.
+
+**Important points:**
+- Key point 1
+- Key point 2
+
+## Execution Steps
+
+1. **Step 1**: Step description
+2. **Step 2**: Step description
+3. **Step 3**: Step description
+
+## Constraints
+
+- DO NOT do X
+- DO NOT do Y
+- DO NOT do Z
+
+## Checklist
+
+- [ ] Success criterion 1
+- [ ] Success criterion 2
+- [ ] Success criterion 3
+```
+
+## 🎯 Examples of Good Commands
+
+### Example 1: Simple command
+
+```markdown
+# commit
+
+Creating git commit following project standards from [git-workflow-standards.mdc](../../rules/utilities/git-workflow-standards.mdc).
+DO NOT push to remote repository, this will be done later.
+
+**Before creating commit, AI should:**
+
+1. **Study changes**: Analyze what was changed in files using `git diff`
+2. **Understand purpose**: Determine why changes were made
+3. **Add brief points**: Include brief description of what was done in commit message
+4. **Clean imports**: Remove unused imports
+```
+
+### Example 2: Command with steps
+
+```markdown
+# add-error-handling
+
+Adding error handling to existing code.
+
+Follow standards from [fastapi-exceptions-errors.mdc](../../rules/backend/python/fastapi/fastapi-exceptions-errors.mdc).
+
+## Steps
+
+1. Analyze current code and identify places where error handling is needed
+2. Create corresponding domain exceptions if they don't exist
+3. Add handling to global error handler if needed
+4. Update code to use new exceptions
+5. Add error logging
+
+## Constraints
+
+- DO NOT use HTTPException in domain layer
+- DO NOT expose internal details in error responses
+- DO NOT forget request_id in error responses
+```
+
+### Example 3: Command with checklist
+
+```markdown
+# code-review
+
+Conducting code review for changes.
+
+## Instructions
+
+Conduct thorough code review of changes in current branch. Check:
+
+1. Compliance with project standards
+2. Code quality and architecture
+3. Test coverage
+4. Documentation
+5. Security
+
+## Checklist
+
+- [ ] Code follows project standards
+- [ ] No code duplication
+- [ ] Tests added/updated
+- [ ] Documentation updated
+- [ ] No security leaks
+- [ ] Error handling is correct
+- [ ] Performance is acceptable
+```
+
+## 🔗 Linking to Rules
+
+Use links to rules for context:
+
+```markdown
+Follow standards from [fastapi-settings.mdc](../../rules/backend/python/fastapi/fastapi-settings.mdc)
+```
+
+Relative paths:
+- From `commands/utilities/` to `rules/utilities/`: `../../rules/utilities/`
+- From `commands/` to `rules/`: `../rules/`
+
+## 📊 Command Creation Checklist
+
+Before creating a new command, ensure:
+
+- [ ] File has descriptive name in kebab-case
+- [ ] Command starts with H1 heading
+- [ ] Brief description of purpose is included
+- [ ] Instructions are specific and clear
+- [ ] Execution steps are specified (if needed)
+- [ ] Constraints are added (what not to do)
+- [ ] Checklist for verification is included
+- [ ] Links to related rules are added (if any)
+- [ ] Command is focused on one task
+- [ ] File is placed in correct directory
+
+## 🚀 Command Creation Process
+
+1. **Define task**: What specific task should the command perform?
+2. **Check existing**: Are there similar commands already?
+3. **Define structure**: What steps are needed for execution?
+4. **Write instructions**: Formulate clear instructions for AI
+5. **Add constraints**: Specify what not to do
+6. **Create checklist**: Define success criteria
+7. **Check**: Go through checklist
+8. **Test**: Ensure command works correctly
+
+## 🎨 Instruction Writing Style
+
+### ✅ Good Formulations
+
+- "Analyze changes using `git diff`"
+- "Create commit with message in Conventional Commits format"
+- "Add error handling following project standards"
+- "Ensure all tests pass before commit"
+
+### ❌ Bad Formulations
+
+- "Improve code" (too abstract)
+- "Do well" (not specific)
+- "Check everything" (unclear what to check)
+- "Optimize" (without specifying what)
+
+## 📚 Additional Resources
+
+- Official Cursor IDE documentation
+- Existing commands in `commands/` for examples
+- Best practices from developer community
+- Related rules in `rules/`
+
+## 🔄 Command Updates
+
+Commands should be updated when:
+
+- Project standards change
+- New practices emerge
+- Problems are discovered in command operation
+- Project structure changes
+
+---
+
+**Remember**: A good command is a specific, clear instruction that helps AI effectively perform a task, following project standards.
