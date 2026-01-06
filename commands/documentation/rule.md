@@ -1,75 +1,42 @@
 # rule
 
-Creating a new cursor rule following standards from [rules.mdc](../../rules/documentation/rules.mdc).
+Creating a new cursor rule following standards.
 
 ## Instructions
 
-Create a new cursor rule (`.mdc` file) in the `rules/` directory following best practices and project standards.
+**IMPORTANT: Before starting, read the complete guide:** [rules.mdc](../../rules/documentation/rules.mdc)
 
-**Before creating a rule, AI should:**
+This command creates a new cursor rule (`.mdc` file) in the `rules/` directory. All detailed requirements, best practices, creation process, checklist, and constraints are defined in the rule documentation.
 
-1. **Clarify details**: Determine independently and clarify with user if unclear:
-   - Rule name (will be used as filename in kebab-case)
-   - Rule purpose and scope (what area it should cover)
-   - Target directory (e.g., `backend/python/fastapi/`, `utilities/`, `documentation/`)
-   - Related rules (if any, for links)
-   - File patterns for `globs` (if rule should apply to specific files)
-   - Whether rule should always apply (`alwaysApply: true/false`)
+**Before creating a rule, AI must:**
 
-2. **Check if similar rules already exist** in project or globally, warn user for dublication
+1. **Read the rule guide**: Read [rules.mdc](../../rules/documentation/rules.mdc) completely to understand all requirements
+2. **Research**: Research modern best practices for the technology/topic
+3. **Decide structure**: Determine if rule should be single file or folder with multiple files
+4. **Clarify with user**: Ask user if any details are unclear (name, purpose, directory, globs, framework-agnostic requirement)
+5. **Check duplication**: Verify no similar rules exist
+6. **Create rule**: Follow the process and checklist from [rules.mdc](../../rules/documentation/rules.mdc)
 
-3. **Create structure** described in rules.mdc
+## Quick Reference
 
-4. **Follow standards** from rules.mdc
-
-## Creation Steps
-
-Following instructions from rules.mdc:
-
-1. **Determine name**
-2. **Determine directory**
-3. **Create file**
-4. **Add content**
-5. **Verify compliance** following checklist from `rules.mdc`
-
-## What to Ask User
-
-If details are unclear, ask user:
-
-1. **Rule name and purpose**: "What should this rule be called and what should it cover?"
-2. **Target files**: "Which files should this rule apply to? (for globs)"
-3. **Always apply**: "Should this rule always be active or only for specific files?"
-4. **Related rules**: "Are there related rules this should link to?"
-5. **Examples needed**: "What specific examples should be included?"
-6. **Dublication warning**: "Similar rule already exists in project or globally. Do you want to create it anyway?"
+- **Rule location**: `rules/` directory
+- **File format**: `.mdc` with YAML frontmatter
+- **Naming**: kebab-case (e.g., `html.mdc`, `fastapi-settings.mdc`)
+- **Required sections**: DO, DON'T, Key Points, Examples (✅ and ❌)
 
 ## Constraints
 
+- DO NOT create rules without reading [rules.mdc](../../rules/documentation/rules.mdc) first
+- DO NOT duplicate information - refer to the rule guide for all details
+- DO NOT skip research phase
 - DO NOT create rules without clarifying unclear details with user
-- DO NOT use abstract formulations ("how to write code")
-- DO NOT create rules that duplicate existing rules
-- DO NOT forget YAML frontmatter
-- DO NOT use unclear file names
-- DO NOT create rules without code examples
-- DO NOT forget to include both DO and DON'T sections
-
-## Rule Creation Checklist
-
-Before completion, ensure:
-
-- [ ] YAML frontmatter with `description` is created
-- [ ] Correct `globs` are specified (if needed)
-- [ ] Rule is focused on one topic
-- [ ] Examples of correct code (✅) are included
-- [ ] Examples of incorrect code (❌) are included
-- [ ] Emojis are used for sections
-- [ ] Code examples are complete and working
-- [ ] File has descriptive name in kebab-case
-- [ ] File is placed in correct directory
-- [ ] Rule doesn't duplicate existing rules
-- [ ] Key Points section is added
-- [ ] Links to related rules are added (if any)
 
 ## Links
 
-Follow standards from [rules.mdc](../../rules/documentation/rules.mdc) for creating cursor rules.
+All detailed information is in [rules.mdc](../../rules/documentation/rules.mdc):
+- Complete creation process (6 phases)
+- Detailed checklist
+- Best practices and anti-patterns
+- Framework-agnostic guidelines
+- AI agent optimization tips
+- Special cases and constraints

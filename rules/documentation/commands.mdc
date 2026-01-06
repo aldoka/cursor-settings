@@ -7,36 +7,24 @@ alwaysApply: false
 
 ## 📋 Overview
 
-Cursor Commands (`.md` files) are reusable AI prompts stored in `.cursor/commands/` or `commands/` directories that can be invoked via slash commands in Cursor IDE. Commands simplify execution of repetitive tasks.
+Cursor Commands (`.md` files) are reusable AI prompts stored in `.cursor/commands/` or `commands/` directories that can be invoked via slash commands in Cursor IDE. Commands simplify execution of repetitive tasks by providing brief, action-oriented instructions that reference rules for detailed information.
 
-## 📁 File Structure
+### Commands vs. Rules
 
-### File Format
+**Commands (`.md` files):**
+- **Purpose**: Brief, executable instructions for AI agents
+- **Content**: What to do, when to do it, quick reference
+- **Length**: Typically 20-50 lines
+- **Style**: Imperative, action-oriented
+- **References**: Should explicitly reference rules for detailed information
 
-Commands are simple Markdown files (`.md`) without frontmatter. They contain instructions for AI.
+**Rules (`.mdc` files):**
+- **Purpose**: IDE-agnostic knowledge, requirements, best practices
+- **Content**: What standards to follow, why, examples, constraints
+- **Length**: Can be longer (300-500+ lines)
+- **Style**: Descriptive, comprehensive
+- **Usage**: Referenced by commands, applied automatically by IDE
 
-### Basic Structure
-
-```markdown
-# command-name
-
-Brief description of the command's purpose.
-
-## Instructions
-
-Detailed instructions for AI...
-
-## Execution Steps
-
-1. Step 1
-2. Step 2
-3. Step 3
-
-## Checklist
-
-- [ ] Criterion 1
-- [ ] Criterion 2
-```
 
 ## ✅ Best Practices (DO)
 
@@ -58,36 +46,13 @@ Detailed instructions for AI...
 ### 2. Command Structure
 
 - ✅ **H1 heading**: Start with H1 heading with command name
+- ✅ **Links to rules**: Reference related rules (`.mdc` files) for detailed information
 - ✅ **Clear instructions**: Give specific, clear instructions
 - ✅ **Sequential steps**: Break complex tasks into steps
 - ✅ **Checklist**: Include checklist for verification
 
-**Example structure:**
 
-```markdown
-# commit
-
-Creating git commit following project standards.
-
-**Before creating commit, AI should:**
-
-1. Study changes through `git diff`
-2. Understand purpose of changes
-3. Create meaningful commit message
-4. Clean unused imports
-```
-
-### 3. Context and Links
-
-- ✅ **Links to rules**: Reference related rules (`.mdc` files)
-  ```markdown
-  Follow standards from [git-workflow-standards.mdc](../../rules/utilities/git-workflow-standards.mdc)
-  ```
-
-- ✅ **Project context**: Consider project structure and standards
-- ✅ **Explicit requirements**: Clearly specify what needs to be done
-
-### 4. Instructions for AI
+### 3. Instructions for AI
 
 - ✅ **Imperative style**: Use imperative mood
   - ✅ "Analyze changes"
@@ -105,7 +70,7 @@ Creating git commit following project standards.
   - DO NOT use force push
   ```
 
-### 5. Command Organization
+### 4. Command Organization
 
 - ✅ **Logical directory structure**: Group commands by categories
   - `commands/utilities/` - utilities (commit, lint, format)
@@ -116,13 +81,15 @@ Creating git commit following project standards.
   - Project commands: `.cursor/commands/` or `commands/`
   - Personal commands: `~/.cursor/commands/` (not in repository)
 
-### 6. Length and Readability
+### 5. Length and Readability
 
-- ✅ **Brevity**: Commands should be brief and to the point
+- ✅ **Brevity**: Commands should be brief and to the point (typically 20-50 lines)
 - ✅ **Focus**: One command = one task
 - ✅ **Readability**: Use formatting to improve readability
+- ✅ **Reference rules**: For detailed information, reference rules instead of duplicating content
+- ✅ **Minimal duplication**: Only include information in commands if it's essential for execution and not available in rules
 
-### 7. Command Updates
+### 6. Command Updates
 
 - ✅ **Regular review**: Periodically review and update commands
 - ✅ **Currency**: Update commands when project practices change
@@ -153,6 +120,30 @@ Creating git commit following project standards.
 - ❌ **Flat structure**: Don't put all commands in one directory
 - ❌ **Unclear names**: Avoid abbreviations
 
+## 🔗 Linking to Rules
+
+Commands should reference rules for detailed information to avoid duplication and context pollution.
+
+### Principle: Commands Reference Rules
+
+- ✅ **Commands are brief**: Commands should be concise instructions that reference rules
+- ✅ **Rules contain details**: All detailed requirements, best practices, and guidelines are in rules
+- ✅ **Avoid duplication**: Don't duplicate information from rules into commands
+- ✅ **Explicit references**: Commands should explicitly instruct AI to read the referenced rule(s)
+- ✅ **Multiple rules support**: Commands can reference single rule, multiple conditional rules, or multiple required rules
+
+### Rule Reference Types
+
+1. **Single rule**: One rule applies to the entire command
+2. **Multiple conditional rules**: Different rules apply based on context (framework, environment, etc.)
+3. **Multiple required rules**: All listed rules must be read and followed
+
+### Relative Paths
+
+- From `commands/utilities/` to `rules/utilities/`: `../../rules/utilities/`
+- From `commands/` to `rules/`: `../rules/`
+- From `.cursor/commands/` to `rules/`: `../../rules/`
+
 ## 📐 Standard Command Structure
 
 ```markdown
@@ -160,7 +151,7 @@ Creating git commit following project standards.
 
 Brief description of the command's purpose (1-2 sentences).
 
-[Optional: Link to related rules or context]
+**Links to related rules or context**
 
 ## Main Instructions
 
@@ -191,30 +182,14 @@ Detailed instructions for AI on what needs to be done.
 
 ## 🎯 Examples of Good Commands
 
-### Example 1: Simple command
-
-```markdown
-# commit
-
-Creating git commit following project standards from [git-workflow-standards.mdc](../../rules/utilities/git-workflow-standards.mdc).
-DO NOT push to remote repository, this will be done later.
-
-**Before creating commit, AI should:**
-
-1. **Study changes**: Analyze what was changed in files using `git diff`
-2. **Understand purpose**: Determine why changes were made
-3. **Add brief points**: Include brief description of what was done in commit message
-4. **Clean imports**: Remove unused imports
-```
-
-### Example 2: Command with steps
+### Example 1: Command with steps, single rule, and checklist
 
 ```markdown
 # add-error-handling
 
 Adding error handling to existing code.
 
-Follow standards from [fastapi-exceptions-errors.mdc](../../rules/backend/python/fastapi/fastapi-exceptions-errors.mdc).
+**IMPORTANT: Before starting, read:** [fastapi-exceptions-errors.mdc](../../rules/backend/python/fastapi/fastapi-exceptions-errors.mdc)
 
 ## Steps
 
@@ -229,62 +204,98 @@ Follow standards from [fastapi-exceptions-errors.mdc](../../rules/backend/python
 - DO NOT use HTTPException in domain layer
 - DO NOT expose internal details in error responses
 - DO NOT forget request_id in error responses
-```
-
-### Example 3: Command with checklist
-
-```markdown
-# code-review
-
-Conducting code review for changes.
-
-## Instructions
-
-Conduct thorough code review of changes in current branch. Check:
-
-1. Compliance with project standards
-2. Code quality and architecture
-3. Test coverage
-4. Documentation
-5. Security
 
 ## Checklist
 
-- [ ] Code follows project standards
-- [ ] No code duplication
-- [ ] Tests added/updated
-- [ ] Documentation updated
-- [ ] No security leaks
-- [ ] Error handling is correct
-- [ ] Performance is acceptable
+- [ ] All error-prone code sections identified
+- [ ] Domain exceptions created (if needed)
+- [ ] Global error handler updated (if needed)
+- [ ] Code updated to use new exceptions
+- [ ] Error logging implemented
+- [ ] Error responses include request_id
 ```
 
-## 🔗 Linking to Rules
-
-Use links to rules for context:
+### Example 2: Command with multiple conditional rules and checklist
 
 ```markdown
-Follow standards from [fastapi-settings.mdc](../../rules/backend/python/fastapi/fastapi-settings.mdc)
+# create-component
+
+Creating a new UI component.
+
+**IMPORTANT: Read the appropriate rule based on framework:**
+
+- **React**: Read [react-components.mdc](../../rules/frontend/react/components.mdc)
+- **Vue**: Read [vue-components.mdc](../../rules/frontend/vue/components.mdc)
+- **Angular**: Read [angular-components.mdc](../../rules/frontend/angular/components.mdc)
+
+Determine the framework from project structure (check package.json, file extensions, or ask user), then read and follow the corresponding rule.
+
+## Steps
+
+1. Identify framework from project structure
+2. Read the appropriate component rule
+3. Create component following rule guidelines
+4. Add component to appropriate location
+
+## Checklist
+
+- [ ] Framework identified correctly
+- [ ] Appropriate rule read and understood
+- [ ] Component created following rule guidelines
+- [ ] Component placed in correct location
+- [ ] Component follows project naming conventions
 ```
 
-Relative paths:
-- From `commands/utilities/` to `rules/utilities/`: `../../rules/utilities/`
-- From `commands/` to `rules/`: `../rules/`
+### Example 3: Command with multiple required rules and checklist
+
+```markdown
+# refactor-service
+
+Refactoring a service following best practices.
+
+**IMPORTANT: Read all relevant rules:**
+
+1. Read [service-patterns.mdc](../../rules/backend/python/fastapi/service-patterns.mdc) for service structure
+2. Read [dependency-injection.mdc](../../rules/backend/python/fastapi/dependency-injection.mdc) for DI patterns
+3. Read [testing-services.mdc](../../rules/testing/service-tests.mdc) if tests need updates
+
+Follow all referenced rules when refactoring. If tests are affected, read the testing rule as well.
+
+## Steps
+
+1. Read all applicable rules
+2. Analyze current service implementation
+3. Identify refactoring opportunities
+4. Apply patterns from rules
+5. Update tests if needed
+
+## Checklist
+
+- [ ] All relevant rules read and understood
+- [ ] Current service implementation analyzed
+- [ ] Refactoring opportunities identified
+- [ ] Patterns from rules applied correctly
+- [ ] Tests updated (if needed)
+- [ ] Service follows all referenced rule guidelines
+```
 
 ## 📊 Command Creation Checklist
 
 Before creating a new command, ensure:
 
+- [ ] File is placed in correct directory
 - [ ] File has descriptive name in kebab-case
+- [ ] Command does not dublicate another command, ask user for confirmation if similar command already exists
+- [ ] Command is focused on one task
 - [ ] Command starts with H1 heading
 - [ ] Brief description of purpose is included
+- [ ] Links to related rules are added
+  - [ ] Single rule reference (if one rule applies)
+  - [ ] Multiple rule references (if multiple rules apply)
+  - [ ] Conditional rule selection (if rules depend on context)
+- [ ] Execution steps are specified
 - [ ] Instructions are specific and clear
-- [ ] Execution steps are specified (if needed)
-- [ ] Constraints are added (what not to do)
 - [ ] Checklist for verification is included
-- [ ] Links to related rules are added (if any)
-- [ ] Command is focused on one task
-- [ ] File is placed in correct directory
 
 ## 🚀 Command Creation Process
 
@@ -292,43 +303,10 @@ Before creating a new command, ensure:
 2. **Check existing**: Are there similar commands already?
 3. **Define structure**: What steps are needed for execution?
 4. **Write instructions**: Formulate clear instructions for AI
-5. **Add constraints**: Specify what not to do
 6. **Create checklist**: Define success criteria
 7. **Check**: Go through checklist
 8. **Test**: Ensure command works correctly
 
-## 🎨 Instruction Writing Style
-
-### ✅ Good Formulations
-
-- "Analyze changes using `git diff`"
-- "Create commit with message in Conventional Commits format"
-- "Add error handling following project standards"
-- "Ensure all tests pass before commit"
-
-### ❌ Bad Formulations
-
-- "Improve code" (too abstract)
-- "Do well" (not specific)
-- "Check everything" (unclear what to check)
-- "Optimize" (without specifying what)
-
-## 📚 Additional Resources
-
-- Official Cursor IDE documentation
-- Existing commands in `commands/` for examples
-- Best practices from developer community
-- Related rules in `rules/`
-
-## 🔄 Command Updates
-
-Commands should be updated when:
-
-- Project standards change
-- New practices emerge
-- Problems are discovered in command operation
-- Project structure changes
-
 ---
 
-**Remember**: A good command is a specific, clear instruction that helps AI effectively perform a task, following project standards.
+**Remember**: A good command is a specific, clear instruction that helps AI effectively perform a task, following project standards. Commands should be brief and reference rules for detailed information to avoid duplication and context pollution.
