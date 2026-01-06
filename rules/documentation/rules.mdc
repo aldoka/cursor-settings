@@ -1,8 +1,8 @@
 ---
-description: Guide for creating cursor rules - standards and best practices
+description: Guide for creating rules for LLM agents
+globs: .cursor/rules/**
 alwaysApply: false
 ---
-
 # Guide for Creating Cursor Rules
 
 ## 📋 Overview

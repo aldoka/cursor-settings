@@ -1,5 +1,6 @@
 ---
-description: Guide for creating cursor commands - standards and best practices
+description: Guide for creating commands for LLM agents
+globs: .cursor/commands/**
 alwaysApply: false
 ---
 
@@ -262,7 +263,6 @@ Refactoring a service following best practices.
 Follow all referenced rules when refactoring. If tests are affected, read the testing rule as well.
 
 ## Steps
-
 1. Read all applicable rules
 2. Analyze current service implementation
 3. Identify refactoring opportunities
@@ -295,6 +295,7 @@ Before creating a new command, ensure:
   - [ ] Conditional rule selection (if rules depend on context)
 - [ ] Execution steps are specified
 - [ ] Instructions are specific and clear
+
 - [ ] Checklist for verification is included
 
 ## 🚀 Command Creation Process
