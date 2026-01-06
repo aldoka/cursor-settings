@@ -1,0 +1,254 @@
+---
+description: HTML performance optimizations - preconnect, preload, responsive images, and script loading strategies
+globs: *.html,*.htm,**/*.html,**/*.htm,**/index.html
+alwaysApply: false
+---
+
+# HTML Performance Optimizations
+
+## 📋 Overview
+
+This rule covers HTML performance optimization techniques including resource hints, responsive images, and script loading strategies. These optimizations are typically configured once per project or page.
+
+See [HTML Best Practices](html.mdc) for core HTML guidelines.
+
+## ✅ DO (Recommended Practices)
+
+### 1. Resource Hints
+
+- ✅ **Preconnect**: Use preconnect for critical external resources (fonts, APIs)
+- ✅ **DNS-prefetch**: Use dns-prefetch for less critical external resources
+- ✅ **Preload**: Use preload for critical CSS, fonts, or scripts that must be available early
+
+**Example:**
+```html
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- ✅ Correct: Preconnect for critical resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- ✅ Correct: DNS-prefetch for less critical resources -->
+  <link rel="dns-prefetch" href="https://api.example.com">
+  <link rel="dns-prefetch" href="https://analytics.example.com">
+  
+  <!-- ✅ Correct: Preload for critical resources -->
+  <link rel="preload" href="critical.css" as="style">
+  <link rel="preload" href="font.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="hero-image.jpg" as="image">
+</head>
+```
+
+### 2. Responsive Images
+
+- ✅ **Srcset and sizes**: Use srcset and sizes for responsive images
+- ✅ **Picture element**: Use picture element for art direction (different images for different viewports)
+- ✅ **Image dimensions**: Always specify width and height to prevent layout shift
+
+**Example:**
+```html
+<!-- ✅ Correct: Responsive images with srcset -->
+<img 
+  srcset="image-400.jpg 400w, image-800.jpg 800w, image-1200.jpg 1200w"
+  sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1200px"
+  src="image-800.jpg"
+  alt="Responsive image"
+  loading="lazy"
+  width="800"
+  height="600"
+>
+
+<!-- ✅ Correct: Picture element for art direction -->
+<picture>
+  <source media="(min-width: 1200px)" srcset="large.jpg">
+  <source media="(min-width: 600px)" srcset="medium.jpg">
+  <img 
+    src="small.jpg" 
+    alt="Responsive image with art direction"
+    width="400"
+    height="300"
+  >
+</picture>
+```
+
+### 3. Script Loading Strategies
+
+- ✅ **Defer for critical scripts**: Use defer for scripts that must execute in order
+- ✅ **Async for independent scripts**: Use async for scripts that don't depend on DOM or other scripts
+- ✅ **Module scripts**: Use type="module" for ES6 modules
+
+**Example:**
+```html
+<!-- ✅ Correct: Script loading strategies -->
+<script src="critical.js" defer></script>
+<script src="analytics.js" async></script>
+<script type="module" src="app.js"></script>
+
+<!-- ✅ Correct: Inline critical script -->
+<script>
+  // Critical inline script that must execute immediately
+  console.log('Critical initialization');
+</script>
+```
+
+### 4. Image Loading Optimization
+
+- ✅ **Lazy loading**: Use loading="lazy" for images below the fold
+- ✅ **Eager loading**: Use loading="eager" (or omit) for above-the-fold images
+- ✅ **Fetchpriority**: Use fetchpriority="high" for critical images
+
+**Example:**
+```html
+<!-- ✅ Correct: Above-the-fold image (eager) -->
+<img 
+  src="hero.jpg" 
+  alt="Hero image"
+  loading="eager"
+  fetchpriority="high"
+  width="1200"
+  height="600"
+>
+
+<!-- ✅ Correct: Below-the-fold image (lazy) -->
+<img 
+  src="thumbnail.jpg" 
+  alt="Thumbnail"
+  loading="lazy"
+  width="200"
+  height="200"
+>
+```
+
+## ❌ DON'T (Forbidden Practices)
+
+### 1. Performance Anti-patterns
+
+- ❌ **Don't preload everything**: Only preload truly critical resources
+- ❌ **Don't use blocking scripts**: Avoid scripts without defer/async in head
+- ❌ **Don't forget image dimensions**: Always specify width and height to prevent layout shift
+- ❌ **Don't load large images on mobile**: Use responsive images with appropriate sizes
+
+**Example:**
+```html
+<!-- ❌ Incorrect: Preloading too many resources -->
+<head>
+  <link rel="preload" href="style1.css" as="style">
+  <link rel="preload" href="style2.css" as="style">
+  <link rel="preload" href="style3.css" as="style">
+  <link rel="preload" href="font1.woff2" as="font">
+  <link rel="preload" href="font2.woff2" as="font">
+  <link rel="preload" href="font3.woff2" as="font">
+</head>
+
+<!-- ❌ Incorrect: Blocking script in head -->
+<head>
+  <script src="heavy-script.js"></script>
+</head>
+
+<!-- ❌ Incorrect: Missing image dimensions -->
+<img src="image.jpg" alt="Image">
+
+<!-- ✅ Correct: Selective preloading -->
+<head>
+  <link rel="preload" href="critical.css" as="style">
+  <link rel="preload" href="critical-font.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+
+<!-- ✅ Correct: Non-blocking script -->
+<head>
+  <script src="heavy-script.js" defer></script>
+</head>
+
+<!-- ✅ Correct: Image with dimensions -->
+<img src="image.jpg" alt="Image" width="800" height="600">
+```
+
+## 🔧 Usage Examples
+
+### Complete Example: Optimized Page Head
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optimized Page</title>
+  
+  <!-- Resource hints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://api.example.com">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="critical.css" as="style">
+  <link rel="preload" href="font.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="critical.css">
+</head>
+<body>
+  <!-- Hero image (above the fold) -->
+  <img 
+    src="hero.jpg" 
+    alt="Hero image"
+    loading="eager"
+    fetchpriority="high"
+    width="1200"
+    height="600"
+  >
+  
+  <!-- Responsive image -->
+  <img 
+    srcset="image-400.jpg 400w, image-800.jpg 800w, image-1200.jpg 1200w"
+    sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1200px"
+    src="image-800.jpg"
+    alt="Responsive image"
+    loading="lazy"
+    width="800"
+    height="600"
+  >
+  
+  <!-- Scripts -->
+  <script src="critical.js" defer></script>
+  <script src="analytics.js" async></script>
+</body>
+</html>
+```
+
+## 📝 Key Points
+
+### Must Have
+- ✅ Use preconnect for critical external resources
+- ✅ Use preload only for truly critical resources
+- ✅ Always specify image dimensions (width/height)
+- ✅ Use responsive images (srcset, sizes) for different viewports
+
+### Do
+- ✅ Preconnect to critical external domains (fonts, APIs)
+- ✅ DNS-prefetch for less critical external resources
+- ✅ Preload critical CSS, fonts, and images
+- ✅ Use srcset and sizes for responsive images
+- ✅ Use picture element for art direction
+- ✅ Use defer for scripts that must execute in order
+- ✅ Use async for independent scripts
+- ✅ Use lazy loading for below-the-fold images
+- ✅ Use eager loading for above-the-fold images
+
+### Don't
+- ❌ Don't preload too many resources
+- ❌ Don't use blocking scripts in head
+- ❌ Don't forget image dimensions
+- ❌ Don't load large images on mobile without responsive images
+- ❌ Don't use preconnect for non-critical resources
+
+## 🔗 Related Rules
+
+- [HTML Best Practices](html.mdc) - Core HTML guidelines
+- [HTML Meta Tags](html-meta.mdc) - Meta tags and head section
+
+---
+
+**Remember**: Performance optimizations should be applied strategically. Only optimize what's truly critical to avoid over-optimization and unnecessary complexity.

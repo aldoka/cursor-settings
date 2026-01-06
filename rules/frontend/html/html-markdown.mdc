@@ -1,0 +1,240 @@
+---
+description: HTML usage within Markdown documents - when and how to use HTML in Markdown
+globs: *.md,*.mdx,**/*.md,**/*.mdx,**/*.mdc,*.mdc
+alwaysApply: false
+---
+
+# HTML in Markdown
+
+## 📋 Overview
+
+This rule covers best practices for using HTML within Markdown documents. HTML can be embedded in Markdown when Markdown syntax is insufficient, but should be used sparingly to maintain readability and portability.
+
+See [HTML Best Practices](html.mdc) for core HTML guidelines.
+
+## ✅ DO (Recommended Practices)
+
+### 1. Prefer Markdown
+
+- ✅ **Use Markdown syntax**: Use Markdown syntax when possible
+- ✅ **HTML for complex structures**: Use HTML only when Markdown is insufficient
+- ✅ **Consistent formatting**: Maintain consistent formatting throughout
+- ✅ **Validate syntax**: Ensure HTML embedded in Markdown is valid
+
+**Example:**
+```markdown
+<!-- ✅ Correct: Use Markdown for simple formatting -->
+# Heading
+This is **bold** and this is *italic*.
+
+A paragraph with [a link](https://example.com).
+
+- List item 1
+- List item 2
+- List item 3
+```
+
+### 2. When to Use HTML
+
+- ✅ **Complex tables**: Use HTML for tables with complex formatting
+- ✅ **Custom styling**: Use HTML when specific styling is needed
+- ✅ **Interactive elements**: Use HTML for details/summary, custom components
+- ✅ **Alerts and callouts**: Use HTML for styled alerts and warnings
+
+**Example:**
+```markdown
+<!-- ✅ Correct: Use HTML for complex structures -->
+<div class="alert alert-warning" role="alert">
+  <strong>Warning:</strong> This feature is experimental.
+</div>
+
+<details>
+  <summary>Click to expand</summary>
+  <p>Hidden content that can be expanded.</p>
+</details>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Data 1</td>
+      <td><span class="badge">Active</span></td>
+      <td>Value</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+### 3. Accessibility in Markdown HTML
+
+- ✅ **ARIA attributes**: Use ARIA attributes when needed
+- ✅ **Semantic HTML**: Use semantic HTML elements
+- ✅ **Alt text**: Include alt text for images in HTML blocks
+
+**Example:**
+```markdown
+<!-- ✅ Correct: Accessible HTML in Markdown -->
+<div role="alert" aria-live="polite">
+  <strong>Important:</strong> Please read this notice.
+</div>
+
+<figure>
+  <img src="chart.png" alt="Sales data visualization" width="800" height="600">
+  <figcaption>Sales data for Q4 2024</figcaption>
+</figure>
+```
+
+## ❌ DON'T (Forbidden Practices)
+
+### 1. HTML in Markdown Anti-patterns
+
+- ❌ **Don't overuse HTML**: Don't use HTML when Markdown works
+- ❌ **Don't mix inconsistently**: Don't randomly mix Markdown and HTML
+- ❌ **Don't ignore compatibility**: Ensure HTML renders correctly across platforms
+- ❌ **Don't use HTML for simple formatting**: Use Markdown for bold, italic, links, etc.
+
+**Example:**
+```markdown
+<!-- ❌ Incorrect: Overusing HTML -->
+<div><strong>Bold text</strong></div>
+<div><em>Italic text</em></div>
+<div><a href="https://example.com">Link</a></div>
+
+<!-- ✅ Correct: Use Markdown -->
+**Bold text**
+*Italic text*
+[Link](https://example.com)
+
+<!-- ❌ Incorrect: Inconsistent mixing -->
+# Heading
+<div>Some content</div>
+**Bold** and <div>more content</div>
+Another paragraph.
+
+<!-- ✅ Correct: Consistent approach -->
+# Heading
+Some content
+**Bold** and more content
+Another paragraph.
+
+<!-- Use HTML only when needed -->
+<div class="special-component">
+  Complex content here
+</div>
+```
+
+### 2. Compatibility Issues
+
+- ❌ **Don't assume HTML support**: Not all Markdown parsers support all HTML
+- ❌ **Don't use inline styles excessively**: Prefer classes or external styles
+- ❌ **Don't break Markdown flow**: HTML blocks should be self-contained
+
+**Example:**
+```markdown
+<!-- ❌ Incorrect: Inline styles in Markdown -->
+<div style="color: red; font-size: 20px;">Text</div>
+
+<!-- ✅ Correct: Use classes -->
+<div class="highlight">Text</div>
+
+<!-- ❌ Incorrect: Breaking Markdown flow -->
+# Heading
+<div>Content</div>
+**Bold** text here
+<div>More content</div>
+
+<!-- ✅ Correct: Self-contained HTML blocks -->
+# Heading
+
+<div class="content-block">
+  <p>Content here</p>
+  <p><strong>Bold</strong> text</p>
+</div>
+```
+
+## 🔧 Usage Examples
+
+### Complete Example: HTML in Markdown Document
+
+```markdown
+# Documentation Page
+
+This is a standard Markdown paragraph with **bold** and *italic* text.
+
+## Standard Markdown Features
+
+- List item 1
+- List item 2
+- List item 3
+
+## When to Use HTML
+
+For complex structures that Markdown doesn't support well:
+
+<div class="alert alert-warning" role="alert">
+  <strong>Warning:</strong> This feature is experimental.
+</div>
+
+<details>
+  <summary>Click to expand</summary>
+  <p>Hidden content that can be expanded.</p>
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+  </ul>
+</details>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Data 1</td>
+      <td><span class="badge">Active</span></td>
+    </tr>
+  </tbody>
+</table>
+```
+
+## 📝 Key Points
+
+### Must Have
+- ✅ Prefer Markdown syntax when possible
+- ✅ Use HTML only when Markdown is insufficient
+- ✅ Ensure HTML is valid and accessible
+- ✅ Maintain consistent formatting
+
+### Do
+- ✅ Use Markdown for simple formatting (bold, italic, links, lists)
+- ✅ Use HTML for complex structures (tables, alerts, details)
+- ✅ Use semantic HTML elements
+- ✅ Include ARIA attributes when needed
+- ✅ Keep HTML blocks self-contained
+- ✅ Validate HTML syntax
+
+### Don't
+- ❌ Don't use HTML when Markdown works
+- ❌ Don't randomly mix Markdown and HTML
+- ❌ Don't use HTML for simple formatting
+- ❌ Don't assume all HTML is supported in all Markdown parsers
+- ❌ Don't use inline styles excessively
+- ❌ Don't break Markdown flow with HTML
+
+## 🔗 Related Rules
+
+- [HTML Best Practices](html.mdc) - Core HTML guidelines
+- [Markdown Best Practices](../documentation/markdown.mdc) - For Markdown-specific guidelines
+
+---
+
+**Remember**: HTML in Markdown should be used sparingly and only when Markdown syntax is insufficient. Always prioritize Markdown for readability and portability.

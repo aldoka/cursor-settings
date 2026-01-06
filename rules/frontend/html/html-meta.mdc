@@ -1,0 +1,237 @@
+---
+description: HTML meta tags, head section, SEO, social sharing, and structured data best practices
+globs: **/index.html,**/layout.html
+alwaysApply: false
+---
+
+# HTML Meta Tags and Head Section
+
+## 📋 Overview
+
+This rule covers meta tags, head section configuration, SEO optimization, social sharing (Open Graph), security headers, and structured data. These are typically configured once per page or project.
+
+See [HTML Best Practices](html.mdc) for core HTML guidelines.
+
+## ✅ DO (Recommended Practices)
+
+### 1. Essential Meta Tags
+
+- ✅ **Charset**: Always include charset meta tag (UTF-8)
+- ✅ **Viewport**: Always include viewport meta tag for responsive design
+- ✅ **Description**: Include meta description for SEO
+- ✅ **Title**: Always include descriptive title tag
+- ✅ **Theme-color**: Include theme-color for mobile browsers
+- ✅ **Language**: Specify lang attribute on html element
+
+**Example:**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Page description for SEO (150-160 characters)">
+  <meta name="theme-color" content="#000000">
+  <title>Page Title - Site Name</title>
+</head>
+```
+
+### 2. Open Graph Tags (Social Sharing)
+
+- ✅ **Open Graph**: Add Open Graph meta tags for social media sharing
+- ✅ **Twitter Cards**: Consider Twitter Card meta tags
+- ✅ **Image dimensions**: Specify og:image dimensions
+
+**Example:**
+```html
+<head>
+  <!-- Open Graph -->
+  <meta property="og:title" content="Page Title">
+  <meta property="og:description" content="Page description">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/page">
+  <meta property="og:image" content="https://example.com/image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Site Name">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Page Title">
+  <meta name="twitter:description" content="Page description">
+  <meta name="twitter:image" content="https://example.com/image.jpg">
+</head>
+```
+
+### 3. Security and Privacy
+
+- ✅ **Referrer policy**: Set referrer-policy meta tag
+- ✅ **Content Security Policy**: Consider CSP meta tag (or HTTP header)
+- ✅ **Permissions policy**: Set permissions-policy for feature access
+
+**Example:**
+```html
+<head>
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline';">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+</head>
+```
+
+### 4. Icons and App Configuration
+
+- ✅ **Favicon**: Include favicon and app icons
+- ✅ **Apple touch icon**: Include Apple touch icon for iOS
+- ✅ **Manifest**: Link to web app manifest if applicable
+
+**Example:**
+```html
+<head>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+</head>
+```
+
+### 5. Structured Data (Schema.org)
+
+- ✅ **Microdata**: Add structured data using microdata when appropriate
+- ✅ **JSON-LD**: Consider JSON-LD for structured data (preferred by Google)
+
+**Example:**
+```html
+<!-- ✅ Correct: Microdata -->
+<article itemscope itemtype="https://schema.org/Article">
+  <header>
+    <h1 itemprop="headline">Article Title</h1>
+    <p>
+      Published on 
+      <time datetime="2024-01-15" itemprop="datePublished">January 15, 2024</time>
+      by <span itemprop="author">John Doe</span>
+    </p>
+  </header>
+  <div itemprop="articleBody">
+    <p>Article content...</p>
+  </div>
+</article>
+
+<!-- ✅ Correct: JSON-LD (preferred) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Article Title",
+  "datePublished": "2024-01-15T10:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "John Doe"
+  }
+}
+</script>
+```
+
+## ❌ DON'T (Forbidden Practices)
+
+### 1. Meta Tags Anti-patterns
+
+- ❌ **Don't duplicate meta tags**: Don't include duplicate meta tags
+- ❌ **Don't use keyword meta tag**: The keywords meta tag is ignored by search engines
+- ❌ **Don't skip essential meta tags**: Always include charset, viewport, title
+- ❌ **Don't use vague descriptions**: Meta descriptions should be specific and descriptive
+
+**Example:**
+```html
+<!-- ❌ Incorrect: Duplicate and outdated meta tags -->
+<head>
+  <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="keywords" content="web, development, html">
+  <meta name="description" content="Page">
+</head>
+
+<!-- ✅ Correct: Essential meta tags only -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Specific and descriptive page description (150-160 characters)">
+  <title>Descriptive Page Title</title>
+</head>
+```
+
+## 🔧 Usage Examples
+
+### Complete Head Section
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Essential -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Page description for SEO">
+  <meta name="theme-color" content="#000000">
+  <title>Page Title - Site Name</title>
+  
+  <!-- Security -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Page Title">
+  <meta property="og:description" content="Page description">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/page">
+  <meta property="og:image" content="https://example.com/image.jpg">
+  
+  <!-- Icons -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Page Title",
+    "description": "Page description"
+  }
+  </script>
+</head>
+<body>
+  <!-- Content -->
+</body>
+</html>
+```
+
+## 📝 Key Points
+
+### Must Have
+- ✅ Charset meta tag (UTF-8)
+- ✅ Viewport meta tag
+- ✅ Title tag
+- ✅ Description meta tag (for SEO)
+- ✅ Lang attribute on html element
+
+### Do
+- ✅ Include essential meta tags (charset, viewport, title, description)
+- ✅ Add Open Graph tags for social sharing
+- ✅ Include favicon and app icons
+- ✅ Set referrer-policy for security
+- ✅ Add structured data (JSON-LD preferred)
+- ✅ Include theme-color for mobile browsers
+
+### Don't
+- ❌ Don't use keyword meta tag (ignored by search engines)
+- ❌ Don't duplicate meta tags
+- ❌ Don't use vague descriptions
+- ❌ Don't skip essential meta tags
+
+## 🔗 Related Rules
+
+- [HTML Best Practices](html.mdc) - Core HTML guidelines
+- [HTML Performance](html-performance.mdc) - Performance optimizations
+
+---
+
+**Remember**: Meta tags are configured once per page. Focus on essential tags first, then add Open Graph and structured data as needed.

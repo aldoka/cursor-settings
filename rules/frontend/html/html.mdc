@@ -1,0 +1,420 @@
+---
+description: HTML core best practices - semantic HTML, accessibility, forms, and essential guidelines for daily use
+globs: *.html,*.htm,**/*.html,**/*.htm
+alwaysApply: false
+---
+
+# HTML Best Practices
+
+## 📋 Overview
+
+This rule provides framework-agnostic core guidelines for writing modern, semantic, and accessible HTML. These practices apply to all HTML documents regardless of the frontend framework used (React, Vue, Angular, vanilla JS, etc.).
+
+For advanced topics, see related rules:
+- [HTML Performance](html-performance.mdc) - Performance optimizations (preconnect, preload, responsive images)
+- [HTML Meta Tags](html-meta.mdc) - Meta tags, head section, SEO, and social sharing
+- [HTML in Markdown](html-markdown.mdc) - Using HTML within Markdown documents
+
+## ✅ DO (Recommended Practices)
+
+### 1. Semantic HTML
+
+- ✅ **Use semantic elements**: Prefer semantic HTML5 elements over generic divs
+- ✅ **Meaningful structure**: Structure content with appropriate semantic tags
+- ✅ **Clear hierarchy**: Maintain logical heading hierarchy (h1 → h2 → h3)
+
+**Example:**
+```html
+<!-- ✅ Correct: Semantic structure -->
+<article>
+  <header>
+    <h1>Article Title</h1>
+    <p class="meta">Published on <time datetime="2024-01-15">January 15, 2024</time></p>
+  </header>
+  <section>
+    <h2>Introduction</h2>
+    <p>Content here...</p>
+  </section>
+  <footer>
+    <p>Author: John Doe</p>
+  </footer>
+</article>
+```
+
+### 2. Accessibility (a11y)
+
+- ✅ **Alt text for images**: Always provide descriptive alt text
+- ✅ **ARIA attributes**: Use ARIA when semantic HTML is insufficient
+- ✅ **Keyboard navigation**: Ensure all interactive elements are keyboard accessible
+- ✅ **Form labels**: Always associate labels with form inputs
+- ✅ **Landmarks**: Use semantic landmarks (header, nav, main, footer, aside)
+- ✅ **Skip links**: Provide skip links for keyboard navigation
+- ✅ **Focus management**: Ensure visible focus indicators
+- ✅ **Form validation**: Use HTML5 validation attributes (required, pattern, min, max)
+- ✅ **Empty alt for decorative images**: Use alt="" for purely decorative images
+
+**Example:**
+```html
+<!-- ✅ Correct: Skip link -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ✅ Correct: Accessible form with validation -->
+<form>
+  <label for="email">Email Address</label>
+  <input 
+    type="email" 
+    id="email" 
+    name="email" 
+    required 
+    aria-describedby="email-help email-error"
+    aria-invalid="false"
+    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+  >
+  <small id="email-help">We'll never share your email.</small>
+  <span id="email-error" role="alert" aria-live="polite"></span>
+  
+  <label for="age">Age</label>
+  <input 
+    type="number" 
+    id="age" 
+    name="age" 
+    min="18" 
+    max="120" 
+    required
+    aria-describedby="age-help"
+  >
+  <small id="age-help">Must be between 18 and 120</small>
+  
+  <button type="submit">Submit</button>
+</form>
+
+<!-- ✅ Correct: Accessible image -->
+<img 
+  src="chart.png" 
+  alt="Sales chart showing 25% increase in Q4 2024"
+  loading="lazy"
+  width="800"
+  height="600"
+>
+
+<!-- ✅ Correct: Decorative image -->
+<img 
+  src="decoration.png" 
+  alt=""
+  role="presentation"
+>
+```
+
+### 3. Modern HTML5 Features
+
+- ✅ **Use HTML5 elements**: article, section, nav, header, footer, aside, main
+- ✅ **Input types**: Use appropriate input types (email, tel, url, date, etc.)
+- ✅ **Data attributes**: Use data-* attributes for custom data
+- ✅ **Essential meta tags**: Include charset, viewport, and title
+
+**Example:**
+```html
+<!-- ✅ Correct: Essential head section -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Title</title>
+</head>
+
+<!-- ✅ Correct: Modern HTML5 form -->
+<form>
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" required>
+  
+  <label for="phone">Phone</label>
+  <input type="tel" id="phone" name="phone" pattern="[0-9]{10}">
+  
+  <label for="birthdate">Birth Date</label>
+  <input type="date" id="birthdate" name="birthdate" max="2024-01-01">
+  
+  <button type="submit">Submit</button>
+</form>
+
+<!-- ✅ Correct: Data attributes for custom data -->
+<div 
+  data-user-id="12345" 
+  data-role="admin" 
+  data-toggle="modal"
+>
+  User content
+</div>
+```
+
+### 4. Basic Performance
+
+- ✅ **Lazy loading**: Use loading="lazy" for images below the fold
+- ✅ **Defer scripts**: Use defer or async for non-critical scripts
+- ✅ **Minimize inline styles**: Prefer external stylesheets
+- ✅ **Valid HTML**: Ensure HTML validates against W3C standards
+- ✅ **Image dimensions**: Always specify width and height for images
+
+**Example:**
+```html
+<!-- ✅ Correct: Optimized image loading -->
+<img 
+  src="hero.jpg" 
+  alt="Hero image"
+  loading="eager"
+  width="1200"
+  height="600"
+>
+
+<img 
+  src="thumbnail.jpg" 
+  alt="Thumbnail"
+  loading="lazy"
+  width="200"
+  height="200"
+>
+
+<!-- ✅ Correct: Script loading -->
+<script src="critical.js" defer></script>
+<script src="analytics.js" async></script>
+```
+
+## ❌ DON'T (Forbidden Practices)
+
+### 1. Avoid Non-Semantic HTML
+
+- ❌ **Don't use divs for everything**: Avoid div soup
+- ❌ **Don't skip semantic elements**: Don't use generic containers when semantic elements exist
+- ❌ **Don't break heading hierarchy**: Don't skip heading levels (h1 → h3)
+- ❌ **Don't nest main incorrectly**: Don't nest `<main>` inside `<article>` or `<section>` - `<main>` should be direct child of `<body>`
+
+**Example:**
+```html
+<!-- ❌ Incorrect: Div soup -->
+<div>
+  <div>
+    <div>Title</div>
+    <div>Content</div>
+  </div>
+</div>
+
+<!-- ❌ Incorrect: Main nested incorrectly -->
+<article>
+  <main>
+    <p>Content</p>
+  </main>
+</article>
+
+<!-- ✅ Correct: Semantic structure -->
+<body>
+  <article>
+    <header>
+      <h1>Title</h1>
+    </header>
+    <section>
+      <p>Content</p>
+    </section>
+  </article>
+  <main>
+    <p>Main content</p>
+  </main>
+</body>
+```
+
+### 2. Accessibility Anti-patterns
+
+- ❌ **Don't skip alt text**: Never omit alt attribute on images (use alt="" for decorative images)
+- ❌ **Don't use divs for buttons**: Use button or anchor elements
+- ❌ **Don't create inaccessible forms**: Always associate labels with inputs
+- ❌ **Don't rely on color alone**: Don't convey information only through color
+- ❌ **Don't use inline event handlers**: Avoid onclick, onsubmit, etc. - use event listeners
+- ❌ **Don't skip form validation**: Use HTML5 validation attributes
+
+**Example:**
+```html
+<!-- ❌ Incorrect: Missing accessibility -->
+<img src="chart.png">
+<div onclick="submit()">Submit</div>
+<input type="text" name="email">
+
+<!-- ❌ Incorrect: Inline event handler -->
+<button onclick="handleClick()">Click me</button>
+
+<!-- ✅ Correct: Accessible -->
+<img src="chart.png" alt="Sales data visualization" width="800" height="600">
+<button type="submit" id="submit-btn">Submit</button>
+<script>
+  document.getElementById('submit-btn').addEventListener('click', submit);
+</script>
+<label for="email">Email</label>
+<input type="email" id="email" name="email" required>
+```
+
+### 3. Outdated Practices
+
+- ❌ **Don't use deprecated tags**: Avoid center, font, marquee, etc.
+- ❌ **Don't use inline styles excessively**: Minimize inline CSS
+- ❌ **Don't use table layouts**: Don't use tables for page layout
+- ❌ **Don't skip DOCTYPE**: Always include proper DOCTYPE
+- ❌ **Don't skip viewport meta**: Always include viewport meta tag
+
+**Example:**
+```html
+<!-- ❌ Incorrect: Deprecated and outdated -->
+<!DOCTYPE HTML>
+<html>
+<head>
+  <center>
+    <font size="5">Title</font>
+  </center>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>Layout column 1</td>
+      <td>Layout column 2</td>
+    </tr>
+  </table>
+</body>
+</html>
+
+<!-- ✅ Correct: Modern HTML5 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Title</title>
+</head>
+<body>
+  <header>
+    <h1>Title</h1>
+  </header>
+  <main>
+    <section>Content column 1</section>
+    <section>Content column 2</section>
+  </main>
+</body>
+</html>
+```
+
+## 🔧 Usage Examples
+
+### Complete Example: Accessible Article Page
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article Title - Site Name</title>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header role="banner">
+    <nav aria-label="Main navigation">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main id="main-content" role="main">
+    <article>
+      <header>
+        <h1>Article Title</h1>
+        <p class="meta">
+          Published on 
+          <time datetime="2024-01-15T10:00:00Z">January 15, 2024</time>
+          by <span>John Doe</span>
+        </p>
+      </header>
+      
+      <section>
+        <h2>Introduction</h2>
+        <p>Article content goes here...</p>
+        
+        <figure>
+          <img 
+            src="image.jpg" 
+            alt="Descriptive alt text for the image"
+            loading="lazy"
+            width="800"
+            height="600"
+          >
+          <figcaption>Image caption explaining the image</figcaption>
+        </figure>
+      </section>
+      
+      <section>
+        <h2>Conclusion</h2>
+        <p>Conclusion content...</p>
+      </section>
+    </article>
+  </main>
+  
+  <aside role="complementary" aria-label="Related articles">
+    <h2>Related Articles</h2>
+    <ul>
+      <li><a href="/article-1">Related Article 1</a></li>
+      <li><a href="/article-2">Related Article 2</a></li>
+    </ul>
+  </aside>
+  
+  <footer role="contentinfo">
+    <p>&copy; 2024 Site Name. All rights reserved.</p>
+  </footer>
+</body>
+</html>
+```
+
+## 📝 Key Points
+
+### Must Have
+- ✅ **Semantic HTML**: Always use semantic HTML5 elements
+- ✅ **Accessibility**: Ensure WCAG 2.1 AA compliance minimum
+- ✅ **Valid HTML**: HTML must validate against W3C standards
+- ✅ **Proper DOCTYPE**: Always include `<!DOCTYPE html>`
+- ✅ **Language attribute**: Always specify `lang` attribute on html element
+- ✅ **Viewport meta**: Always include viewport meta tag for responsive design
+- ✅ **Charset meta**: Always include charset meta tag (UTF-8)
+- ✅ **Title tag**: Always include descriptive title tag
+
+### Do
+- ✅ Use semantic elements (article, section, nav, header, footer, main, aside)
+- ✅ Provide alt text for all images (empty alt="" for decorative images)
+- ✅ Associate labels with all form inputs
+- ✅ Use appropriate ARIA attributes when needed
+- ✅ Validate HTML syntax
+- ✅ Use modern HTML5 input types
+- ✅ Implement lazy loading for images
+- ✅ Ensure keyboard navigation works
+- ✅ Include viewport meta tag
+- ✅ Add skip links for keyboard navigation
+- ✅ Use HTML5 form validation attributes
+- ✅ Always specify image dimensions (width/height)
+
+### Don't
+- ❌ Don't create div soup - use semantic elements
+- ❌ Don't skip heading hierarchy
+- ❌ Don't omit alt text on images (use alt="" for decorative images)
+- ❌ Don't use divs for interactive elements (use button, a, etc.)
+- ❌ Don't create forms without labels
+- ❌ Don't rely on color alone for information
+- ❌ Don't use deprecated HTML tags
+- ❌ Don't use tables for layout
+- ❌ Don't skip DOCTYPE declaration
+- ❌ Don't skip viewport meta tag
+- ❌ Don't nest main element inside article or section
+- ❌ Don't use inline event handlers (onclick, onsubmit, etc.)
+- ❌ Don't forget to specify image dimensions (width/height)
+
+## 🔗 Related Rules
+
+- [HTML Performance](html-performance.mdc) - For performance optimizations (preconnect, preload, responsive images)
+- [HTML Meta Tags](html-meta.mdc) - For meta tags, head section, SEO, and social sharing
+- [HTML in Markdown](html-markdown.mdc) - For using HTML within Markdown documents
+
+---
+
+**Remember**: Modern HTML should be semantic, accessible, and valid. Always prioritize user experience and accessibility over convenience.
