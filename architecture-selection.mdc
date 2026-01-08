@@ -1,0 +1,235 @@
+---
+description: Architecture-based rule selection guide - choose rules based on project architecture
+alwaysApply: false
+---
+
+# Architecture-Based Rule Selection
+
+## 📋 Overview
+
+This guide helps developers select appropriate cursor rules based on their project architecture. Not all rules are relevant to every project type.
+
+## 🏗️ Architecture Types
+
+### 1. Simple Static Website
+**Characteristics:**
+- Static HTML/CSS/JavaScript
+- No backend API
+- No database
+- Client-side only
+
+**Relevant Rules:**
+- `rules/documentation/` - Documentation standards
+- `rules/utilities/` - Git workflow, general utilities
+- Frontend-specific rules (if any)
+
+**NOT Relevant:**
+- ❌ API rules (`rules/backend/`, API-specific SDD rules)
+- ❌ Database rules
+- ❌ Backend framework rules
+
+### 2. Frontend Application (SPA)
+**Characteristics:**
+- React, Vue, Angular, etc.
+- Consumes external APIs
+- No own backend
+- Client-side state management
+
+**Relevant Rules:**
+- `rules/documentation/` - Documentation standards
+- `rules/utilities/` - Git workflow, utilities
+- Frontend framework rules (if any)
+- `rules/documentation/sdd/api-standards.mdc` - For consuming APIs
+
+**NOT Relevant:**
+- ❌ Backend implementation rules
+- ❌ Database migration rules
+- ❌ Server-side framework rules
+
+### 3. Backend API Service
+**Characteristics:**
+- REST/GraphQL API
+- Database integration
+- No frontend
+- Microservice architecture
+
+**Relevant Rules:**
+- `rules/backend/` - Backend framework rules
+- `rules/documentation/sdd/` - All SDD rules
+- `rules/docker-infrastructure/` - Infrastructure rules
+- `rules/utilities/` - Git workflow, utilities
+
+**NOT Relevant:**
+- ❌ Frontend framework rules
+- ❌ Client-side rules
+
+### 4. Full-Stack Application
+**Characteristics:**
+- Frontend + Backend
+- API between layers
+- Database
+- Complete application
+
+**Relevant Rules:**
+- `rules/backend/` - Backend rules
+- `rules/documentation/sdd/` - All SDD rules
+- `rules/docker-infrastructure/` - Infrastructure rules
+- `rules/utilities/` - Git workflow, utilities
+- Frontend rules (if any)
+
+### 5. CLI Tool
+**Characteristics:**
+- Command-line interface
+- No API
+- No frontend
+- Standalone executable
+
+**Relevant Rules:**
+- `rules/documentation/` - Documentation standards
+- `rules/utilities/` - Git workflow, utilities
+- CLI-specific rules (if any)
+
+**NOT Relevant:**
+- ❌ API rules
+- ❌ Frontend rules
+- ❌ Web framework rules
+
+### 6. AI Agent / LLM Application
+**Characteristics:**
+- AI/LLM integration
+- May have API
+- May have frontend
+- Agent orchestration
+
+**Relevant Rules:**
+- `rules/documentation/sdd/` - All SDD rules (especially important)
+- `rules/backend/` - If has API
+- `rules/utilities/` - Git workflow, utilities
+- AI agent-specific rules (if any)
+
+## 📂 Rule Organization by Architecture
+
+### Universal Rules (All Projects)
+```
+rules/
+├── documentation/
+│   ├── rules/
+│   │   ├── rules.mdc           # How to create rules
+│   │   └── rules-separation.mdc # Rule separation guide
+│   ├── commands.mdc            # How to create commands
+│   └── sdd/
+│       ├── principles.mdc     # SDD principles
+│       └── architecture-selection.mdc  # This file
+└── utilities/
+    ├── git-workflow-standards.mdc
+    └── ...
+```
+
+### Backend-Specific Rules
+```
+rules/
+├── backend/
+│   └── python/
+│       ├── alembic-migrations.mdc
+│       └── fastapi/
+│           └── ...
+└── docker-infrastructure/
+    └── ...
+```
+
+### API-Specific Rules
+```
+rules/
+└── documentation/
+    └── sdd/
+        ├── api-standards.mdc      # API-specific SDD
+        ├── implementation.mdc      # API implementation
+        └── workflow.mdc           # API workflow
+```
+
+### Frontend-Specific Rules
+```
+rules/
+└── frontend/  # (if exists)
+    └── ...
+```
+
+## 🎯 Rule Selection Matrix
+
+| Architecture | Documentation | Utilities | Backend | SDD Principles | SDD API | SDD Implementation | Infrastructure |
+|--------------|--------------|-----------|---------|----------------|---------|-------------------|----------------|
+| Static Website | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| Frontend SPA | ✅ | ✅ | ❌ | ✅ | ✅* | ❌ | ❌ |
+| Backend API | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Full-Stack | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| CLI Tool | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| AI Agent | ✅ | ✅ | ✅* | ✅ | ✅* | ✅* | ✅* |
+
+* = Relevant if architecture includes this component
+
+## 🔍 How to Select Rules
+
+### Step 1: Identify Architecture
+Determine your project type:
+- What components does it have? (Frontend, Backend, API, Database, etc.)
+- What is the primary purpose? (Website, API service, CLI tool, etc.)
+
+### Step 2: Check Rule Descriptions
+Each rule has a `description` in frontmatter that indicates:
+- What it covers
+- When it applies
+- What architecture it targets
+
+### Step 3: Use `globs` and `alwaysApply`
+- Rules with `globs` apply automatically to matching files
+- Rules with `alwaysApply: true` are always active
+- Rules with `alwaysApply: false` only apply when relevant files are open
+
+### Step 4: Manual Selection
+For rules without automatic application:
+- Review rule descriptions
+- Select rules matching your architecture
+- Enable rules in Cursor settings if needed
+
+## 📋 Quick Reference
+
+### For Simple Projects
+**Start with:**
+- `rules/rules/rules.mdc` - Understanding rules
+- `rules/utilities/git-workflow-standards.mdc` - Git workflow
+
+### For API Projects
+**Add:**
+- `rules/documentation/sdd/principles.mdc` - SDD principles
+- `rules/documentation/sdd/api-standards.mdc` - API standards
+- `rules/documentation/sdd/implementation.mdc` - Implementation guide
+- `rules/backend/` - Backend framework rules
+
+### For Full-Stack Projects
+**Add all above plus:**
+- Frontend rules (if available)
+- `rules/documentation/sdd/workflow.mdc` - Complete workflow
+
+## ⚠️ Common Mistakes
+
+### ❌ Don't Do This
+- Enable all rules regardless of architecture
+- Use API rules for static websites
+- Use backend rules for frontend-only projects
+- Ignore architecture when selecting rules
+
+### ✅ Do This
+- Select rules based on actual architecture
+- Review rule descriptions before enabling
+- Use `globs` for automatic application
+- Start minimal, add rules as needed
+
+## 🔗 Related Rules
+
+- [SDD Principles](principles.mdc) - Core SDD principles
+- [Rule Creation Guide](../rules/rules/rules.mdc) - How to create rules
+- [Command Creation Guide](../commands.mdc) - How to create commands
+
+---
+
+**Remember**: Select rules that match your project architecture. Not every rule is relevant to every project. Start minimal and add rules as your project grows.

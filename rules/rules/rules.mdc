@@ -1,0 +1,313 @@
+---
+description: Guide for creating rules for LLM agents
+globs: .cursor/rules/**
+alwaysApply: false
+---
+# Guide for Creating Cursor Rules
+
+## 📋 Overview
+
+Cursor Rules (`.mdc` files) are IDE-agnostic rules that guide AI behavior when working with code. Rules contain requirements, best practices, and useful information with possible references to other documentation, but without step-by-step instructions. Rules are stored in the `rules/` directory and can be used in Claude Code, Cursor, or any other AI coding assistant.
+
+Rules should be:
+- **IDE-agnostic**: Work with any AI coding assistant, not tied to specific IDE
+- **Knowledge-focused**: Contain requirements, standards, best practices
+- **Reference-friendly**: Include links to other documentation when needed
+- **Instruction-free**: Avoid step-by-step instructions (those belong in commands)
+
+## 📁 File Structure
+
+### YAML Frontmatter (required)
+
+Each rule file must start with YAML frontmatter:
+
+```yaml
+---
+description: Brief description of the rule's purpose
+globs: file patterns for applying the rule
+alwaysApply: true/false
+---
+```
+
+#### Frontmatter fields:
+
+- **`description`** (required): Brief description of the rule's purpose (1-2 sentences)
+- **`globs`** (optional): Glob patterns for automatically applying the rule to matching files
+  - Examples: `*.py`, `**/router.py`, `service.py,repository.py`, `**/dto/*.py`
+  - Multiple patterns can be specified separated by commas
+- **`alwaysApply`** (optional, default `false`): Whether to apply the rule always, regardless of open files
+  - `true` - rule is always applied
+  - `false` - rule is only applied when opening matching files (by globs)
+
+### Markdown Content
+
+After frontmatter follows Markdown content describing the rule.
+
+## 📐 Standard Rule Structure
+
+```markdown
+---
+description: Brief description of the rule
+globs: file patterns (optional)
+alwaysApply: false
+---
+
+# Rule Name
+
+## 📋 Overview / Responsibility
+
+Brief description of the rule's purpose and scope.
+
+## 📚 Related or Detailed Rules
+[Related Rule 1](related-rule-1.mdc) - Description of related rule 1
+...
+
+## ✅ DO (Recommended Practices)
+
+### Subsection 1
+Description with examples...
+
+# Example of correct code
+
+## ❌ DON'T (Forbidden Practices)
+
+### Anti-pattern 1
+Description with examples...
+
+# Example of incorrect code
+
+## 🔧 Usage Examples
+
+Complete examples...
+
+## 📝 Key Points
+
+- Key point 1
+- Key point 2
+- Key point 3
+```
+
+## 🚀 Rule Creation Process
+
+### Phase 1: Research and Information Gathering
+
+Before creating a rule, research and gather information:
+
+1. **Research modern best practices**: Use web search to find current industry standards
+2. **Check documentation sources**: Check if latest documentation is available in context7 MCP or other sources (if applicable)
+3. **Compile practices list**: Gather must-have, do, and don't practices
+4. **Understand standards**: Understand current industry standards and conventions
+
+### Phase 2: Structural Decisions
+
+Make decisions about rule structure:
+
+1. **Single file vs. folder**: Determine if rule should be universal (single file) or separated (folder with multiple files)
+   - Consider if different approaches exist that warrant separation
+   - Decide: single `rule-name.mdc` file OR `rule-name/` folder with multiple `.mdc` files
+2. **Framework-agnostic**: If framework-agnostic rule is needed, ensure it doesn't reference specific frameworks
+3. **Separation approach**: For complex rules, consider using hierarchical separation approach (common rules + detailed rules)
+   - See [Rule Separation Guide](rules-separation.mdc) for detailed guidance
+
+### Phase 3: Planning
+
+Plan the rule structure:
+
+1. **Determine rule name**: Use kebab-case (e.g., `html.mdc`, `fastapi-settings.mdc`)
+2. **Determine target directory**: Choose appropriate directory (e.g., `backend/python/fastapi/`, `frontend/`, `utilities/`, `documentation/`)
+3. **Identify related rules**: Find related rules for linking
+4. **Define globs patterns**: Determine file patterns if rule should apply to specific files
+5. **Set alwaysApply flag**: Decide if rule should always apply or only for specific files
+
+### Phase 4: Clarification
+
+Clarify details with user if unclear:
+
+- Rule name and purpose
+- Structure decision (single file vs. folder)
+- Framework requirement (framework-agnostic vs. framework-specific)
+- Target files (for globs)
+- Always apply setting
+- Related rules
+- Examples needed
+- Duplication warning (if similar rule exists)
+
+### Phase 5: Creation
+
+Create the rule:
+
+1. **Create directory structure**: Create directories if needed
+2. **Create file with YAML frontmatter**: Include description, globs, alwaysApply
+3. **Add content**: Follow standard rule structure
+4. **Include examples**: Add comprehensive examples (✅ correct, ❌ incorrect)
+
+### Phase 6: Verification
+
+Verify compliance:
+
+1. **Check structure**: Ensure all sections are present (DO, DON'T, Key Points, etc.)
+2. **Validate examples**: Check code examples are complete and working
+3. **Validate links**: Check links to related rules
+4. **Go through checklist**: Verify all checklist items are met
+
+
+## ✅ Best Practices (DO)
+
+### 1. Focus and Specificity
+
+- ✅ **One rule = one topic**: Each file should describe one specific area
+- ✅ **Concrete examples**: Include examples of correct and incorrect code
+- ✅ **Practical patterns**: Provide ready-to-use code templates
+
+### 2. Content Structure
+
+- ✅ **Use emojis for sections**: Improves readability
+  - 🚀 Initialization/setup
+  - 📋 Configuration/settings
+  - 🔐 Security
+  - 🛠 Tools/utilities
+  - ⚙️ Parameters/options
+  - 📊 Monitoring/statistics
+  - 🔧 Tuning/configuration
+  - ❌ Forbidden practices
+  - ✅ Recommended practices
+
+- ✅ **Heading hierarchy**: Use logical H2, H3, H4 structure
+- ✅ **Code blocks with language**: Always specify language in code blocks (`python`, `bash`, `sql`, etc.)
+
+### 3. Code Examples
+
+- ✅ **Complete examples**: Provide complete, working examples
+- ✅ **Templates with placeholders**: Use `{Entity}`, `{entity}` for templates
+- ✅ **Code comments**: Add explanatory comments
+- ✅ **Real scenarios**: Examples should reflect real use cases
+
+### 4. Pattern Description
+
+- ✅ **DO/DON'T sections**: Clearly separate what to do and what not to do
+- ✅ **Responsibility section**: Describe component/pattern responsibility
+- ✅ **Summary section**: Include summary or checklist at the end of the document
+
+### 5. File Organization
+
+- ✅ **Logical directory structure**: Group rules by domains/technologies
+  - `rules/backend/python/fastapi/` - rules for FastAPI
+  - `rules/docker-infrastructure/` - rules for Docker
+  - `rules/utilities/` - utilities and general rules
+
+- ✅ **Descriptive file names**: Use kebab-case
+  - ✅ `fastapi-settings.mdc`
+  - ✅ `git-workflow-standards.mdc`
+  - ❌ `rule1.mdc`, `settings.mdc`
+
+### 6. Length and Readability
+
+- ✅ **Optimal size**: Try to keep rules within 300-500 lines
+- ✅ **Split into parts**: If a rule is large, split into several related files
+- ✅ **Links between rules**: Use links to related rules
+
+### 7. Currency
+
+- ✅ **Regular updates**: Update rules when practices change
+
+### 8. Rule Separation
+
+For complex rules, consider using hierarchical separation approach (common rules + detailed rules). See [Rule Separation Guide](rules-separation.mdc) for detailed guidance.
+
+### 9. AI Agent Optimization
+
+To make rules more effective for AI agents:
+
+- ✅ **Clear structure**: Use consistent section headings and emojis for easy parsing
+- ✅ **Explicit examples**: Provide complete, working code examples (not snippets)
+- ✅ **Negative examples**: Always include ❌ incorrect examples alongside ✅ correct ones
+- ✅ **Summary section**: Include summary or checklist for quick reference
+- ✅ **Metadata**: Ensure YAML frontmatter is complete and accurate
+- ✅ **Links**: Link to related rules to help AI understand context
+- ✅ **Framework-agnostic**: When creating universal rules, avoid framework-specific syntax
+- ✅ **Research-based**: Base rules on current best practices, not outdated information
+
+### 10. Framework-Agnostic Rules
+
+When creating framework-agnostic rules (e.g., HTML, CSS, general patterns):
+
+- ✅ **Focus on core technology**: Not framework-specific implementations
+- ✅ **Use vanilla syntax**: Use vanilla/standard syntax in examples
+- ✅ **Separate framework rules**: Note that framework-specific rules will be created separately
+- ✅ **Example naming**: `rules/frontend/html.mdc` (framework-agnostic) vs. `rules/frontend/react/html-in-jsx.mdc` (framework-specific)
+
+## ❌ Anti-patterns (DON'T)
+
+### 1. Avoid
+
+- ❌ **Too general rules**: Don't create rules like "how to write code"
+- ❌ **Duplication**: Don't duplicate information from other rules
+- ❌ **Outdated practices**: Don't include outdated approaches
+- ❌ **Contradictions**: Ensure rules don't contradict each other
+- ❌ **Skip research phase**: Don't create rules without researching modern best practices first
+- ❌ **Framework mismatch**: Don't create framework-specific rules when framework-agnostic is requested
+
+### 2. Structure
+
+- ❌ **Missing frontmatter**: Always include YAML frontmatter
+- ❌ **Imprecise globs**: Don't use too broad patterns (`**/*.py` for specific rules)
+- ❌ **Unclear descriptions**: `description` should be clear and specific
+
+### 3. Content
+
+- ❌ **Abstract examples**: Avoid examples without context
+- ❌ **Incomplete examples**: Always provide complete, working examples
+- ❌ **Missing negative examples**: Show not only what to do, but also what not to do
+- ❌ **Missing code examples**: Don't create rules without code examples
+- ❌ **Missing DO/DON'T sections**: Don't forget to include both DO and DON'T sections
+
+### 4. Organization
+
+- ❌ **Flat structures**: Don't put all rules in one directory
+- ❌ **Unclear names**: Avoid abbreviations in file names
+- ❌ **Structural decisions without analysis**: Don't make structural decisions without considering separation needs
+
+
+## 📊 Rule Creation Checklist
+
+Before creating a new rule, ensure:
+
+### Research Phase
+- [ ] Modern best practices researched via web search
+- [ ] Context7 MCP or other documentation sources checked (if applicable)
+- [ ] Must-have, do, and don't practices compiled
+- [ ] Current industry standards understood
+
+### Structure Phase
+- [ ] Decision made: single file vs. folder structure
+- [ ] Framework-agnostic requirement considered (if applicable)
+- [ ] Separation needs evaluated (multiple approaches?)
+
+### Content Phase
+- [ ] YAML frontmatter with `description` is created
+- [ ] Correct `globs` are specified (if needed)
+- [ ] Rule is focused on one topic
+- [ ] Examples of correct code (✅) are included
+- [ ] Examples of incorrect code (❌) are included
+- [ ] DO and DON'T sections are clearly separated
+- [ ] Logical heading hierarchy (H2, H3, H4) is used
+- [ ] Code blocks have specified language
+- [ ] Emojis are used for sections
+- [ ] Code examples are complete and working
+- [ ] Code examples include explanatory comments
+- [ ] Templates with placeholders are used (if applicable)
+- [ ] Rule size is within 300-500 lines (or split if larger)
+- [ ] File has descriptive name in kebab-case
+- [ ] File is placed in correct directory (logical structure)
+- [ ] Rule doesn't duplicate existing rules
+- [ ] Links to related rules are added (if any)
+- [ ] Framework-agnostic approach maintained (if required)
+
+## 📚 Related Detailed Rules
+
+For specific implementation cases, see:
+- [Rule Separation Guide](rules-separation.mdc) - Hierarchical separation approach, two-layer structure, decision criteria, and best practices
+
+---
+
+**Remember**: A good rule is a specific, clear, and practical guide that helps AI generate quality code that follows project standards. Rules should be IDE-agnostic and contain requirements and useful information with possible references to other documentation, but without step-by-step instructions.

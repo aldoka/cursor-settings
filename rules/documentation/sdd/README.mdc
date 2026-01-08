@@ -1,0 +1,108 @@
+---
+description: Spec Driven Development (SDD) rules index - overview and navigation
+alwaysApply: false
+---
+
+# Spec Driven Development (SDD) Rules
+
+## 📋 Overview
+
+This directory contains rules for Spec Driven Development (SDD), a methodology that emphasizes creating detailed specifications before writing implementation code. These rules are optimized for AI agent-assisted development.
+
+## 📚 Rules in This Directory
+
+### Core Rules
+
+1. **[principles.mdc](principles.mdc)**
+   - Universal SDD principles (all architectures)
+   - API-specific principles
+   - AI agent development principles
+   - **When to use**: Start here to understand SDD fundamentals
+
+2. **[api-standards.mdc](api-standards.mdc)**
+   - API-specific SDD standards
+   - OpenAPI specification best practices
+   - Machine-readable API contracts
+   - **When to use**: For projects with APIs (REST, GraphQL, etc.)
+
+3. **[implementation.mdc](implementation.mdc)**
+   - Code generation from specifications
+   - Validation and testing practices
+   - Maintaining spec-implementation sync
+   - **When to use**: When implementing code from specifications
+
+
+### Additional Resources
+
+4. **[commands-suggestions.md](commands-suggestions.md)**
+   - Suggested cursor commands for SDD
+   - Command categories and priorities
+   - **When to use**: When creating SDD-related commands
+
+## 📖 Reading Order
+
+### For Understanding SDD
+1. [principles.mdc](principles.mdc) - Core principles
+
+### For API Development
+1. [principles.mdc](principles.mdc) - Core principles
+2. [api-standards.mdc](api-standards.mdc) - API standards
+3. [implementation.mdc](implementation.mdc) - Implementation guide
+4. [workflow.mdc](workflow.mdc) - Workflow
+
+### For Implementation
+1. [principles.mdc](principles.mdc) - Core principles
+2. [implementation.mdc](implementation.mdc) - Implementation practices
+
+## 🔗 Related Documentation
+
+- [Rules Creation Guide](../../rules/rules.mdc) - How to create cursor rules
+- [Commands Creation Guide](../commands.mdc) - How to create cursor commands
+- [SDD Commands Suggestions](commands-suggestions.md) - Suggested SDD commands
+
+## 📝 Key Concepts
+
+### Universal Principles
+- Specification First
+- Human Reviewability
+- Meaningful Decomposition
+- Continuous Validation
+- Structured Specifications
+- Maintain as Source of Truth
+- Effective AI Agent Usage
+
+### API-Specific Principles
+- Machine-Readable Contracts
+- Actionable Error Messages
+- Consistency and Predictability
+- Explicit Semantic Context
+- Idempotency and State Management
+- Security by Design
+- Versioning Strategy
+
+### AI Agent Principles
+- Specification Clarity for AI
+- Iterative Refinement
+- Validation and Testing
+- Tool Integration
+
+## 🛠 Tools Mentioned
+
+- **OpenAPI Generator**: Code generation
+- **Spectral**: Specification validation
+- **Dredd**: Contract testing
+- **Prism**: Mock server generation
+- **Swagger UI / ReDoc**: Documentation
+- **Stoplight**: API design platform
+
+## ⚠️ Important Notes
+
+- **Not all projects need SDD**: Check [architecture-selection.mdc](architecture-selection.mdc) first
+- **Specification is source of truth**: Always update spec before code
+- **Generate, don't write**: Use code generation tools
+- **Validate continuously**: Automate validation
+- **AI agent optimized**: Rules designed for AI-assisted development
+
+---
+
+**Remember**: SDD is a methodology, not a requirement. Use it when it adds value to your project. For API projects and AI agent development, SDD is highly recommended.

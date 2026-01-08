@@ -1,0 +1,174 @@
+---
+description: Guide for hierarchical separation of rules into common and detailed layers
+globs: .cursor/rules/**
+alwaysApply: false
+---
+# Rule Separation Guide
+
+> **Reference**: This guide extends the [Guide for Creating Cursor Rules](rules.mdc). Make sure you're familiar with the common rule structure before using separation approach.
+
+## 📋 Overview
+
+When creating complex rules for AI agents, use hierarchical separation to optimize context usage and loading efficiency. This approach structures rules in two layers: common (base context) and detailed (on-demand context).
+
+## 🎯 Core Principle
+
+Complex rules should be structured in layers:
+
+1. **Common/Base Layer**: Essential information required for any task with the technology
+2. **Detailed/Specific Layer**: In-depth information for concrete implementation cases
+
+## 📊 Two-Layer Structure
+
+### Layer 1: Common Rules (Base Context)
+
+**Purpose**: Provide essential, frequently-used information without excessive details
+
+**Size**: Keep compact to avoid context pollution (typically 200-400 lines)
+
+**Content**:
+- Core concepts and principles
+- Most common patterns and practices
+- Essential DO/DON'T guidelines
+- Critical configuration requirements
+
+**Loading**: Automatically loaded when working with the technology
+
+**Links**: Must include references to detailed rules for specific use cases
+
+### Layer 2: Detailed Rules (On-Demand Context)
+
+**Purpose**: Provide comprehensive information for specific implementation cases
+
+**Size**: Can be larger (500+ lines) as they're loaded only when needed
+
+**Content**:
+- Detailed implementation patterns
+- Specific use case scenarios
+- Advanced configurations
+- Edge cases and troubleshooting
+
+**Loading**: Loaded by AI agent when deciding to implement a specific case
+
+**Access**: Referenced from common rules via links
+
+
+## ✅ Best Practices for Separation
+
+### Common Rules Structure
+
+- ✅ **Start with overview and core principles**: Provide essential context immediately
+- ✅ **Include most frequently used patterns (80/20 rule)**: Cover the most common use cases
+- ✅ **Keep compact (typically 200-400 lines)**: Avoid context pollution
+- ✅ **Provide links to detailed rules at the end**: Enable AI to access detailed information when needed
+- ✅ **Keep examples concise but complete**: Show patterns without excessive detail
+
+### Detailed Rules Structure
+
+- ✅ **Reference the common rule at the beginning**: Link back to base knowledge
+- ✅ **Focus on specific use cases**: Deep dive into particular scenarios
+- ✅ **Include comprehensive examples**: Provide complete, working implementations
+- ✅ **Cover edge cases and advanced scenarios**: Address complex situations
+- ✅ **Can be larger (500+ lines)**: Loaded only when needed
+
+### Naming Convention
+
+- ✅ **Common rule**: `{technology}.mdc` (e.g., `fastapi.mdc`, `rules.mdc`)
+- ✅ **Detailed rules**: `{technology}-{specific-case}.mdc` (e.g., `fastapi-auth-patterns.mdc`, `rules-separation.mdc`)
+
+### Context Optimization
+
+- ✅ **Common rules should be self-contained for basic tasks**: AI can work with just the common rule
+- ✅ **Detailed rules should assume common rule knowledge**: Don't duplicate base information
+- ✅ **Avoid duplication between layers**: Each layer has distinct purpose
+
+## 🔗 Linking Strategy
+
+In common/base rules, use clear links to detailed rules:
+
+```markdown
+## 📚 Related Detailed Rules
+
+For specific implementation cases, see:
+- [Specific case 1](specific-case-1.mdc) - Description of specific case 1
+- [Specific case 2](specific-case-2.mdc) - Description of specific case 2
+```
+
+In detailed rules, reference the common rule at the beginning:
+
+```markdown
+> **Reference**: This guide extends the [Common Rule](common-rule.mdc). 
+> Make sure you're familiar with the common rule structure before using separation approach.
+```
+
+## 🎯 Decision Criteria
+
+### Create a Common Rule When:
+
+- ✅ Technology has core concepts used in most tasks
+- ✅ Multiple specific implementation patterns exist
+- ✅ Base knowledge is needed for any work with the technology
+- ✅ Rule would exceed 500 lines if kept as single file
+- ✅ Different use cases require different detailed guidelines
+
+### Create Detailed Rules When:
+
+- ✅ Specific implementation case requires extensive explanation
+- ✅ Advanced patterns need comprehensive coverage
+- ✅ Use case is specialized but important
+- ✅ Edge cases and troubleshooting need detailed documentation
+- ✅ Multiple approaches exist for the same concept
+
+## 📝 Example Structure
+
+```
+rules/
+  documentation/rules/
+    rules.mdc                    # Common rule (base context)
+    rules-separation.mdc         # Detailed: separation approach
+  backend/
+    python/
+      fastapi/
+        fastapi.mdc                    # Common rule (base context)
+        fastapi-auth-patterns.mdc      # Detailed: authentication
+        fastapi-database.mdc           # Detailed: database integration
+        fastapi-testing.mdc            # Detailed: testing strategies
+        fastapi-caching.mdc            # Detailed: caching patterns
+```
+
+## ❌ Anti-patterns
+
+- ❌ **Duplicating common rule content in detailed rules**: Detailed rules should reference, not repeat
+- ❌ **Making common rules too detailed**: Keep common rules focused on essentials
+- ❌ **Creating detailed rules without common rule**: Always have a base layer first
+- ❌ **Inconsistent naming**: Follow `{technology}-{specific-case}.mdc` convention
+- ❌ **Missing links between layers**: Always link from common to detailed rules
+
+## 📝 Key Points
+
+### Must Have
+
+- Common rule with essential information (200-400 lines)
+- Clear links from common to detailed rules
+- Detailed rules reference common rule at the beginning
+- Consistent naming convention
+
+### Do
+
+- Keep common rules compact and self-contained
+- Use 80/20 rule: cover most common cases in common rule
+- Provide comprehensive details in detailed rules
+- Avoid duplication between layers
+- Use clear, descriptive links
+
+### Don't
+
+- Don't duplicate common rule content in detailed rules
+- Don't make common rules too detailed
+- Don't create detailed rules without a common rule
+- Don't use inconsistent naming
+- Don't forget to link between layers
+
+---
+
+**Remember**: Separation approach optimizes context usage by loading essential information first and detailed information on-demand. This improves AI agent efficiency and reduces context pollution.
