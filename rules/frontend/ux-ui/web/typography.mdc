@@ -1,0 +1,686 @@
+---
+description: Comprehensive guide for web typography including font selection, pairing, sizing, spacing, readability, and performance optimization
+alwaysApply: false
+---
+# Typography
+
+> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into typography specifics.
+
+## 📋 Overview
+
+Typography is the art and technique of arranging type to make written language legible, readable, and visually appealing. Good typography enhances user experience, establishes hierarchy, conveys brand identity, and guides users through content effectively.
+
+**Key point**: Typography is one of the primary ways users consume information on the web, so it heavily influences usability, hierarchy, and perceived quality.
+
+## 🎯 Core Typography Principles
+
+### 1. Legibility vs Readability
+- **Legibility**: How easy individual characters are to distinguish
+- **Readability**: How easy text is to read in longer passages
+- Both are essential but serve different purposes
+
+### 2. Type Hierarchy
+- Establish clear levels: H1 > H2 > H3 > Body > Caption
+- Use size, weight, and color to create distinction
+- Maintain consistent ratios between levels
+
+### 3. Optimal Line Length
+- **50-75 characters per line** for optimal readability
+- Use `max-width: 65ch` for body content
+- Shorter for mobile, longer for wide screens
+
+### 4. Line Height (Leading)
+- **Body text**: 1.5-1.75 for comfortable reading
+- **Headings**: 1.1-1.3 for tighter spacing
+- **Captions**: 1.4-1.6 for clarity
+
+### 5. Font Performance
+- Limit font weights and styles loaded
+- Use variable fonts when appropriate
+- Subset fonts to include only needed characters
+- Use system fonts for instant loading
+
+## ✅ DO (Recommended Practices)
+
+### Font Selection
+
+#### Choosing Web Fonts
+- ✅ **Consider readability first**: Not all fonts work on screens
+- ✅ **Limit to 2-3 font families maximum**
+- ✅ **Test at small sizes**: Ensure legibility at 14-16px
+- ✅ **Check character support**: Verify complete character sets
+
+```css
+/* ✅ Good: Limited font families with clear purposes */
+:root {
+  /* Headings: Geometric sans-serif for impact */
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Body: Highly readable sans-serif */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Monospace: Code and technical content */
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Using system font stack for maximum performance */
+:root {
+  --font-system: system-ui, -apple-system, BlinkMacSystemFont, 
+                 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 
+                 'Cantarell', 'Fira Sans', 'Droid Sans', 
+                 'Helvetica Neue', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+```
+
+#### Font Pairing
+- ✅ **Contrast is key**: Pair serif + sans-serif or geometric + humanist
+- ✅ **Same family different weights**: Simplest and safest
+- ✅ **Test together**: Ensure fonts complement each other
+- ✅ **Consider mood alignment**: Fonts should match brand tone
+
+```css
+/* ✅ Good: Classic serif + sans-serif pairing */
+:root {
+  /* Playfair Display (elegant serif) for headings */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  
+  /* Lato (clean sans-serif) for body */
+  --font-body: 'Lato', 'Helvetica Neue', sans-serif;
+}
+
+/* ✅ Good: Single family, multiple weights (safest) */
+:root {
+  --font-family: 'Inter', sans-serif;
+  
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+h1, h2 {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+}
+
+body {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-regular);
+}
+
+/* ✅ Good: Modern geometric pairing */
+:root {
+  /* Montserrat (geometric) for headings */
+  --font-heading: 'Montserrat', 'Arial', sans-serif;
+  
+  /* Merriweather (serif) for body - creates contrast */
+  --font-body: 'Merriweather', Georgia, serif;
+}
+```
+
+**Recommended Pairings for 2025:**
+- **Modern Clean**: Poppins (heading) + Inter (body)
+- **Professional**: Montserrat (heading) + Merriweather (body)
+- **Elegant**: Playfair Display (heading) + Lato (body)
+- **Corporate**: Roboto (heading) + Open Sans (body)
+- **Tech**: Space Grotesk (heading) + IBM Plex Sans (body)
+
+### Type Scale System
+
+#### Modular Scale
+- ✅ **Use consistent ratio**: 1.2 (Minor Third), 1.25 (Major Third), 1.333 (Perfect Fourth), 1.5 (Perfect Fifth)
+- ✅ **Define complete scale**: From smallest to largest
+- ✅ **Use CSS variables**: For easy maintenance
+- ✅ **Test on actual devices**: Ensure sizes work in context
+
+```css
+/* ✅ Good: Modular scale with 1.25 ratio (Major Third) */
+:root {
+  /* Base size */
+  --text-base: 1rem;           /* 16px */
+  
+  /* Scale down (÷ 1.25) */
+  --text-sm: 0.8rem;           /* 12.8px */
+  --text-xs: 0.64rem;          /* 10.24px */
+  
+  /* Scale up (× 1.25) */
+  --text-lg: 1.25rem;          /* 20px */
+  --text-xl: 1.563rem;         /* 25px */
+  --text-2xl: 1.953rem;        /* 31.25px */
+  --text-3xl: 2.441rem;        /* 39.06px */
+  --text-4xl: 3.052rem;        /* 48.83px */
+  --text-5xl: 3.815rem;        /* 61.04px */
+}
+
+/* Application to elements */
+h1 { font-size: var(--text-5xl); }
+h2 { font-size: var(--text-4xl); }
+h3 { font-size: var(--text-3xl); }
+h4 { font-size: var(--text-2xl); }
+h5 { font-size: var(--text-xl); }
+h6 { font-size: var(--text-lg); }
+
+p, li { font-size: var(--text-base); }
+small { font-size: var(--text-sm); }
+.caption { font-size: var(--text-xs); }
+```
+
+#### Fluid Typography with clamp()
+- ✅ **Scale smoothly between breakpoints**
+- ✅ **Use clamp() for automatic scaling**
+- ✅ **Define min, preferred, and max sizes**
+- ✅ **Test at various screen widths**
+
+```css
+/* ✅ Good: Fluid typography that scales with viewport */
+:root {
+  /* clamp(min, preferred, max) */
+  --text-sm: clamp(0.875rem, 0.85rem + 0.125vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.5rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 2rem);
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2.5rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 3.5rem);
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 4.5rem);
+  --text-5xl: clamp(3rem, 2rem + 5vw, 6rem);
+}
+
+/* Headings scale automatically with viewport */
+h1 {
+  font-size: var(--text-5xl);
+  /* On mobile (375px): ~3rem (48px)
+     On desktop (1440px): ~6rem (96px) */
+}
+
+h2 {
+  font-size: var(--text-4xl);
+  /* On mobile: ~2.25rem (36px)
+     On desktop: ~4.5rem (72px) */
+}
+
+body {
+  font-size: var(--text-base);
+  /* On mobile: ~1rem (16px)
+     On desktop: ~1.125rem (18px) */
+}
+```
+
+### Line Height and Spacing
+
+#### Line Height Guidelines
+- ✅ **Body text: 1.5-1.75** for comfortable reading
+- ✅ **Headings: 1.1-1.3** for tighter, impactful spacing
+- ✅ **Small text: 1.4-1.6** for clarity
+- ✅ **Adjust with font size**: Larger text = tighter leading
+
+```css
+/* ✅ Good: Line height system */
+:root {
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+}
+
+/* Headings: Tight line height for impact */
+h1, h2, h3 {
+  line-height: var(--leading-tight);
+}
+
+/* Body: Comfortable reading */
+p, li {
+  line-height: var(--leading-normal);
+}
+
+/* Long-form content: More relaxed */
+article p {
+  line-height: var(--leading-relaxed);
+}
+
+/* Small text: Slightly tighter but still readable */
+small, .caption {
+  line-height: var(--leading-snug);
+}
+
+/* Code: Monospace needs more space */
+code, pre {
+  line-height: var(--leading-relaxed);
+}
+```
+
+#### Letter Spacing (Tracking)
+- ✅ **Uppercase: increase spacing (+0.05-0.1em)**
+- ✅ **Small text: slight increase (+0.01-0.02em)**
+- ✅ **Large headings: slight decrease (-0.01-0.02em)**
+- ✅ **Body text: usually default (0)**
+
+```css
+/* ✅ Good: Letter spacing adjustments */
+:root {
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+}
+
+/* Large headings: Slightly tighter */
+h1, h2 {
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Uppercase text: More spacing */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+/* Small labels: Slightly more space */
+label, .label {
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* Body text: Default spacing */
+p {
+  letter-spacing: var(--tracking-normal);
+}
+```
+
+### Line Length and Measure
+
+#### Optimal Line Length
+- ✅ **50-75 characters per line** (65ch optimal)
+- ✅ **Use `ch` unit** for character-based width
+- ✅ **Narrower for mobile** (45-60 characters)
+- ✅ **Consider reading context**
+
+```css
+/* ✅ Good: Optimal line length for readability */
+.prose {
+  max-width: 65ch;              /* ~65 characters per line */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Wider for short-form content */
+.card-text {
+  max-width: 45ch;              /* Shorter for cards */
+}
+
+/* Even wider for short headlines */
+.headline {
+  max-width: 20ch;              /* Short, impactful lines */
+}
+
+/* Full-width for certain contexts */
+.code-block {
+  max-width: 100%;              /* Code needs horizontal space */
+  overflow-x: auto;
+}
+
+/* Responsive line length */
+.article-body {
+  max-width: min(65ch, 90vw);   /* 65ch or 90% viewport, whichever is smaller */
+  padding: 0 1rem;
+}
+```
+
+### Font Loading and Performance
+
+#### Modern Font Loading
+- ✅ **Use `font-display: swap`** for faster perceived load
+- ✅ **Preload critical fonts**
+- ✅ **Subset fonts** to reduce file size
+- ✅ **Consider variable fonts** for flexibility with one file
+
+```html
+<!-- ✅ Good: Preload critical fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Preload the most critical font -->
+<link rel="preload" 
+      href="/fonts/inter-var.woff2" 
+      as="font" 
+      type="font/woff2" 
+      crossorigin>
+
+<!-- Load fonts with font-display: swap -->
+<style>
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/inter-var.woff2') format('woff2');
+    font-weight: 100 900;           /* Variable font weight range */
+    font-display: swap;             /* Show fallback immediately */
+    font-style: normal;
+  }
+</style>
+```
+
+```css
+/* ✅ Good: Font loading with fallback system */
+:root {
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  /* Browser shows system font immediately, swaps when Inter loads */
+}
+
+/* ✅ Good: Limit font weights loaded */
+/* Only load weights you actually use */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* ❌ Bad: Loading all weights */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+```
+
+#### Variable Fonts
+- ✅ **One file, multiple weights/styles**
+- ✅ **Better performance than multiple files**
+- ✅ **Smooth interpolation between weights**
+- ✅ **Growing browser support**
+
+```css
+/* ✅ Good: Variable font usage */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-VariableFont.woff2') format('woff2');
+  font-weight: 100 900;           /* Supports any weight in this range */
+  font-style: normal;
+  font-display: swap;
+}
+
+h1 {
+  font-family: 'Inter';
+  font-weight: 750;               /* Can use any value between 100-900 */
+}
+
+h2 {
+  font-weight: 650;
+}
+
+p {
+  font-weight: 400;
+}
+
+strong {
+  font-weight: 600;
+}
+```
+
+### Text Formatting
+
+#### Emphasis and Hierarchy
+- ✅ **Use semantic HTML**: `<strong>`, `<em>`, `<mark>`
+- ✅ **Limit emphasis**: Don't bold everything
+- ✅ **Consistent formatting**: Apply styles consistently
+- ✅ **Readable paragraphs**: Use spacing between paragraphs
+
+```html
+<!-- ✅ Good: Semantic emphasis -->
+<article>
+  <h1>Article Title</h1>
+  
+  <p class="lead">
+    This is an introductory paragraph with <strong>important information</strong> 
+    that needs emphasis. Notice how we use semantic HTML.
+  </p>
+  
+  <p>
+    Regular paragraph text flows naturally. We can emphasize <em>specific words</em> 
+    when needed for <strong>critical points</strong>.
+  </p>
+  
+  <p>
+    Use <mark>highlighting</mark> sparingly for search results or 
+    particularly important notes.
+  </p>
+</article>
+
+<style>
+/* ✅ Good: Styled semantic elements */
+.lead {
+  font-size: var(--text-xl);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+p {
+  margin-bottom: 1.5rem;
+}
+
+strong, b {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+em, i {
+  font-style: italic;
+}
+
+mark {
+  background-color: #fef3c7;      /* Yellow highlight */
+  color: #78350f;                 /* Dark text for contrast */
+  padding: 0.125rem 0.25rem;
+  border-radius: 2px;
+}
+</style>
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Font Selection Mistakes
+- ❌ **Too many fonts**: Don't use more than 2-3 families
+- ❌ **Decorative body text**: Don't use display fonts for paragraphs
+- ❌ **Poor readability**: Don't sacrifice legibility for style
+- ❌ **Inconsistent fonts**: Don't mix fonts randomly
+
+```css
+/* ❌ Bad: Too many different fonts */
+h1 { font-family: 'Fancy Display', serif; }
+h2 { font-family: 'Another Font', sans-serif; }
+p { font-family: 'Yet Another', serif; }
+button { font-family: 'Fourth Font', sans-serif; }
+
+/* ✅ Good: Consistent, limited fonts */
+:root {
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+h1, h2, h3 { font-family: var(--font-heading); }
+p, button { font-family: var(--font-body); }
+```
+
+### Size and Scale Mistakes
+- ❌ **Random sizes**: Don't use arbitrary font sizes
+- ❌ **Too small**: Don't use less than 14px for body text
+- ❌ **Insufficient contrast**: Don't make headings too similar
+- ❌ **Inconsistent scaling**: Don't break the type scale
+
+```css
+/* ❌ Bad: Random, arbitrary sizes */
+h1 { font-size: 37px; }
+h2 { font-size: 29px; }
+p { font-size: 15px; }
+small { font-size: 11px; }
+
+/* ❌ Bad: Too small for readability */
+body { font-size: 12px; }         /* Too small! */
+
+/* ✅ Good: Systematic scale, readable sizes */
+h1 { font-size: var(--text-5xl); }  /* 48px */
+h2 { font-size: var(--text-4xl); }  /* 36px */
+p { font-size: var(--text-base); }  /* 16px */
+small { font-size: var(--text-sm); } /* 14px */
+```
+
+### Line Height Mistakes
+- ❌ **Too tight**: Don't use line-height below 1.4 for body
+- ❌ **Too loose**: Don't use excessive leading
+- ❌ **Same for all**: Don't use one line-height everywhere
+- ❌ **Fixed pixels**: Don't use px for line-height
+
+```css
+/* ❌ Bad: Line height too tight for body text */
+p {
+  line-height: 1.2;               /* Too tight, hard to read */
+}
+
+/* ❌ Bad: Same line-height for everything */
+* {
+  line-height: 1.5;               /* Headings look awkward */
+}
+
+/* ❌ Bad: Using pixels for line-height */
+p {
+  font-size: 16px;
+  line-height: 24px;              /* Doesn't scale with font-size */
+}
+
+/* ✅ Good: Appropriate line-heights */
+h1, h2, h3 {
+  line-height: 1.25;              /* Tighter for headings */
+}
+
+p {
+  line-height: 1.6;               /* Comfortable for reading */
+}
+```
+
+### Line Length Mistakes
+- ❌ **Too long**: Don't let lines exceed 90 characters
+- ❌ **Too short**: Don't constrain to less than 40 characters
+- ❌ **No limits**: Don't let text span full width on wide screens
+- ❌ **Ignoring content**: Don't use same width for all content
+
+```css
+/* ❌ Bad: No line length limit on wide screens */
+.article {
+  width: 100%;                    /* Could be 200+ characters! */
+}
+
+/* ❌ Bad: Too narrow */
+.article {
+  max-width: 30ch;                /* Too narrow, choppy reading */
+}
+
+/* ✅ Good: Optimal line length */
+.article {
+  max-width: 65ch;                /* 50-75 characters per line */
+  margin: 0 auto;
+}
+```
+
+### Performance Mistakes
+- ❌ **Loading all weights**: Don't load unused font weights
+- ❌ **No font-display**: Don't cause FOIT (flash of invisible text)
+- ❌ **Not subsetting**: Don't load entire font with unused glyphs
+- ❌ **Multiple font services**: Don't load from multiple CDNs
+
+```html
+<!-- ❌ Bad: Loading all weights unnecessarily -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+<!-- ✅ Good: Only load needed weights -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+```
+
+## 📝 Typography Checklist
+
+Before launching, verify:
+- [ ] Body text is at least 16px on mobile
+- [ ] Line height is 1.5+ for body text
+- [ ] Line length is 50-75 characters (65ch)
+- [ ] Type scale follows consistent ratio
+- [ ] Using 2-3 font families maximum
+- [ ] Fonts load with font-display: swap
+- [ ] Only necessary font weights are loaded
+- [ ] Headings have clear hierarchy (size, weight, color)
+- [ ] Text has sufficient contrast (4.5:1 minimum)
+- [ ] Responsive typography scales smoothly
+- [ ] Long-form content is readable at all sizes
+- [ ] Emphasis is used consistently and sparingly
+
+## 📊 Quick Reference Guide
+
+### Font Sizes (16px base)
+| Element | Size (rem) | Size (px) | Use Case |
+|---------|-----------|-----------|----------|
+| **H1** | 3rem | 48px | Page titles |
+| **H2** | 2.25rem | 36px | Section headings |
+| **H3** | 1.875rem | 30px | Subsection headings |
+| **H4** | 1.5rem | 24px | Minor headings |
+| **Body** | 1rem | 16px | Main content |
+| **Small** | 0.875rem | 14px | Captions, labels |
+
+### Line Heights
+| Content Type | Line Height | Example |
+|--------------|-------------|---------|
+| **Headings** | 1.1-1.3 | Tight, impactful |
+| **Body** | 1.5-1.6 | Comfortable reading |
+| **Long-form** | 1.6-1.75 | Extra comfortable |
+| **Small text** | 1.4-1.6 | Clear despite size |
+| **Code** | 1.6-1.75 | Room for clarity |
+
+### Recommended Font Pairings
+- **Montserrat + Merriweather**: Professional warmth
+- **Playfair Display + Lato**: Elegant simplicity
+- **Poppins + Inter**: Modern clean
+- **Roboto + Open Sans**: Corporate standard
+- **Inter (single family)**: Safest choice
+
+## 📝 Key Points
+
+### Must Have
+- Readable body text size (16px minimum)
+- Optimal line length (50-75 characters)
+- Comfortable line height (1.5+ for body)
+- Clear heading hierarchy
+- Performance-optimized font loading
+- Responsive typography scaling
+
+### Do
+- Use modular type scale with consistent ratios
+- Limit to 2-3 font families maximum
+- Use clamp() for fluid typography
+- Preload critical fonts
+- Use font-display: swap
+- Test readability on actual devices
+- Maintain 65ch max width for body text
+- Use relative units (rem, em) for scalability
+
+### Don't
+- Don't use less than 16px for body text on mobile
+- Don't load all font weights unnecessarily
+- Don't use more than 3 font families
+- Don't ignore line length (no full-width text)
+- Don't use tight line-height for body text
+- Don't use random font sizes
+- Don't make headings too similar in size
+- Don't sacrifice readability for aesthetics
+
+---
+
+**Remember**: Typography is the foundation of web design. Prioritize readability and performance over novelty. Well-executed typography is invisible—users read content effortlessly without noticing the type itself.

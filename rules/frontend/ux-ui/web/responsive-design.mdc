@@ -1,0 +1,744 @@
+---
+description: Comprehensive guide for responsive web design with mobile-first approach, breakpoints, and adaptive layouts
+alwaysApply: false
+---
+# Responsive Design
+
+> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into responsive design specifics.
+
+## 📋 Overview
+
+Responsive design ensures web applications work seamlessly across all devices and screen sizes. This guide focuses on mobile-first approach, flexible layouts, breakpoint strategies, and content prioritization for optimal user experience on any device.
+
+**Why it matters**: Mobile traffic is often the majority. Mobile-first design is not optional—it's essential.
+
+## 🎯 Core Responsive Design Principles
+
+### 1. Mobile-First Approach
+Start with mobile design and progressively enhance for larger screens:
+- Design for smallest screens first (320px width)
+- Add complexity only when screen size allows
+- Use `min-width` media queries (not `max-width`)
+- Prioritize essential content and features
+
+### 2. Fluid vs Adaptive Layouts
+- **Fluid (Responsive)**: Layouts flow and adapt continuously
+- **Adaptive**: Layouts snap to specific breakpoints
+- **Hybrid**: Combine both approaches for optimal results
+
+### 3. Content First
+- Mobile users should access the same content as desktop
+- No "mobile version" that hides important features
+- Prioritize content hierarchy based on user needs
+- Progressive disclosure for complex information
+
+## ✅ DO (Recommended Practices)
+
+### Flexible Grid Systems
+
+#### CSS Grid for Complex Layouts
+- ✅ **Use CSS Grid for page-level layouts**
+- ✅ **Define flexible grid tracks with minmax()**
+- ✅ **Use auto-fit and auto-fill for responsive columns**
+- ✅ **Combine grid with gap for consistent spacing**
+
+```css
+/* ✅ Good: Responsive grid that adapts automatically */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+/* ✅ Good: Mobile-first grid with progressive enhancement */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile: single column */
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr 1fr; /* Tablet: 2 columns */
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 250px 1fr; /* Desktop: sidebar + main */
+    gap: 2rem;
+  }
+}
+```
+
+#### Flexbox for Component Layouts
+- ✅ **Use Flexbox for one-dimensional layouts**
+- ✅ **Allow items to wrap with flex-wrap**
+- ✅ **Use flex-grow and flex-shrink appropriately**
+- ✅ **Combine with gap for spacing (modern browsers)**
+
+```css
+/* ✅ Good: Flexible navigation that adapts */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav-item {
+  flex: 1 1 auto; /* Grow, shrink, auto basis */
+  min-width: 120px; /* Prevent too-narrow items */
+}
+
+/* ✅ Good: Responsive card layout */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card {
+  flex: 1 1 calc(100% - 1rem); /* Mobile: full width */
+  min-width: 0; /* Allow flex items to shrink below content size */
+}
+
+@media (min-width: 640px) {
+  .card {
+    flex: 1 1 calc(50% - 1rem); /* Tablet: 2 columns */
+  }
+}
+
+@media (min-width: 1024px) {
+  .card {
+    flex: 1 1 calc(33.333% - 1rem); /* Desktop: 3 columns */
+  }
+}
+```
+
+### Breakpoint Strategy
+
+#### Standard Breakpoints
+- ✅ **Use common device breakpoints**
+- ✅ **Name breakpoints semantically**
+- ✅ **Keep breakpoints in CSS variables or config**
+- ✅ **Test between breakpoints, not just at exact values**
+
+```css
+/* ✅ Good: Standard breakpoint system */
+:root {
+  --breakpoint-sm: 640px;   /* Small devices (large phones) */
+  --breakpoint-md: 768px;   /* Medium devices (tablets) */
+  --breakpoint-lg: 1024px;  /* Large devices (desktops) */
+  --breakpoint-xl: 1280px;  /* Extra large devices */
+  --breakpoint-2xl: 1536px; /* Ultra-wide screens */
+}
+
+/* Mobile first: Base styles for mobile */
+.container {
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 960px;
+    padding: 2rem;
+  }
+}
+
+/* Large desktop and up */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+```
+
+#### Content-Based Breakpoints
+- ✅ **Add breakpoints where content breaks, not just at device sizes**
+- ✅ **Test with actual content, not lorem ipsum**
+- ✅ **Adjust typography at breakpoints**
+
+```css
+/* ✅ Good: Typography adjusts at content breakpoints */
+.heading {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1.2;
+}
+
+/* Adjust when line length gets too long */
+@media (min-width: 900px) {
+  .text-content {
+    max-width: 65ch; /* Optimal 50-75 characters per line */
+    margin: 0 auto;
+  }
+}
+```
+
+### Responsive Images
+
+#### Modern Image Techniques
+- ✅ **Use srcset for different image sizes**
+- ✅ **Use picture element for art direction**
+- ✅ **Implement lazy loading for below-fold images**
+- ✅ **Serve modern formats (WebP, AVIF) with fallbacks**
+
+```html
+<!-- ✅ Good: Responsive image with srcset -->
+<img 
+  src="image-800w.jpg"
+  srcset="
+    image-400w.jpg 400w,
+    image-800w.jpg 800w,
+    image-1200w.jpg 1200w,
+    image-1600w.jpg 1600w"
+  sizes="
+    (max-width: 640px) 100vw,
+    (max-width: 1024px) 80vw,
+    1200px"
+  alt="Descriptive alt text"
+  loading="lazy"
+  width="1200"
+  height="800">
+
+<!-- ✅ Good: Art direction with picture element -->
+<picture>
+  <!-- Mobile: Square crop -->
+  <source 
+    media="(max-width: 639px)" 
+    srcset="hero-mobile-1x.jpg 1x, hero-mobile-2x.jpg 2x">
+  
+  <!-- Tablet: 16:9 crop -->
+  <source 
+    media="(max-width: 1023px)" 
+    srcset="hero-tablet-1x.jpg 1x, hero-tablet-2x.jpg 2x">
+  
+  <!-- Desktop: Wide crop -->
+  <source 
+    media="(min-width: 1024px)" 
+    srcset="hero-desktop-1x.jpg 1x, hero-desktop-2x.jpg 2x">
+  
+  <!-- Fallback -->
+  <img src="hero-desktop-1x.jpg" alt="Hero image" width="1920" height="1080">
+</picture>
+
+<!-- ✅ Good: Modern format with fallback -->
+<picture>
+  <source srcset="image.avif" type="image/avif">
+  <source srcset="image.webp" type="image/webp">
+  <img src="image.jpg" alt="Description" loading="lazy">
+</picture>
+```
+
+#### CSS Background Images
+- ✅ **Use image-set() for responsive backgrounds**
+- ✅ **Optimize background images for different screens**
+
+```css
+/* ✅ Good: Responsive background images */
+.hero {
+  background-image: url('hero-mobile.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    background-image: url('hero-tablet.jpg');
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    background-image: image-set(
+      url('hero-desktop.webp') type('image/webp'),
+      url('hero-desktop.jpg') type('image/jpeg')
+    );
+  }
+}
+
+/* High DPI screens */
+@media (min-width: 1024px) and (min-resolution: 2dppx) {
+  .hero {
+    background-image: url('hero-desktop-2x.jpg');
+  }
+}
+```
+
+### Responsive Typography
+
+#### Fluid Typography
+- ✅ **Use clamp() for fluid font sizes**
+- ✅ **Scale typography with viewport units**
+- ✅ **Maintain readability at all sizes**
+- ✅ **Adjust line height with font size**
+
+```css
+/* ✅ Good: Fluid typography with clamp() */
+:root {
+  /* Font sizes scale smoothly between min and max */
+  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
+  --font-size-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+  --font-size-2xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+  line-height: 1.1;
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+body {
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+}
+
+/* ✅ Good: Responsive line length */
+.prose {
+  max-width: 65ch; /* 50-75 characters optimal */
+  margin: 0 auto;
+}
+```
+
+### Touch-Friendly Design
+
+#### Tap Target Sizes
+- ✅ **Minimum 44×44px tap targets (iOS HIG)**
+- ✅ **48×48dp minimum (Android Material)**
+- ✅ **Add padding to increase target size**
+- ✅ **Space targets at least 8px apart**
+
+```css
+/* ✅ Good: Touch-friendly buttons */
+.button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  /* Add visual feedback */
+  transition: transform 100ms;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+/* ✅ Good: Touch-friendly navigation */
+.nav-link {
+  display: block;
+  padding: 16px 20px;
+  min-height: 48px;
+  /* Adequate spacing between links */
+  margin: 4px 0;
+}
+
+/* ✅ Good: Touch-friendly form inputs */
+input,
+select,
+textarea {
+  min-height: 44px;
+  padding: 12px 16px;
+  font-size: 16px; /* Prevents zoom on iOS */
+  border: 2px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Increase touch targets for checkboxes/radio */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 24px;
+  height: 24px;
+  margin: 10px; /* Adds padding to touch area */
+}
+```
+
+#### Gesture Support
+- ✅ **Support swipe gestures for carousels**
+- ✅ **Avoid hover-only interactions**
+- ✅ **Provide touch feedback (ripple, scale)**
+- ✅ **Test on actual touch devices**
+
+```css
+/* ✅ Good: Touch-friendly carousel */
+.carousel {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ✅ Good: Avoid hover-only tooltips on touch */
+.tooltip-trigger:hover .tooltip,
+.tooltip-trigger:focus .tooltip {
+  display: block;
+}
+
+/* Allow tap to show on touch devices */
+.tooltip-trigger:active .tooltip {
+  display: block;
+}
+```
+
+### Viewport and Meta Tags
+
+#### Essential Meta Tags
+- ✅ **Always include viewport meta tag**
+- ✅ **Set appropriate initial scale**
+- ✅ **Allow user zoom for accessibility**
+
+```html
+<!-- ✅ Good: Proper viewport configuration -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ✅ Good: iOS safe area support -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<style>
+  body {
+    /* Respect notch on iPhone X and similar */
+    padding: env(safe-area-inset-top) 
+             env(safe-area-inset-right) 
+             env(safe-area-inset-bottom) 
+             env(safe-area-inset-left);
+  }
+</style>
+
+<!-- ✅ Good: Theme color for mobile browsers -->
+<meta name="theme-color" content="#0066cc">
+```
+
+### Content Prioritization
+
+#### Mobile Content Strategy
+- ✅ **Show critical content first**
+- ✅ **Use progressive disclosure**
+- ✅ **Collapse secondary content**
+- ✅ **Maintain feature parity (don't hide important features)**
+
+```html
+<!-- ✅ Good: Progressive disclosure with details/summary -->
+<details class="expandable">
+  <summary>Advanced Options</summary>
+  <div class="advanced-content">
+    <!-- Complex options hidden by default on mobile -->
+    <label>
+      <input type="checkbox" name="option1">
+      Advanced option 1
+    </label>
+    <!-- More options... -->
+  </div>
+</details>
+
+<style>
+  .expandable {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+  }
+  
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    user-select: none;
+  }
+  
+  .advanced-content {
+    margin-top: 1rem;
+  }
+  
+  /* On desktop you may want this section expanded by default.
+     Note: `open` is an HTML attribute on <details>, not a CSS property. */
+  @media (min-width: 1024px) {
+    /* If <details> is open, you can hide the summary to remove redundant chrome */
+    details[open] > summary { display: none; }
+  }
+</style>
+
+<script>
+  // Optional: open by default on desktop without forcing close on mobile.
+  const mq = window.matchMedia('(min-width: 1024px)');
+  const details = document.querySelector('details.expandable');
+  if (details && mq.matches) details.setAttribute('open', '');
+</script>
+```
+
+#### Reordering Content
+- ✅ **Use CSS Grid order for layout changes**
+- ✅ **Maintain logical DOM order for accessibility**
+- ✅ **Reorder visually, not in HTML**
+
+```css
+/* ✅ Good: Reorder with CSS Grid, maintain semantic HTML */
+.page {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "sidebar"
+    "footer";
+}
+
+.header { grid-area: header; }
+.main { grid-area: main; }
+.sidebar { grid-area: sidebar; }
+.footer { grid-area: footer; }
+
+@media (min-width: 1024px) {
+  .page {
+    grid-template-areas:
+      "header header"
+      "sidebar main"
+      "footer footer";
+    grid-template-columns: 250px 1fr;
+  }
+}
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Layout Mistakes
+- ❌ **Desktop-first approach**: Don't design for desktop and scale down
+- ❌ **Fixed pixel widths**: Don't use `width: 1200px;` for containers
+- ❌ **Horizontal scroll**: Don't allow horizontal scrolling (except carousels)
+- ❌ **Too many breakpoints**: Don't create breakpoints for every device
+
+```css
+/* ❌ Bad: Desktop-first with max-width */
+.container {
+  width: 1200px;
+}
+
+@media (max-width: 1024px) {
+  .container { width: 960px; }
+}
+
+@media (max-width: 768px) {
+  .container { width: 100%; }
+}
+
+/* ✅ Good: Mobile-first with min-width */
+.container {
+  width: 100%;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 960px;
+  }
+}
+```
+
+### Image Mistakes
+- ❌ **Single large image**: Don't serve desktop images to mobile
+- ❌ **Missing dimensions**: Don't omit width/height attributes (causes layout shift)
+- ❌ **No lazy loading**: Don't load all images immediately
+- ❌ **Unoptimized formats**: Don't use only JPEG/PNG
+
+```html
+<!-- ❌ Bad: Single image for all devices -->
+<img src="huge-image-4k.jpg" alt="Product">
+
+<!-- ❌ Bad: Missing dimensions causes layout shift -->
+<img src="image.jpg" alt="Product">
+
+<!-- ✅ Good: Responsive with dimensions -->
+<img 
+  src="image-800w.jpg"
+  srcset="image-400w.jpg 400w, image-800w.jpg 800w, image-1200w.jpg 1200w"
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+  alt="Product"
+  loading="lazy"
+  width="800"
+  height="600">
+```
+
+### Typography Mistakes
+- ❌ **Fixed font sizes**: Don't use only pixels for font sizes
+- ❌ **Tiny text**: Don't use font sizes below 16px on mobile (causes zoom)
+- ❌ **Poor readability**: Don't create long lines on wide screens
+- ❌ **No scaling**: Don't prevent text zoom with `maximum-scale=1`
+
+```html
+<!-- ❌ Bad: Prevents user zoom (accessibility issue) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<!-- ✅ Good: Allows zoom -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+```css
+/* ❌ Bad: Fixed typography doesn't scale */
+body { font-size: 14px; }
+h1 { font-size: 32px; }
+
+/* ✅ Good: Scalable typography */
+body { font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem); }
+h1 { font-size: clamp(2rem, 1.5rem + 2.5vw, 4rem); }
+```
+
+### Touch Mistakes
+- ❌ **Small tap targets**: Don't make buttons smaller than 44×44px
+- ❌ **Hover-only interactions**: Don't rely on hover states on mobile
+- ❌ **No touch feedback**: Don't ignore active/pressed states
+- ❌ **Dense spacing**: Don't pack interactive elements too closely
+
+```css
+/* ❌ Bad: Too small for touch */
+.button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* ❌ Bad: Hover-only dropdown (doesn't work on touch) */
+.dropdown:hover .menu {
+  display: block;
+}
+
+/* ✅ Good: Click/tap to open */
+.dropdown[aria-expanded="true"] .menu {
+  display: block;
+}
+```
+
+### Content Mistakes
+- ❌ **Hiding critical features**: Don't hide important features on mobile
+- ❌ **Different content**: Don't show different content on mobile vs desktop
+- ❌ **Separate mobile site**: Don't create m.example.com (use responsive design)
+- ❌ **Reordering in HTML**: Don't change HTML order for different devices
+
+## 📝 Testing Responsive Designs
+
+### Browser DevTools
+```javascript
+// ✅ Test common device sizes
+const testSizes = [
+  { name: 'iPhone SE', width: 375, height: 667 },
+  { name: 'iPhone 12 Pro', width: 390, height: 844 },
+  { name: 'iPhone 14 Pro Max', width: 430, height: 932 },
+  { name: 'iPad', width: 768, height: 1024 },
+  { name: 'iPad Pro', width: 1024, height: 1366 },
+  { name: 'Desktop HD', width: 1920, height: 1080 },
+];
+```
+
+### Responsive Testing Checklist
+- [ ] Test at actual device sizes, not just breakpoints
+- [ ] Test between breakpoints (e.g., 400px, 850px)
+- [ ] Test in portrait and landscape orientations
+- [ ] Test with real content (long names, missing images)
+- [ ] Test touch interactions on actual devices
+- [ ] Test with slow network (3G throttling)
+- [ ] Test with different font size settings
+- [ ] Check for horizontal scroll on all sizes
+- [ ] Verify tap targets are minimum 44×44px
+- [ ] Test forms with on-screen keyboard
+
+### Real Device Testing
+- ✅ **Test on actual phones and tablets**
+- ✅ **Test on different operating systems (iOS, Android)**
+- ✅ **Test on different browsers (Safari, Chrome, Firefox)**
+- ✅ **Test with various input methods (touch, mouse, keyboard)**
+
+## 📊 Common Breakpoint Reference
+
+```css
+/* Extra Small Devices (phones, 375px and up) */
+/* Base styles - Mobile First */
+
+/* Small Devices (large phones, 640px and up) */
+@media (min-width: 640px) { }
+
+/* Medium Devices (tablets, 768px and up) */
+@media (min-width: 768px) { }
+
+/* Large Devices (desktops, 1024px and up) */
+@media (min-width: 1024px) { }
+
+/* Extra Large Devices (large desktops, 1280px and up) */
+@media (min-width: 1280px) { }
+
+/* 2X Large Devices (ultra-wide, 1536px and up) */
+@media (min-width: 1536px) { }
+
+/* Orientation queries */
+@media (orientation: portrait) { }
+@media (orientation: landscape) { }
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) { }
+
+/* Print styles */
+@media print { }
+```
+
+## 📝 Key Points
+
+### Must Have
+- Mobile-first approach with min-width media queries
+- Flexible layouts using CSS Grid and Flexbox
+- Responsive images with srcset and picture element
+- Touch-friendly tap targets (minimum 44×44px)
+- Proper viewport meta tag
+- Content parity across devices
+
+### Do
+- Start with mobile (320px) and enhance progressively
+- Use relative units (rem, em, %) for flexibility
+- Test on real devices, not just desktop browser
+- Optimize images for different screen sizes
+- Maintain semantic HTML order for accessibility
+- Use clamp() for fluid typography
+- Respect safe-area-inset on notched devices
+
+### Don't
+- Don't start with desktop and scale down
+- Don't hide important features on mobile
+- Don't use fixed pixel widths for containers
+- Don't create separate mobile/desktop sites
+- Don't prevent user zoom (accessibility)
+- Don't rely on hover-only interactions
+- Don't make tap targets smaller than 44×44px
+
+---
+
+**Remember**: Responsive design is about creating one website that works everywhere, not multiple websites for different devices. Focus on flexible, content-driven layouts that adapt gracefully to any screen size.

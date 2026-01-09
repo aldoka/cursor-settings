@@ -1,0 +1,725 @@
+---
+description: Comprehensive guide for web accessibility including WCAG standards, ARIA implementation, keyboard navigation, and inclusive design practices
+alwaysApply: false
+---
+# Accessibility (A11y)
+
+> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into accessibility specifics.
+
+## 📋 Overview
+
+Accessibility ensures that websites and applications are usable by everyone, including people with disabilities. This includes visual, auditory, motor, and cognitive impairments. Accessible design benefits all users, not just those with disabilities.
+
+**Why it matters:**
+- A significant share of users has permanent or temporary impairments (vision, hearing, motor, cognitive).
+- Accessibility is often a **legal requirement** (e.g., ADA, Section 508, European Accessibility Act).
+- Accessible design improves usability for everyone (keyboard power-users, mobile users, users in bright environments, aging users).
+
+## 🎯 Core Accessibility Principles (POUR)
+
+### 1. Perceivable
+Information must be presentable to users in ways they can perceive:
+- Text alternatives for images
+- Captions for audio/video
+- Sufficient color contrast
+- Resizable text
+
+### 2. Operable
+Interface must be operable by all users:
+- Keyboard accessible
+- Sufficient time to read/use
+- No seizure-inducing content
+- Clear navigation
+
+### 3. Understandable
+Information and interface must be understandable:
+- Readable text
+- Predictable functionality
+- Input assistance (error messages)
+- Consistent navigation
+
+### 4. Robust
+Content must work with assistive technologies:
+- Valid HTML
+- Compatible with screen readers
+- Future-proof markup
+- Progressive enhancement
+
+## ✅ DO (Recommended Practices)
+
+### Semantic HTML
+
+#### Use Appropriate Elements
+- ✅ **Use native HTML elements**: Better accessibility built-in
+- ✅ **Proper heading hierarchy**: h1 → h2 → h3 (don't skip)
+- ✅ **Semantic landmarks**: `<header>`, `<nav>`, `<main>`, `<footer>`
+- ✅ **Lists for list content**: `<ul>`, `<ol>`, `<dl>`
+
+```html
+<!-- ✅ Good: Semantic HTML structure -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Title - Site Name</title>
+</head>
+<body>
+  <!-- Skip link for keyboard users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header>
+    <nav aria-label="Main navigation">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main id="main-content">
+    <article>
+      <h1>Article Title</h1>
+      <p>Introduction paragraph...</p>
+      
+      <section>
+        <h2>First Section</h2>
+        <p>Section content...</p>
+        
+        <h3>Subsection</h3>
+        <p>Subsection content...</p>
+      </section>
+      
+      <section>
+        <h2>Second Section</h2>
+        <p>More content...</p>
+      </section>
+    </article>
+  </main>
+  
+  <aside aria-label="Related content">
+    <h2>Related Articles</h2>
+    <ul>
+      <li><a href="/article1">Article 1</a></li>
+      <li><a href="/article2">Article 2</a></li>
+    </ul>
+  </aside>
+  
+  <footer>
+    <p>&copy; 2025 Company Name. All rights reserved.</p>
+  </footer>
+</body>
+</html>
+
+<style>
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #0066cc;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+</style>
+```
+
+#### Buttons vs Links
+- ✅ **`<button>` for actions**: Submit, open, toggle
+- ✅ **`<a>` for navigation**: Going to another page
+- ✅ **Never use `<div>` or `<span>` for clickable elements**
+
+```html
+<!-- ✅ Good: Proper element usage -->
+<button type="button" onclick="openModal()">Open Modal</button>
+<button type="submit">Submit Form</button>
+<a href="/about">About Us</a>
+
+<!-- ❌ Bad: Div/span as button (not keyboard accessible) -->
+<div onclick="openModal()">Open Modal</div>
+<span onclick="submit()">Submit</span>
+
+<!-- ✅ Good: If you must style link as button -->
+<a href="/signup" class="button" role="button">Sign Up</a>
+```
+
+### ARIA (Accessible Rich Internet Applications)
+
+#### ARIA Roles
+- ✅ **Use native HTML first**: ARIA should supplement, not replace
+- ✅ **Role when needed**: `role="button"`, `role="dialog"`, etc.
+- ✅ **Landmark roles**: For better navigation
+- ✅ **Don't override native semantics**
+
+```html
+<!-- ✅ Good: ARIA roles for custom components -->
+<div 
+  role="dialog" 
+  aria-labelledby="modal-title"
+  aria-describedby="modal-desc"
+  aria-modal="true">
+  
+  <h2 id="modal-title">Confirm Action</h2>
+  <p id="modal-desc">Are you sure you want to delete this item?</p>
+  
+  <button type="button">Cancel</button>
+  <button type="button">Delete</button>
+</div>
+
+<!-- ✅ Good: ARIA for tabs -->
+<div role="tablist" aria-label="Content sections">
+  <button 
+    role="tab" 
+    aria-selected="true"
+    aria-controls="panel-1"
+    id="tab-1">
+    Tab 1
+  </button>
+  <button 
+    role="tab" 
+    aria-selected="false"
+    aria-controls="panel-2"
+    id="tab-2">
+    Tab 2
+  </button>
+</div>
+
+<div id="panel-1" role="tabpanel" aria-labelledby="tab-1">
+  Content for tab 1
+</div>
+
+<div id="panel-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+  Content for tab 2
+</div>
+```
+
+#### ARIA Labels and Descriptions
+- ✅ **`aria-label`**: Provides label when none visible
+- ✅ **`aria-labelledby`**: References visible label
+- ✅ **`aria-describedby`**: Additional description
+- ✅ **`aria-hidden`**: Hides decorative elements from screen readers
+
+```html
+<!-- ✅ Good: ARIA labels for icons/buttons -->
+<button aria-label="Close dialog">
+  <svg aria-hidden="true">
+    <use href="#icon-close"></use>
+  </svg>
+</button>
+
+<button aria-label="Search">
+  🔍
+</button>
+
+<!-- ✅ Good: aria-labelledby for form groups -->
+<fieldset>
+  <legend id="shipping-legend">Shipping Address</legend>
+  
+  <div role="group" aria-labelledby="shipping-legend">
+    <label for="street">Street</label>
+    <input type="text" id="street" name="street">
+    
+    <label for="city">City</label>
+    <input type="text" id="city" name="city">
+  </div>
+</fieldset>
+
+<!-- ✅ Good: aria-describedby for hints -->
+<label for="password">Password</label>
+<input 
+  type="password" 
+  id="password" 
+  aria-describedby="password-hint">
+<span id="password-hint">Must be at least 8 characters</span>
+
+<!-- ✅ Good: aria-hidden for decorative elements -->
+<button>
+  <svg aria-hidden="true">
+    <use href="#icon-save"></use>
+  </svg>
+  Save Document
+</button>
+```
+
+#### ARIA States and Properties
+- ✅ **`aria-expanded`**: For collapsible content
+- ✅ **`aria-checked`**: For custom checkboxes
+- ✅ **`aria-disabled`**: For disabled elements
+- ✅ **`aria-invalid`**: For form validation
+- ✅ **`aria-live`**: For dynamic content updates
+
+```html
+<!-- ✅ Good: Accordion with ARIA -->
+<div class="accordion">
+  <button 
+    aria-expanded="false"
+    aria-controls="section-1"
+    id="accordion-1">
+    Section 1
+  </button>
+  
+  <div id="section-1" role="region" aria-labelledby="accordion-1" hidden>
+    <p>Content for section 1</p>
+  </div>
+</div>
+
+<!-- ✅ Good: Custom checkbox -->
+<div 
+  role="checkbox" 
+  aria-checked="false"
+  tabindex="0"
+  aria-labelledby="checkbox-label">
+  <span id="checkbox-label">I agree to terms</span>
+</div>
+
+<!-- ✅ Good: Form validation -->
+<label for="email">Email</label>
+<input 
+  type="email" 
+  id="email"
+  aria-invalid="true"
+  aria-describedby="email-error">
+<span id="email-error" role="alert">
+  Please enter a valid email address
+</span>
+
+<!-- ✅ Good: Live region for notifications -->
+<div 
+  role="status" 
+  aria-live="polite" 
+  aria-atomic="true"
+  class="notification">
+  <!-- Dynamically inserted messages appear here -->
+</div>
+
+<!-- ✅ Good: Alert for important messages -->
+<div role="alert" aria-live="assertive">
+  Your session will expire in 5 minutes
+</div>
+```
+
+### Keyboard Navigation
+
+#### Focus Management
+- ✅ **All interactive elements focusable**: Tab index 0 or native
+- ✅ **Visible focus indicators**: Clear outline or ring
+- ✅ **Logical tab order**: Follows visual layout
+- ✅ **Skip links**: Jump to main content
+
+```html
+<!-- ✅ Good: Keyboard accessible custom button -->
+<div 
+  role="button" 
+  tabindex="0"
+  onclick="handleClick()">
+  Custom Button
+</div>
+
+<script>
+const customButton = document.querySelector('[role="button"][tabindex="0"]');
+customButton.addEventListener('keydown', (event) => {
+  // Trigger on Enter or Space
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    handleClick();
+  }
+});
+</script>
+
+<style>
+/* ✅ Good: Clear focus indicator */
+button:focus,
+a:focus,
+input:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Alternative: custom focus ring */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.4);
+}
+</style>
+```
+
+#### Keyboard Shortcuts
+- ✅ **Standard shortcuts**: Tab, Shift+Tab, Enter, Space, Escape
+- ✅ **Arrow keys**: For lists, menus, sliders
+- ✅ **Home/End**: Jump to start/end
+- ✅ **Document shortcuts**: Avoid conflicting with browser
+
+```javascript
+// ✅ Good: Keyboard navigation for custom dropdown
+const dropdown = document.querySelector('[role="listbox"]');
+const options = dropdown.querySelectorAll('[role="option"]');
+let currentIndex = 0;
+
+dropdown.addEventListener('keydown', (e) => {
+  switch(e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      currentIndex = Math.min(currentIndex + 1, options.length - 1);
+      options[currentIndex].focus();
+      break;
+      
+    case 'ArrowUp':
+      e.preventDefault();
+      currentIndex = Math.max(currentIndex - 1, 0);
+      options[currentIndex].focus();
+      break;
+      
+    case 'Home':
+      e.preventDefault();
+      currentIndex = 0;
+      options[0].focus();
+      break;
+      
+    case 'End':
+      e.preventDefault();
+      currentIndex = options.length - 1;
+      options[currentIndex].focus();
+      break;
+      
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      options[currentIndex].click();
+      break;
+      
+    case 'Escape':
+      closeDropdown();
+      break;
+  }
+});
+```
+
+### Images and Media
+
+#### Alternative Text
+- ✅ **Descriptive alt text**: Describe image purpose/content
+- ✅ **Empty alt for decorative**: `alt=""`
+- ✅ **Don't use "image of"**: Screen readers announce it's an image
+- ✅ **Keep concise**: 125 characters or less
+
+```html
+<!-- ✅ Good: Descriptive alt text -->
+<img 
+  src="chart.png" 
+  alt="Bar chart showing sales increased 50% in Q4">
+
+<!-- ✅ Good: Empty alt for decorative -->
+<img src="decorative-pattern.png" alt="">
+
+<!-- ✅ Good: Complex image with longdesc -->
+<img 
+  src="complex-diagram.png" 
+  alt="Network architecture diagram"
+  aria-describedby="diagram-desc">
+<div id="diagram-desc" class="sr-only">
+  Detailed description: The diagram shows a three-tier architecture 
+  with web servers, application servers, and database servers...
+</div>
+
+<!-- ❌ Bad: Generic or missing alt -->
+<img src="photo.jpg" alt="image">
+<img src="logo.png">  <!-- Missing alt -->
+```
+
+#### Video and Audio
+- ✅ **Captions for videos**: For deaf/hard of hearing
+- ✅ **Transcripts for audio**: Full text alternative
+- ✅ **Audio descriptions**: Narrate visual content
+- ✅ **Controls accessible**: Keyboard operable
+
+```html
+<!-- ✅ Good: Video with captions and transcript -->
+<video controls>
+  <source src="video.mp4" type="video/mp4">
+  <track 
+    kind="captions" 
+    src="captions-en.vtt" 
+    srclang="en" 
+    label="English"
+    default>
+  <track 
+    kind="descriptions" 
+    src="descriptions-en.vtt" 
+    srclang="en" 
+    label="English descriptions">
+</video>
+
+<details>
+  <summary>Video Transcript</summary>
+  <p>Full text transcript of video content...</p>
+</details>
+
+<!-- ✅ Good: Audio with transcript -->
+<audio controls>
+  <source src="podcast.mp3" type="audio/mpeg">
+  Your browser doesn't support audio.
+</audio>
+
+<section aria-label="Podcast transcript">
+  <h2>Transcript</h2>
+  <p>Full text transcript...</p>
+</section>
+```
+
+### Forms Accessibility
+
+#### Labels and Instructions
+- ✅ **Explicit labels**: Always use `<label>` element
+- ✅ **Required fields marked**: Visual and programmatic
+- ✅ **Clear instructions**: Before form, not just in errors
+- ✅ **Error identification**: Specific and helpful
+
+```html
+<!-- ✅ Good: Accessible form -->
+<form>
+  <p>Required fields are marked with <span aria-label="required">*</span></p>
+  
+  <div class="form-group">
+    <label for="name">
+      Full Name 
+      <span aria-label="required">*</span>
+    </label>
+    <input 
+      type="text" 
+      id="name" 
+      name="name"
+      required
+      aria-required="true"
+      autocomplete="name">
+  </div>
+  
+  <div class="form-group">
+    <label for="email">
+      Email Address 
+      <span aria-label="required">*</span>
+    </label>
+    <input 
+      type="email" 
+      id="email" 
+      name="email"
+      required
+      aria-required="true"
+      aria-describedby="email-hint"
+      autocomplete="email">
+    <span id="email-hint" class="hint">
+      We'll never share your email with anyone else
+    </span>
+  </div>
+  
+  <fieldset>
+    <legend>Contact Preference</legend>
+    
+    <div>
+      <input 
+        type="radio" 
+        id="contact-email" 
+        name="contact" 
+        value="email">
+      <label for="contact-email">Email</label>
+    </div>
+    
+    <div>
+      <input 
+        type="radio" 
+        id="contact-phone" 
+        name="contact" 
+        value="phone">
+      <label for="contact-phone">Phone</label>
+    </div>
+  </fieldset>
+  
+  <button type="submit">Submit</button>
+</form>
+```
+
+### Color Contrast
+
+#### WCAG Requirements
+- ✅ **Normal text**: 4.5:1 minimum (AA), 7:1 (AAA)
+- ✅ **Large text**: 3:1 minimum (AA), 4.5:1 (AAA)
+- ✅ **UI components**: 3:1 minimum
+- ✅ **Test all combinations**: Use contrast checkers
+
+```css
+/* ✅ Good: Sufficient contrast */
+:root {
+  /* Text on white background */
+  --text-primary: #111827;     /* 16.5:1 - AAA */
+  --text-secondary: #4b5563;   /* 8.6:1 - AAA */
+  --text-tertiary: #6b7280;    /* 5.7:1 - AA */
+  
+  /* Links */
+  --link-color: #0066cc;       /* 7.7:1 - AAA */
+  
+  /* Buttons */
+  --button-bg: #0066cc;
+  --button-text: #ffffff;      /* 7.7:1 on blue */
+  
+  /* Success/Error */
+  --success-text: #047857;     /* 6.4:1 - AAA */
+  --error-text: #b91c1c;       /* 7.1:1 - AAA */
+}
+
+/* ❌ Bad: Insufficient contrast */
+.low-contrast {
+  color: #cccccc;              /* 1.6:1 - Fails WCAG */
+  background: #ffffff;
+}
+
+/* ✅ Good: Proper contrast */
+.good-contrast {
+  color: #666666;              /* 5.7:1 - Passes AA */
+  background: #ffffff;
+}
+```
+
+### Screen Reader Support
+
+#### Screen Reader Only Text
+- ✅ **Visually hidden, screen reader visible**
+- ✅ **Additional context for SR users**
+- ✅ **Don't use `display: none` or `visibility: hidden`**
+
+```html
+<!-- ✅ Good: Screen reader only text -->
+<a href="/article">
+  Read more
+  <span class="sr-only">about our new product launch</span>
+</a>
+
+<button>
+  <svg aria-hidden="true">
+    <use href="#icon-delete"></use>
+  </svg>
+  <span class="sr-only">Delete item</span>
+</button>
+
+<style>
+/* ✅ Good: Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Show on focus for keyboard users */
+.sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Semantic HTML Mistakes
+- ❌ **Div/span for buttons/links**: Not accessible
+- ❌ **Skipping heading levels**: h1 → h3 (skip h2)
+- ❌ **Multiple h1 per page**: Confuses hierarchy
+- ❌ **Tables for layout**: Use CSS Grid/Flexbox
+
+### ARIA Mistakes
+- ❌ **Overusing ARIA**: Use native HTML first
+- ❌ **Conflicting roles**: Don't override native semantics
+- ❌ **Incorrect relationships**: aria-labelledby pointing to non-existent ID
+- ❌ **Missing required attributes**: role="button" without tabindex
+
+### Keyboard Mistakes
+- ❌ **Removing focus indicators**: Never `outline: none` without alternative
+- ❌ **Non-focusable interactives**: Div buttons without tabindex
+- ❌ **Focus traps**: Can't escape modal/dropdown
+- ❌ **Illogical tab order**: Using tabindex > 0
+
+### Content Mistakes
+- ❌ **Missing alt text**: Empty or missing alt attributes
+- ❌ **Color-only information**: "Click the red button"
+- ❌ **Auto-playing media**: Without controls or way to stop
+- ❌ **Time limits**: Without way to extend or disable
+
+## 📝 Accessibility Checklist
+
+Before launching, verify:
+- [ ] All images have appropriate alt text
+- [ ] Color contrast meets WCAG AA (4.5:1 for text)
+- [ ] All functionality available via keyboard
+- [ ] Focus indicators are clearly visible
+- [ ] Proper heading hierarchy (h1 → h2 → h3)
+- [ ] Form inputs have explicit labels
+- [ ] Error messages are clear and associated with fields
+- [ ] ARIA labels where needed (icons, custom controls)
+- [ ] Videos have captions/transcripts
+- [ ] Page has descriptive `<title>`
+- [ ] Language is declared (`<html lang="en">`)
+- [ ] Skip links for keyboard users
+- [ ] Responsive text (zoom to 200%)
+- [ ] Tested with screen reader (NVDA, JAWS, VoiceOver)
+- [ ] No keyboard traps
+
+## 📊 WCAG Compliance Levels
+
+| Level | Description | Requirements |
+|-------|-------------|--------------|
+| **A** | Minimum | Essential accessibility features |
+| **AA** | Recommended | Standard for most sites (legal requirement) |
+| **AAA** | Optimal | Enhanced accessibility (not always possible) |
+
+**Target**: WCAG **2.2** Level **AA** compliance minimum (2.1 AA as baseline where needed)
+
+## 📝 Key Points
+
+### Must Have
+- Semantic HTML elements
+- Keyboard accessibility for all interactions
+- Sufficient color contrast (4.5:1 minimum)
+- Alt text for all meaningful images
+- Explicit form labels
+- Visible focus indicators
+- ARIA where native HTML insufficient
+
+### Do
+- Use native HTML elements first
+- Test with keyboard only
+- Test with screen readers
+- Provide multiple ways to access content
+- Use clear, plain language
+- Provide text alternatives for media
+- Maintain logical heading hierarchy
+- Include skip links
+
+### Don't
+- Don't use div/span for buttons/links
+- Don't remove focus indicators without replacement
+- Don't rely on color alone
+- Don't auto-play videos/audio
+- Don't use ARIA when native HTML works
+- Don't skip heading levels
+- Don't forget alt text
+- Don't create keyboard traps
+
+---
+
+**Remember**: Accessibility is not optional—it's a fundamental requirement for modern web development. Accessible design benefits everyone: people with disabilities, aging populations, users with temporary impairments, and users in challenging environments. By building accessible websites, you expand your reach, improve SEO, enhance usability, and demonstrate social responsibility.

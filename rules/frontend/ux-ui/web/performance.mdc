@@ -1,0 +1,740 @@
+---
+description: Comprehensive guide for web performance optimization focusing on perceived performance, loading strategies, and user experience
+alwaysApply: false
+---
+# Performance Optimization
+
+> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into performance optimization specifics.
+
+## 📋 Overview
+
+Performance is a critical aspect of user experience. Users expect websites to load quickly and respond instantly. This guide focuses on performance optimization from a UX/UI perspective, emphasizing perceived performance—how fast a site *feels* to users, not just technical metrics.
+
+**Why it matters:**
+- Slow sites increase abandonment and reduce trust.
+- Even small delays can measurably reduce conversion and satisfaction.
+- **Perceived performance** often matters as much as actual load time.
+
+## 🎯 Core Performance Principles
+
+### 1. Actual vs Perceived Performance
+- **Actual**: Technical metrics (load time, Time to Interactive)
+- **Perceived**: User's subjective experience of speed
+- Focus on what users *feel*, not just what metrics show
+
+### 2. Critical Rendering Path
+- Optimize resources that block initial render
+- Prioritize above-the-fold content
+- Defer non-critical resources
+
+### 3. Progressive Enhancement
+- Show content as soon as possible
+- Load enhancements progressively
+- Ensure basic functionality works immediately
+
+### 4. Performance Budget
+- Set limits on resource sizes
+- Monitor bundle sizes
+- Balance features with performance
+
+## ✅ DO (Recommended Practices)
+
+### Perceived Performance
+
+#### Loading States and Skeletons
+- ✅ **Show immediate feedback**: Don't leave users with blank screens
+- ✅ **Use skeleton screens**: Show content structure while loading
+- ✅ **Progress indicators**: Show loading progress for longer waits
+- ✅ **Optimistic UI**: Update UI immediately, sync in background
+
+```html
+<!-- ✅ Good: Skeleton screen while loading -->
+<div class="card skeleton" aria-busy="true" aria-label="Loading content">
+  <div class="skeleton-image"></div>
+  <div class="skeleton-title"></div>
+  <div class="skeleton-text"></div>
+  <div class="skeleton-text"></div>
+</div>
+
+<style>
+/* Skeleton loading animation */
+.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-image,
+.skeleton-title,
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e0e0e0 50%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 60%;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-text:last-child {
+  width: 80%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+</style>
+```
+
+#### Progress Indicators
+- ✅ **Indeterminate spinners**: For unknown duration
+- ✅ **Progress bars**: For known steps/progress
+- ✅ **Step indicators**: For multi-step processes
+- ✅ **Time estimates**: For long operations
+
+```html
+<!-- ✅ Good: Loading spinner for async operations -->
+<button class="button" aria-busy="true">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Loading...</span>
+</button>
+
+<style>
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
+<!-- ✅ Good: Progress bar for file upload -->
+<div class="progress-container">
+  <div class="progress-bar" role="progressbar" 
+       aria-valuenow="45" 
+       aria-valuemin="0" 
+       aria-valuemax="100"
+       style="--progress: 45%">
+    <span class="progress-label">Uploading... 45%</span>
+  </div>
+</div>
+
+<style>
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: var(--progress);
+  height: 100%;
+  background: linear-gradient(90deg, #0066cc, #3b82f6);
+  transition: width 300ms ease;
+}
+
+.progress-label {
+  position: absolute;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+</style>
+```
+
+#### Optimistic UI Updates
+- ✅ **Update UI immediately**: Don't wait for server response
+- ✅ **Rollback on error**: Revert changes if request fails
+- ✅ **Queue actions**: Handle offline scenarios gracefully
+- ✅ **Show confirmation**: Indicate when action is confirmed
+
+```javascript
+// ✅ Good: Optimistic UI update
+async function toggleLike(postId) {
+  const likeButton = document.querySelector(`[data-post="${postId}"]`);
+  const likeCount = likeButton.querySelector('.like-count');
+  
+  // 1. Update UI immediately (optimistic)
+  const wasLiked = likeButton.classList.toggle('liked');
+  const currentCount = parseInt(likeCount.textContent);
+  likeCount.textContent = wasLiked ? currentCount + 1 : currentCount - 1;
+  
+  try {
+    // 2. Send request to server
+    const response = await fetch(`/api/posts/${postId}/like`, {
+      method: 'POST'
+    });
+    
+    if (!response.ok) throw new Error('Failed to like');
+    
+    // 3. Optionally update with server response
+    const data = await response.json();
+    likeCount.textContent = data.likeCount;
+    
+  } catch (error) {
+    // 4. Rollback on error
+    likeButton.classList.toggle('liked');
+    likeCount.textContent = currentCount;
+    
+    // Show error message
+    showNotification('Failed to like post', 'error');
+  }
+}
+```
+
+### Image Optimization
+
+#### Lazy Loading
+- ✅ **Use native lazy loading**: `loading="lazy"` attribute
+- ✅ **Lazy load below fold**: Images not immediately visible
+- ✅ **Eager load above fold**: Critical images load immediately
+- ✅ **Provide dimensions**: Prevent layout shift
+
+```html
+<!-- ✅ Good: Lazy loading for below-the-fold images -->
+<img 
+  src="image-800w.jpg"
+  srcset="image-400w.jpg 400w, image-800w.jpg 800w, image-1200w.jpg 1200w"
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
+  alt="Description"
+  loading="lazy"
+  width="800"
+  height="600">
+
+<!-- ✅ Good: Eager loading for hero image (above fold) -->
+<img 
+  src="hero.jpg"
+  alt="Hero image"
+  loading="eager"
+  width="1920"
+  height="1080">
+
+<!-- ✅ Good: Preload critical images -->
+<link rel="preload" as="image" href="hero.jpg">
+```
+
+#### Modern Image Formats
+- ✅ **Use WebP with fallback**: 25-35% smaller than JPEG
+- ✅ **Use AVIF when supported**: 50% smaller than JPEG
+- ✅ **Provide fallbacks**: For older browsers
+- ✅ **Responsive images**: Serve appropriate sizes
+
+```html
+<!-- ✅ Good: Modern formats with fallbacks -->
+<picture>
+  <!-- AVIF for modern browsers (smallest) -->
+  <source 
+    srcset="image-400.avif 400w, image-800.avif 800w, image-1200.avif 1200w"
+    sizes="(max-width: 640px) 100vw, 800px"
+    type="image/avif">
+  
+  <!-- WebP for wider support -->
+  <source 
+    srcset="image-400.webp 400w, image-800.webp 800w, image-1200.webp 1200w"
+    sizes="(max-width: 640px) 100vw, 800px"
+    type="image/webp">
+  
+  <!-- JPEG fallback -->
+  <img 
+    src="image-800.jpg"
+    srcset="image-400.jpg 400w, image-800.jpg 800w, image-1200.jpg 1200w"
+    sizes="(max-width: 640px) 100vw, 800px"
+    alt="Description"
+    loading="lazy"
+    width="800"
+    height="600">
+</picture>
+```
+
+#### Image Dimensions
+- ✅ **Always specify width/height**: Prevents layout shift
+- ✅ **Use aspect-ratio CSS**: Maintains proportions
+- ✅ **Reserve space**: Prevent content jumping
+- ✅ **Responsive sizing**: Scale properly
+
+```html
+<!-- ✅ Good: Image with dimensions to prevent layout shift -->
+<img 
+  src="image.jpg"
+  alt="Description"
+  width="800"
+  height="600"
+  loading="lazy"
+  style="width: 100%; height: auto;">
+
+<!-- ✅ Good: Using aspect-ratio CSS -->
+<div class="image-container">
+  <img src="image.jpg" alt="Description" loading="lazy">
+</div>
+
+<style>
+.image-container {
+  aspect-ratio: 16 / 9;          /* Maintains 16:9 ratio */
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;             /* Fills container */
+}
+</style>
+```
+
+### Animation Performance
+
+#### Use Hardware-Accelerated Properties
+- ✅ **Transform over position**: GPU accelerated
+- ✅ **Opacity for fades**: Also GPU accelerated
+- ✅ **Avoid layout properties**: Don't animate width, height, top, left
+- ✅ **Use will-change sparingly**: Prepare for animations
+
+```css
+/* ✅ Good: Hardware-accelerated animations */
+.slide-in {
+  transform: translateX(-100%);
+  transition: transform 300ms ease-out;
+}
+
+.slide-in.active {
+  transform: translateX(0);
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+.fade-in.active {
+  opacity: 1;
+}
+
+/* ✅ Good: Using will-change for complex animations */
+.animated-element {
+  will-change: transform;        /* Prepare browser for transform changes */
+}
+
+.animated-element.animating {
+  animation: complex-animation 1s ease-in-out;
+}
+
+.animated-element.done {
+  will-change: auto;             /* Remove after animation completes */
+}
+
+/* ❌ Bad: Animating layout properties (causes reflow) */
+.bad-animation {
+  transition: width 300ms, height 300ms, top 300ms, left 300ms;
+}
+```
+
+#### Respect User Preferences
+- ✅ **Check prefers-reduced-motion**: Accessibility requirement
+- ✅ **Disable non-essential animations**: For users who prefer less motion
+- ✅ **Keep functional animations**: Essential feedback remains
+- ✅ **Reduce duration**: Make animations faster
+
+```css
+/* ✅ Good: Respecting motion preferences */
+.animated-card {
+  transition: transform 300ms ease-out;
+}
+
+.animated-card:hover {
+  transform: scale(1.05);
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animated-card {
+    transition: none;            /* Disable animation */
+  }
+  
+  .animated-card:hover {
+    transform: scale(1.02);      /* Subtle, instant feedback */
+  }
+}
+
+/* Alternative: Faster animations instead of removing */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+#### 60 FPS Performance
+- ✅ **Target 60 fps**: 16.67ms per frame
+- ✅ **Use requestAnimationFrame**: For smooth animations
+- ✅ **Throttle/debounce**: Limit expensive operations
+- ✅ **Monitor performance**: Use DevTools Performance tab
+
+```javascript
+// ✅ Good: Smooth scroll with requestAnimationFrame
+function smoothScrollTo(target, duration = 1000) {
+  const start = window.pageYOffset;
+  const distance = target - start;
+  let startTime = null;
+
+  function animation(currentTime) {
+    if (startTime === null) startTime = currentTime;
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // Easing function
+    const easeInOutCubic = progress < 0.5
+      ? 4 * progress * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    
+    window.scrollTo(0, start + distance * easeInOutCubic);
+    
+    if (progress < 1) {
+      requestAnimationFrame(animation);
+    }
+  }
+  
+  requestAnimationFrame(animation);
+}
+
+// ✅ Good: Debounce expensive operations
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Use debounce for resize events
+const handleResize = debounce(() => {
+  console.log('Window resized');
+  // Expensive operation here
+}, 250);
+
+window.addEventListener('resize', handleResize);
+```
+
+### Resource Loading
+
+#### Critical CSS
+- ✅ **Inline critical CSS**: Above-the-fold styles in `<head>`
+- ✅ **Defer non-critical CSS**: Load later or async
+- ✅ **Minimize inlined CSS**: Only truly critical styles
+- ✅ **Remove unused CSS**: Use tools to purge unused styles
+
+```html
+<!-- ✅ Good: Inline critical CSS -->
+<head>
+  <style>
+    /* Critical above-the-fold styles */
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    .header { background: #0066cc; padding: 1rem; }
+    .hero { min-height: 100vh; display: flex; align-items: center; }
+  </style>
+  
+  <!-- Preload main stylesheet -->
+  <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css"></noscript>
+</head>
+```
+
+#### JavaScript Optimization
+- ✅ **Defer non-critical JS**: Use `defer` attribute
+- ✅ **Async for independent scripts**: Use `async` when order doesn't matter
+- ✅ **Code splitting**: Load only needed code
+- ✅ **Tree shaking**: Remove unused code
+
+```html
+<!-- ✅ Good: Proper script loading -->
+<head>
+  <!-- Critical scripts only -->
+  <script>
+    // Minimal critical inline JS (dark mode, etc.)
+  </script>
+</head>
+
+<body>
+  <!-- Content -->
+  
+  <!-- Non-critical scripts at end with defer -->
+  <script src="main.js" defer></script>
+  
+  <!-- Independent analytics with async -->
+  <script src="analytics.js" async></script>
+</body>
+```
+
+#### Resource Hints
+- ✅ **dns-prefetch**: Resolve DNS early for external domains
+- ✅ **preconnect**: Establish connection early
+- ✅ **prefetch**: Load resources for next page
+- ✅ **preload**: Load critical resources early
+
+```html
+<!-- ✅ Good: Resource hints for performance -->
+<head>
+  <!-- DNS prefetch for external domains -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://analytics.example.com">
+  
+  <!-- Preconnect for critical external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/fonts/main-font.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/images/hero.jpg" as="image">
+  <link rel="preload" href="/styles/critical.css" as="style">
+  
+  <!-- Prefetch resources for next page -->
+  <link rel="prefetch" href="/page2.html">
+  <link rel="prefetch" href="/page2-assets.js">
+</head>
+```
+
+### Caching Strategies
+
+#### Browser Caching
+- ✅ **Set appropriate cache headers**: Long cache for static assets
+- ✅ **Version/hash filenames**: Force cache invalidation when updated
+- ✅ **Cache API responses**: Use Service Workers
+- ✅ **localStorage for data**: Cache API responses client-side
+
+```html
+<!-- ✅ Good: Versioned/hashed filenames -->
+<link rel="stylesheet" href="styles.a4f8d2.css">
+<script src="main.7e3b9c.js" defer></script>
+<img src="logo.f3a7c1.png" alt="Logo">
+
+<!-- Server sets cache headers for static assets -->
+<!-- Cache-Control: public, max-age=31536000, immutable -->
+```
+
+```javascript
+// ✅ Good: Cache API responses
+async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
+  const cacheKey = `cache_${url}`;
+  const cached = localStorage.getItem(cacheKey);
+  
+  if (cached) {
+    const { data, timestamp } = JSON.parse(cached);
+    
+    // Return cached data if not expired
+    if (Date.now() - timestamp < cacheTime) {
+      return data;
+    }
+  }
+  
+  // Fetch fresh data
+  const response = await fetch(url);
+  const data = await response.json();
+  
+  // Cache the response
+  localStorage.setItem(cacheKey, JSON.stringify({
+    data,
+    timestamp: Date.now()
+  }));
+  
+  return data;
+}
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Loading Mistakes
+- ❌ **Blank screens**: Don't show nothing while loading
+- ❌ **No feedback**: Don't leave users wondering if something is happening
+- ❌ **Synchronous operations**: Don't block UI with long operations
+- ❌ **No error states**: Don't ignore failed loads
+
+```html
+<!-- ❌ Bad: No loading state -->
+<div id="content">
+  <!-- Nothing until data loads -->
+</div>
+
+<!-- ✅ Good: Loading state with skeleton -->
+<div id="content">
+  <div class="skeleton" aria-busy="true">
+    Loading content...
+  </div>
+</div>
+```
+
+### Image Mistakes
+- ❌ **Large unoptimized images**: Don't serve full-res images
+- ❌ **No dimensions**: Don't omit width/height (causes layout shift)
+- ❌ **All eager loading**: Don't load all images immediately
+- ❌ **Single format**: Don't ignore modern formats (WebP, AVIF)
+
+```html
+<!-- ❌ Bad: Unoptimized image without dimensions -->
+<img src="huge-image-4k.jpg" alt="Image">
+
+<!-- ✅ Good: Optimized responsive image with dimensions -->
+<picture>
+  <source srcset="image.avif" type="image/avif">
+  <source srcset="image.webp" type="image/webp">
+  <img 
+    src="image.jpg" 
+    alt="Image"
+    loading="lazy"
+    width="800"
+    height="600">
+</picture>
+```
+
+### Animation Mistakes
+- ❌ **Animating expensive properties**: Don't animate width, height, top, left
+- ❌ **Ignoring reduced motion**: Don't ignore accessibility preferences
+- ❌ **Too many animations**: Don't animate everything
+- ❌ **Blocking animations**: Don't prevent user interaction
+
+```css
+/* ❌ Bad: Animating layout properties */
+.bad {
+  transition: width 300ms, height 300ms, left 300ms, top 300ms;
+}
+
+/* ✅ Good: Hardware-accelerated properties */
+.good {
+  transition: transform 300ms, opacity 300ms;
+}
+
+/* ❌ Bad: Ignoring motion preferences */
+.animated {
+  animation: spin 2s infinite;
+}
+
+/* ✅ Good: Respecting motion preferences */
+.animated {
+  animation: spin 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated {
+    animation: none;
+  }
+}
+```
+
+### Resource Loading Mistakes
+- ❌ **Blocking resources**: Don't block render with large JS
+- ❌ **No code splitting**: Don't load entire app upfront
+- ❌ **Render-blocking CSS**: Don't block with non-critical CSS
+- ❌ **No compression**: Don't serve uncompressed assets
+
+```html
+<!-- ❌ Bad: Render-blocking script in head -->
+<head>
+  <script src="huge-bundle.js"></script>
+</head>
+
+<!-- ✅ Good: Deferred, split bundles -->
+<body>
+  <script src="critical.js"></script>
+  <script src="main.js" defer></script>
+  <script src="analytics.js" async></script>
+</body>
+```
+
+## 📝 Performance Checklist
+
+Before launching, verify:
+- [ ] Images have width/height attributes
+- [ ] Images use lazy loading (except above fold)
+- [ ] Modern image formats (WebP/AVIF) with fallbacks
+- [ ] Loading states for async operations
+- [ ] Skeleton screens for content loading
+- [ ] Animations use transform/opacity only
+- [ ] prefers-reduced-motion is respected
+- [ ] Critical CSS is inlined
+- [ ] Non-critical JS is deferred
+- [ ] Resource hints for external domains
+- [ ] Cache headers set appropriately
+- [ ] No layout shift (CLS < 0.1)
+- [ ] First Contentful Paint < 1.8s
+- [ ] Time to Interactive < 3.5s
+
+## 📊 Performance Metrics
+
+| Metric | Good | Needs Improvement | Poor |
+|--------|------|-------------------|------|
+| **First Contentful Paint (FCP)** | < 1.8s | 1.8s - 3s | > 3s |
+| **Largest Contentful Paint (LCP)** | < 2.5s | 2.5s - 4s | > 4s |
+| **Cumulative Layout Shift (CLS)** | < 0.1 | 0.1 - 0.25 | > 0.25 |
+| **First Input Delay (FID)** | < 100ms | 100ms - 300ms | > 300ms |
+| **Time to Interactive (TTI)** | < 3.8s | 3.8s - 7.3s | > 7.3s |
+| **Total Blocking Time (TBT)** | < 200ms | 200ms - 600ms | > 600ms |
+
+## 📝 Key Points
+
+### Must Have
+- Loading indicators for all async operations
+- Skeleton screens for content loading
+- Image optimization (dimensions, lazy loading, modern formats)
+- Hardware-accelerated animations only
+- Respect prefers-reduced-motion
+- Resource optimization (defer, async, preload)
+
+### Do
+- Show immediate feedback (optimistic UI)
+- Use skeleton screens and loading states
+- Lazy load below-the-fold images
+- Use WebP/AVIF with JPEG/PNG fallbacks
+- Animate transform and opacity only
+- Inline critical CSS
+- Defer non-critical JavaScript
+- Set cache headers appropriately
+- Monitor Core Web Vitals
+
+### Don't
+- Don't show blank screens while loading
+- Don't load all images eagerly
+- Don't animate width, height, top, left
+- Don't ignore reduced motion preferences
+- Don't block rendering with large bundles
+- Don't forget image dimensions (causes layout shift)
+- Don't ignore caching strategies
+- Don't skip performance testing
+
+---
+
+**Remember**: Performance is user experience. Users perceive fast sites as more trustworthy, professional, and valuable. Focus on perceived performance—making your site *feel* fast—as much as actual technical performance. Every millisecond matters.

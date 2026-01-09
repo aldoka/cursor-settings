@@ -1,0 +1,341 @@
+---
+description: Core principles and best practices for UX/UI design in modern web applications (framework-agnostic)
+globs: "**/*.{html,css,scss,sass,less,js,ts,jsx,tsx}"
+alwaysApply: false
+---
+# UX/UI Design Principles
+
+> **Framework-agnostic**: This rule contains universal UX/UI principles applicable to any web framework. Framework-specific implementations should be created separately.
+
+## 📋 Overview
+
+This rule defines core principles and best practices for creating modern, user-centric web interfaces. Focus on usability, accessibility, visual hierarchy, and responsive design to deliver exceptional user experiences across all devices.
+
+## 🎯 Core UX/UI Principles
+
+### 1. User-Centric Design
+- **Prioritize user needs**: Design decisions should be based on user research and feedback
+- **Reduce cognitive load**: Simplify interfaces, minimize choices, use familiar patterns
+- **Progressive disclosure**: Show only essential information first, reveal details on demand
+- **Consistency**: Maintain consistent patterns, terminology, and visual language throughout
+
+### 2. Visual Hierarchy
+- **Guide attention**: Use size, color, contrast, and spacing to direct user focus
+- **F-pattern and Z-pattern**: Structure content to match natural reading patterns
+- **Grouping**: Use proximity and visual similarity to group related elements
+- **Emphasis**: Highlight primary actions with prominent visual treatment
+
+### 3. Responsive Design
+- **Mobile-first approach**: Design for smallest screens first, enhance for larger devices
+- **Fluid layouts**: Use flexible grids (CSS Grid, Flexbox) that adapt to screen sizes
+- **Content prioritization**: Show critical content first on mobile devices
+- **Touch-friendly**: Ensure tap targets are at least 44×44px (iOS) or 48×48dp (Android)
+
+### 4. Performance & Perception
+- **Fast load times**: Optimize assets, lazy load images, minimize bundle sizes
+- **Perceived performance**: Use loading states, skeleton screens, optimistic UI updates
+- **Smooth interactions**: Maintain 60fps animations, use hardware acceleration
+- **Instant feedback**: Provide immediate visual response to user actions
+
+### 5. Accessibility & Inclusivity
+- **Semantic HTML**: Use proper HTML elements for better screen reader support
+- **Keyboard navigation**: All interactive elements must be keyboard accessible
+- **Color contrast**: Maintain minimum 4.5:1 ratio for normal text (WCAG AA). Prefer designing toward WCAG 2.2 AA (or higher) where feasible.
+- **Alternative text**: Provide descriptive alt text for all meaningful images
+
+## ✅ DO (Recommended Practices)
+
+### Layout & Spacing
+- ✅ **Use consistent spacing system**: Implement 4px or 8px base grid
+- ✅ **Generous whitespace**: Allow content to breathe, prevent visual clutter
+- ✅ **Logical grouping**: Group related items together with consistent spacing
+- ✅ **Flexible containers**: Use relative units (%, rem, em) over fixed pixels
+
+```html
+<!-- ✅ Good: Consistent spacing using utility classes or CSS variables -->
+<div style="padding: var(--spacing-4); margin-bottom: var(--spacing-6);">
+  <h2 style="margin-bottom: var(--spacing-2);">Title</h2>
+  <p style="line-height: 1.6;">Content with comfortable line height</p>
+</div>
+```
+
+### Typography
+- ✅ **Type scale**: Use consistent font size progression (e.g., 1.2 or 1.25 ratio)
+- ✅ **Line height**: Set 1.4-1.6 for body text, 1.2-1.3 for headings
+- ✅ **Line length**: Keep 50-75 characters per line for optimal readability
+- ✅ **Font weights**: Use 2-3 font weights maximum (e.g., 400, 600, 700)
+
+```css
+/* ✅ Good: Type scale with consistent ratios */
+:root {
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.25rem;    /* 20px */
+  --font-size-xl: 1.5rem;     /* 24px */
+  --font-size-2xl: 2rem;      /* 32px */
+  
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+}
+
+body {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+}
+```
+
+### Colors & Contrast
+- ✅ **Limited palette**: Use 3-5 primary colors maximum
+- ✅ **Semantic colors**: Define colors for success, warning, error, info states
+- ✅ **Contrast ratios**: Test all text/background combinations with tools
+- ✅ **Color blindness**: Don't rely on color alone to convey information
+
+```css
+/* ✅ Good: Semantic color system with sufficient contrast */
+:root {
+  /* Primary colors */
+  --color-primary: #0066cc;
+  --color-primary-hover: #0052a3;
+  
+  /* Semantic colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Neutral colors with good contrast */
+  --color-text-primary: #1f2937;    /* 16.5:1 on white */
+  --color-text-secondary: #6b7280;  /* 5.7:1 on white */
+  --color-background: #ffffff;
+}
+```
+
+### Interactive Elements
+- ✅ **Clear affordances**: Make clickable elements obviously interactive
+- ✅ **Hover/focus states**: Provide clear visual feedback on interaction
+- ✅ **Disabled states**: Visually distinguish disabled elements (reduce opacity)
+- ✅ **Loading states**: Show loading indicators for async operations
+
+```html
+<!-- ✅ Good: Clear button states with proper attributes -->
+<button 
+  class="btn btn-primary" 
+  disabled
+  aria-disabled="true">
+  Submit
+</button>
+
+<button class="btn btn-primary" aria-busy="true">
+  <span class="spinner" aria-hidden="true"></span>
+  Loading...
+</button>
+```
+
+### Forms & Validation
+- ✅ **Clear labels**: Always label form inputs explicitly
+- ✅ **Inline validation**: Validate as user types, show immediate feedback
+- ✅ **Error messages**: Be specific about what went wrong and how to fix
+- ✅ **Autocomplete**: Use appropriate autocomplete attributes
+
+```html
+<!-- ✅ Good: Accessible form with proper labels and validation -->
+<div class="form-group">
+  <label for="email">Email Address</label>
+  <input 
+    type="email" 
+    id="email" 
+    name="email"
+    autocomplete="email"
+    required
+    aria-describedby="email-error"
+    aria-invalid="false">
+  <span id="email-error" class="error-message" role="alert">
+    <!-- Error message appears here -->
+  </span>
+</div>
+```
+
+### Navigation
+- ✅ **Clear hierarchy**: Use proper heading levels (h1-h6) in order
+- ✅ **Breadcrumbs**: Show current location in deep navigation structures
+- ✅ **Active states**: Highlight current page/section in navigation
+- ✅ **Skip links**: Provide "skip to main content" for keyboard users
+
+```html
+<!-- ✅ Good: Semantic navigation with proper structure -->
+<nav aria-label="Main navigation">
+  <ul>
+    <li><a href="/" aria-current="page">Home</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Skip link for accessibility -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+```
+
+### Micro-interactions
+- ✅ **Subtle animations**: Use transitions to guide attention (200-300ms)
+- ✅ **Purposeful motion**: Every animation should serve a purpose
+- ✅ **Respect preferences**: Honor `prefers-reduced-motion` media query
+- ✅ **Feedback loops**: Confirm user actions with visual feedback
+
+```css
+/* ✅ Good: Smooth transitions with reduced motion support */
+.button {
+  transition: background-color 200ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Layout Mistakes
+- ❌ **Fixed widths**: Don't use fixed pixel widths for containers
+- ❌ **Inconsistent spacing**: Don't use random spacing values
+- ❌ **Overcrowding**: Don't pack too much content in limited space
+- ❌ **Horizontal scrolling**: Avoid horizontal scroll on mobile (except carousels)
+
+```html
+<!-- ❌ Bad: Fixed width container that breaks on small screens -->
+<div style="width: 1200px;">
+  Content
+</div>
+
+<!-- ✅ Good: Flexible container -->
+<div style="max-width: 1200px; width: 100%; padding: 0 1rem;">
+  Content
+</div>
+```
+
+### Typography Mistakes
+- ❌ **Too many fonts**: Don't use more than 2-3 font families
+- ❌ **Small text**: Don't use font sizes below 14px for body text
+- ❌ **Poor line height**: Don't use line heights below 1.4 for paragraphs
+- ❌ **All caps everywhere**: Don't overuse uppercase text (reduces readability)
+
+```css
+/* ❌ Bad: Too many fonts and inconsistent sizing */
+h1 { font-family: 'Font1'; font-size: 33px; }
+h2 { font-family: 'Font2'; font-size: 27px; }
+p { font-family: 'Font3'; font-size: 13px; line-height: 1.1; }
+
+/* ✅ Good: Consistent font system */
+:root { --font-primary: 'Inter', sans-serif; }
+h1 { font-family: var(--font-primary); font-size: 2rem; }
+h2 { font-family: var(--font-primary); font-size: 1.5rem; }
+p { font-family: var(--font-primary); font-size: 1rem; line-height: 1.6; }
+```
+
+### Color Mistakes
+- ❌ **Low contrast**: Don't use light gray text on white backgrounds
+- ❌ **Too many colors**: Don't create rainbow interfaces
+- ❌ **Color-only indicators**: Don't rely solely on color for information
+- ❌ **Bright backgrounds**: Avoid bright colored backgrounds with text
+
+```css
+/* ❌ Bad: Insufficient contrast (fails WCAG) */
+.text { color: #999999; background: #ffffff; } /* 2.8:1 ratio */
+
+/* ✅ Good: Sufficient contrast */
+.text { color: #666666; background: #ffffff; } /* 5.7:1 ratio */
+```
+
+### Interaction Mistakes
+- ❌ **Small tap targets**: Don't make buttons/links smaller than 44×44px
+- ❌ **No feedback**: Don't leave users wondering if their action worked
+- ❌ **Hidden interactions**: Don't rely on hover-only interactions on touch devices
+- ❌ **Auto-playing media**: Don't auto-play videos/audio without user consent
+
+```html
+<!-- ❌ Bad: Too small tap target for mobile -->
+<button style="padding: 4px 8px; font-size: 12px;">Click</button>
+
+<!-- ✅ Good: Touch-friendly button -->
+<button style="min-height: 44px; padding: 12px 24px;">Click</button>
+```
+
+### Form Mistakes
+- ❌ **Placeholder-only labels**: Don't use placeholders as labels
+- ❌ **Unclear errors**: Don't show generic "Error occurred" messages
+- ❌ **Reset buttons**: Don't include reset/clear buttons (high risk, low value)
+- ❌ **CAPTCHA overuse**: Don't use CAPTCHA unless absolutely necessary
+
+```html
+<!-- ❌ Bad: Placeholder as label (disappears when typing) -->
+<input type="text" placeholder="Enter your name">
+
+<!-- ✅ Good: Proper label with placeholder as hint -->
+<label for="name">Name</label>
+<input type="text" id="name" placeholder="e.g., John Smith">
+```
+
+### Performance Mistakes
+- ❌ **Unoptimized images**: Don't use full-resolution images without optimization
+- ❌ **Heavy animations**: Don't animate expensive properties (width, height)
+- ❌ **Blocking resources**: Don't block rendering with large JavaScript bundles
+- ❌ **No loading states**: Don't leave users with blank screens during loading
+
+## 📚 Related Detailed Rules
+
+For specific implementation cases, see:
+- [Responsive Design](responsive-design.mdc) - Mobile-first approach, breakpoints, flexible layouts, content prioritization
+- [Visual Hierarchy](visual-hierarchy.mdc) - Typography scale, spacing systems, color hierarchy, layout patterns
+- [Colors and Contrast](colors-contrast.mdc) - Color theory, contrast ratios, semantic colors, dark mode
+- [Typography](typography.mdc) - Font selection, type scale, line height, readability optimization
+- [Performance](performance.mdc) - Loading optimization, perceived performance, smooth animations
+- [Forms and Validation](forms-validation.mdc) - Form design, validation patterns, error handling, accessibility
+- [Navigation](navigation.mdc) - Navigation patterns, menu design, breadcrumbs, pagination
+- [Accessibility](accessibility.mdc) - WCAG guidelines, semantic HTML, ARIA attributes, keyboard navigation
+
+## 📝 Key Points
+
+### Must Have
+- Mobile-first responsive design
+- Sufficient color contrast (minimum 4.5:1 for text)
+- Consistent spacing system (4px or 8px grid)
+- Clear visual hierarchy
+- Accessible keyboard navigation
+- Fast loading and perceived performance
+
+### Do
+- Use semantic HTML elements
+- Implement consistent design patterns
+- Provide immediate feedback on interactions
+- Test on real devices and screen sizes
+- Follow WCAG **2.2 AA** guidelines minimum (2.1 AA baseline where needed)
+- Respect user preferences (reduced motion, color scheme)
+
+### Don't
+- Don't sacrifice accessibility for aesthetics
+- Don't ignore mobile users (mobile traffic is often the majority)
+- Don't use color alone to convey information
+- Don't create interactions that work only on desktop
+- Don't block users with unnecessary features (auto-play, popups)
+- Don't ignore performance impact of design decisions
+
+## 🔧 Testing Checklist
+
+Before launching, verify:
+- [ ] Works on mobile devices (iOS Safari, Android Chrome)
+- [ ] Keyboard navigation works throughout
+- [ ] Screen reader can access all content
+- [ ] Color contrast meets WCAG AA standards
+- [ ] Forms have clear labels and validation
+- [ ] Loading states are shown for async operations
+- [ ] Hover states also work for keyboard focus
+- [ ] Touch targets are at least 44×44px
+- [ ] Page loads in under 3 seconds on 3G
+- [ ] Animations respect `prefers-reduced-motion`
+
+---
+
+**Remember**: Good UX/UI is invisible - users should accomplish their goals effortlessly without noticing the interface. Prioritize usability over aesthetics, accessibility over novelty, and user needs over designer preferences.

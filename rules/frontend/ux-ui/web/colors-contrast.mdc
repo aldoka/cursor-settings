@@ -1,0 +1,734 @@
+---
+description: Comprehensive guide for color theory, contrast ratios, semantic colors, accessibility standards, and dark mode implementation
+alwaysApply: false
+---
+# Colors and Contrast
+
+> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into color and contrast specifics.
+
+## 📋 Overview
+
+Color is one of the most powerful tools in web design, affecting aesthetics, usability, accessibility, and user emotions. This guide covers color theory, WCAG contrast requirements, semantic color systems, and modern approaches including dark mode implementation.
+
+**Critical**: Insufficient color contrast is one of the most common accessibility issues, affecting millions of users with visual impairments and those viewing screens in bright environments.
+
+## 🎯 Core Color Principles
+
+### 1. Color Accessibility (WCAG Standards)
+- **Normal text**: Minimum 4.5:1 contrast ratio (WCAG AA)
+- **Large text** (18pt+/14pt+ bold): Minimum 3:1 contrast ratio
+- **UI components**: Minimum 3:1 contrast ratio
+- **AAA standard**: 7:1 for normal text, 4.5:1 for large text
+
+### 2. Color Psychology
+Colors convey meaning and emotion:
+- **Blue**: Trust, professionalism, calm (finance, healthcare)
+- **Green**: Growth, success, eco-friendly (environmental, finance)
+- **Red**: Urgency, danger, passion (errors, sales, food)
+- **Yellow/Orange**: Warning, energy, optimism (alerts, CTAs)
+- **Purple**: Luxury, creativity (premium brands)
+- **Gray**: Neutral, professional (backgrounds, text)
+
+### 3. Color Harmony
+- **Monochromatic**: Variations of single hue (safe, cohesive)
+- **Analogous**: Adjacent colors on wheel (harmonious)
+- **Complementary**: Opposite colors (high contrast, energetic)
+- **Triadic**: Three equidistant colors (balanced, vibrant)
+
+### 4. 60-30-10 Rule
+- **60%**: Dominant color (backgrounds, major areas)
+- **30%**: Secondary color (supporting elements)
+- **10%**: Accent color (CTAs, highlights)
+
+## ✅ DO (Recommended Practices)
+
+### WCAG Contrast Requirements
+
+#### Text Contrast Standards
+- ✅ **Meet minimum WCAG AA standards (4.5:1)**
+- ✅ **Aim for AAA when possible (7:1)**
+- ✅ **Test all text/background combinations**
+- ✅ **Consider context (mobile in sunlight)**
+
+```css
+/* ✅ Good: Sufficient contrast ratios */
+:root {
+  /* Text colors on white (#ffffff) background */
+  --color-text-primary: #111827;    /* 16.5:1 - AAA */
+  --color-text-secondary: #4b5563;  /* 8.6:1 - AAA */
+  --color-text-tertiary: #6b7280;   /* 5.7:1 - AA */
+  
+  /* Link colors */
+  --color-link: #0066cc;            /* 7.7:1 - AAA */
+  --color-link-hover: #0052a3;      /* 9.9:1 - AAA */
+  
+  /* Error text */
+  --color-error-text: #b91c1c;      /* 7.1:1 - AAA */
+  
+  /* Success text */
+  --color-success-text: #047857;    /* 6.4:1 - AAA */
+}
+
+/* Large text can use lighter colors */
+h1, h2 {
+  color: var(--color-text-primary);
+  /* Large text (24px+): can use 3:1 ratio */
+}
+
+/* Body text needs higher contrast */
+p, li, span {
+  color: var(--color-text-secondary);
+  /* Normal text: needs 4.5:1 minimum */
+}
+
+/* ✅ Good: Button with sufficient contrast */
+.button-primary {
+  background: #0066cc;    /* Primary blue */
+  color: #ffffff;         /* White text: 7.7:1 contrast */
+  border: 2px solid #0066cc;
+}
+
+.button-primary:hover {
+  background: #0052a3;    /* Darker blue */
+  color: #ffffff;         /* Still 9.9:1 contrast */
+}
+
+/* ✅ Good: Disabled state with reduced contrast but still readable */
+.button-primary:disabled {
+  background: #9ca3af;    /* Gray */
+  color: #ffffff;         /* 3.0:1 - acceptable for disabled */
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+```
+
+#### UI Component Contrast
+- ✅ **3:1 minimum for interactive elements**
+- ✅ **Clear focus indicators**
+- ✅ **Sufficient border contrast**
+
+```css
+/* ✅ Good: Input fields with sufficient contrast */
+input, select, textarea {
+  background: #ffffff;
+  color: #111827;               /* 16.5:1 text contrast */
+  border: 2px solid #d1d5db;    /* 1.6:1 border - visible but subtle */
+}
+
+input:focus {
+  border-color: #0066cc;        /* 3.4:1 - meets UI component requirement */
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* ✅ Good: Checkbox/radio with sufficient contrast */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #0066cc;        /* Modern CSS property */
+  width: 20px;
+  height: 20px;
+}
+
+/* ✅ Good: Custom checkbox with proper contrast */
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #6b7280;    /* 3.3:1 contrast */
+  border-radius: 4px;
+}
+
+.custom-checkbox:checked {
+  background: #0066cc;
+  border-color: #0066cc;
+}
+
+.custom-checkbox:checked::after {
+  content: "✓";
+  color: #ffffff;               /* 7.7:1 contrast with blue background */
+}
+```
+
+### Color System Design
+
+#### Semantic Color System
+- ✅ **Define colors by purpose, not appearance**
+- ✅ **Create shade scales (50-900)**
+- ✅ **Include state variations**
+- ✅ **Consider both light and dark modes**
+
+```css
+/* ✅ Good: Complete semantic color system */
+:root {
+  /* Primary brand color scale */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;   /* Base primary */
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  
+  /* Semantic state colors */
+  --color-success: #10b981;
+  --color-success-bg: #d1fae5;
+  --color-success-border: #6ee7b7;
+  
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  --color-warning-border: #fbbf24;
+  
+  --color-error: #ef4444;
+  --color-error-bg: #fee2e2;
+  --color-error-border: #fca5a5;
+  
+  --color-info: #3b82f6;
+  --color-info-bg: #dbeafe;
+  --color-info-border: #93c5fd;
+  
+  /* Neutral scale */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+}
+
+/* ✅ Good: Usage in components */
+.alert-success {
+  background: var(--color-success-bg);
+  border-left: 4px solid var(--color-success);
+  color: #065f46;               /* Dark green for text: 9.3:1 */
+  padding: 1rem;
+}
+
+.alert-error {
+  background: var(--color-error-bg);
+  border-left: 4px solid var(--color-error);
+  color: #991b1b;               /* Dark red for text: 8.3:1 */
+  padding: 1rem;
+}
+
+.alert-warning {
+  background: var(--color-warning-bg);
+  border-left: 4px solid var(--color-warning);
+  color: #92400e;               /* Dark amber for text: 7.8:1 */
+  padding: 1rem;
+}
+```
+
+#### Color Variations for States
+- ✅ **Hover: 10-20% darker/lighter**
+- ✅ **Active: 20-30% darker/lighter**
+- ✅ **Focus: Clear outline with accent color**
+- ✅ **Disabled: Reduced opacity or desaturated**
+
+```css
+/* ✅ Good: Complete button state system */
+.button {
+  background: var(--color-primary-600);
+  color: white;
+  transition: background-color 200ms ease;
+}
+
+.button:hover {
+  background: var(--color-primary-700);  /* One shade darker */
+}
+
+.button:active {
+  background: var(--color-primary-800);  /* Two shades darker */
+  transform: translateY(1px);
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--color-primary-300);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  background: var(--color-gray-300);
+  color: var(--color-gray-500);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+```
+
+### Accessible Color Combinations
+
+#### Pre-Tested Color Pairs
+- ✅ **Document approved combinations**
+- ✅ **Test with contrast tools**
+- ✅ **Provide alternative indicators**
+
+```css
+/* ✅ Good: Pre-approved accessible color combinations */
+:root {
+  /* Dark text on light backgrounds (Light theme) */
+  --text-on-white: #111827;        /* 16.5:1 */
+  --text-on-gray-50: #111827;      /* 15.8:1 */
+  --text-on-gray-100: #1f2937;     /* 12.6:1 */
+  
+  /* Light text on dark backgrounds (Dark theme) */
+  --text-on-gray-900: #f9fafb;     /* 16.1:1 */
+  --text-on-gray-800: #f3f4f6;     /* 12.4:1 */
+  --text-on-black: #ffffff;        /* 21:1 */
+  
+  /* Colored backgrounds with proper text */
+  --text-on-primary: #ffffff;      /* 7.7:1 on #0066cc */
+  --text-on-success: #ffffff;      /* 4.5:1 on #10b981 */
+  --text-on-error: #ffffff;        /* 4.5:1 on #ef4444 */
+  --text-on-warning: #78350f;      /* 7.2:1 on #fef3c7 bg */
+}
+
+/* ✅ Good: Badge system with accessible colors */
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badge-primary {
+  background: #0066cc;
+  color: #ffffff;                  /* 7.7:1 */
+}
+
+.badge-success {
+  background: #059669;
+  color: #ffffff;                  /* 4.9:1 */
+}
+
+.badge-error {
+  background: #dc2626;
+  color: #ffffff;                  /* 5.9:1 */
+}
+
+.badge-warning {
+  background: #fbbf24;
+  color: #78350f;                  /* 7.8:1 */
+}
+
+.badge-info {
+  background: #dbeafe;
+  color: #1e40af;                  /* 8.4:1 */
+}
+```
+
+### Dark Mode Implementation
+
+#### Proper Dark Mode Colors
+- ✅ **Don't just invert colors**
+- ✅ **Use dark grays, not pure black**
+- ✅ **Reduce saturation of bright colors**
+- ✅ **Maintain or improve contrast**
+
+```css
+/* ✅ Good: Proper dark mode color system */
+:root {
+  --background: #ffffff;
+  --surface: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+}
+
+/* Dark mode - not just inverted! */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Use dark gray, not pure black (reduces eye strain) */
+    --background: #0f172a;        /* Dark slate, not #000000 */
+    --surface: #1e293b;           /* Slightly lighter for elevation */
+    
+    /* Off-white text, not pure white */
+    --text-primary: #f1f5f9;      /* Softer than #ffffff */
+    --text-secondary: #94a3b8;    /* Still good contrast: 7.2:1 */
+    
+    /* Adjusted border for dark mode */
+    --border: #334155;            /* 2.3:1 contrast */
+    
+    /* Desaturate bright colors for dark mode */
+    --color-primary: #60a5fa;     /* Lighter blue, less saturated */
+    --color-success: #34d399;     /* Lighter green */
+    --color-error: #f87171;       /* Lighter red */
+    --color-warning: #fbbf24;     /* Slightly adjusted amber */
+  }
+}
+
+/* ✅ Good: Component adapts to dark mode */
+.card {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+/* ✅ Good: Shadows adjust for dark mode */
+.card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    /* Lighter shadows in dark mode */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}
+```
+
+#### Dark Mode Toggle
+- ✅ **Respect system preference by default**
+- ✅ **Allow user override**
+- ✅ **Store preference in localStorage**
+- ✅ **Apply before paint to avoid flash**
+
+```html
+<!-- ✅ Good: Dark mode implementation -->
+<script>
+  // Apply dark mode before page renders (prevent flash)
+  (function() {
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+
+<style>
+  /* Default (light mode) */
+  :root {
+    --bg: #ffffff;
+    --text: #111827;
+  }
+  
+  /* Dark mode */
+  .dark {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+  }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+</style>
+
+<!-- Theme toggle button -->
+<button id="theme-toggle" aria-label="Toggle dark mode">
+  <span class="light-icon">🌙</span>
+  <span class="dark-icon">☀️</span>
+</button>
+
+<script>
+  const toggleButton = document.getElementById('theme-toggle');
+  
+  toggleButton.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+```
+
+### Color Blindness Considerations
+
+#### Don't Rely on Color Alone
+- ✅ **Use icons + color**
+- ✅ **Use patterns/textures**
+- ✅ **Use text labels**
+- ✅ **Test with simulators**
+
+```html
+<!-- ✅ Good: Multiple indicators, not just color -->
+<div class="alert alert-error">
+  <svg class="icon" aria-hidden="true">
+    <use href="#icon-error"></use>
+  </svg>
+  <strong>Error:</strong>
+  <span>Your payment could not be processed.</span>
+</div>
+
+<div class="alert alert-success">
+  <svg class="icon" aria-hidden="true">
+    <use href="#icon-success"></use>
+  </svg>
+  <strong>Success:</strong>
+  <span>Your payment was processed successfully.</span>
+</div>
+
+<style>
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid;
+}
+
+.alert-error {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.alert-error .icon {
+  color: #ef4444;
+}
+
+.alert-success {
+  background: #d1fae5;
+  border-color: #10b981;
+  color: #065f46;
+}
+
+.alert-success .icon {
+  color: #10b981;
+}
+</style>
+
+<!-- ✅ Good: Chart with patterns and labels -->
+<svg class="chart">
+  <!-- Red-green color blind friendly -->
+  <rect fill="url(#pattern-stripe)" />  <!-- Not just color -->
+  <text>Category A: 45%</text>           <!-- Text label -->
+</svg>
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Contrast Mistakes
+- ❌ **Low contrast text**: Don't use light gray on white
+- ❌ **Ignoring WCAG**: Don't skip contrast testing
+- ❌ **Color-only links**: Don't remove underlines without alternative
+- ❌ **Insufficient UI contrast**: Don't use subtle borders/dividers
+
+```css
+/* ❌ Bad: Insufficient contrast */
+.text {
+  color: #cccccc;                /* Only 1.6:1 on white - fails WCAG */
+  background: #ffffff;
+}
+
+.link {
+  color: #3b82f6;
+  text-decoration: none;         /* Removed underline, nothing else */
+}
+
+.input {
+  border: 1px solid #f3f4f6;    /* 1.04:1 - nearly invisible */
+}
+
+/* ✅ Good: Proper contrast */
+.text {
+  color: #6b7280;                /* 5.7:1 - passes AA */
+  background: #ffffff;
+}
+
+.link {
+  color: #0066cc;                /* 7.7:1 */
+  text-decoration: underline;    /* Always underline links */
+}
+
+.link:hover {
+  text-decoration-thickness: 2px; /* Thicker on hover */
+}
+
+.input {
+  border: 2px solid #d1d5db;    /* 1.6:1 - visible */
+}
+
+.input:focus {
+  border-color: #0066cc;         /* 3.4:1 - clear focus */
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+```
+
+### Color System Mistakes
+- ❌ **Too many colors**: Don't create rainbow interfaces
+- ❌ **Inconsistent usage**: Don't use colors arbitrarily
+- ❌ **No semantic meaning**: Don't make red mean "success"
+- ❌ **Pure colors**: Don't use fully saturated colors everywhere
+
+```css
+/* ❌ Bad: Too many unrelated colors */
+:root {
+  --color-1: #ff0000;
+  --color-2: #00ff00;
+  --color-3: #0000ff;
+  --color-4: #ffff00;
+  --color-5: #ff00ff;
+  --color-6: #00ffff;
+  /* ... too many! */
+}
+
+/* ❌ Bad: Inconsistent semantic colors */
+.success-1 { color: green; }
+.success-2 { color: #10b981; }
+.success-3 { color: #22c55e; }    /* Pick ONE! */
+
+/* ✅ Good: Limited, semantic palette */
+:root {
+  --color-primary: #0066cc;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-gray-500: #6b7280;
+}
+```
+
+### Dark Mode Mistakes
+- ❌ **Pure black backgrounds**: Causes eye strain
+- ❌ **Pure white text**: Too harsh on dark backgrounds
+- ❌ **Just inverting colors**: Doesn't work properly
+- ❌ **Forgetting to test**: Dark mode needs separate testing
+
+```css
+/* ❌ Bad: Pure black and white (harsh, eye strain) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #000000;          /* Too harsh */
+    color: #ffffff;               /* Too bright */
+  }
+}
+
+/* ❌ Bad: Simply inverting all colors */
+@media (prefers-color-scheme: dark) {
+  * {
+    filter: invert(1);            /* Inverts everything, including images! */
+  }
+}
+
+/* ✅ Good: Thoughtful dark mode colors */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0f172a;          /* Dark slate, easier on eyes */
+    color: #f1f5f9;               /* Off-white, less harsh */
+  }
+  
+  img {
+    opacity: 0.9;                 /* Slightly dim bright images */
+  }
+}
+```
+
+### Accessibility Mistakes
+- ❌ **Color-only indicators**: Don't use only color for status
+- ❌ **Missing labels**: Don't rely on placeholder text
+- ❌ **Disabled contrast**: Don't make disabled elements invisible
+- ❌ **No focus indicators**: Don't remove focus outlines
+
+```html
+<!-- ❌ Bad: Color only, no text or icons -->
+<div style="color: red;">Important</div>
+<div style="color: green;">Not important</div>
+
+<!-- ✅ Good: Multiple indicators -->
+<div class="status status-error">
+  <svg aria-hidden="true"><use href="#icon-error"></use></svg>
+  <strong>Error:</strong> Important
+</div>
+
+<div class="status status-success">
+  <svg aria-hidden="true"><use href="#icon-success"></use></svg>
+  <strong>Success:</strong> Completed
+</div>
+```
+
+## 🔧 Color Testing Tools
+
+### Online Contrast Checkers
+```
+WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
+Coolors Contrast Checker: https://coolors.co/contrast-checker
+Adobe Color Accessibility: https://color.adobe.com/create/color-accessibility
+```
+
+### Browser DevTools
+```javascript
+// ✅ Chrome DevTools: Inspect element
+// - Shows contrast ratio in color picker
+// - Suggests AA/AAA compliant colors
+// - Simulates color blindness
+
+// ✅ Firefox DevTools: Accessibility Inspector
+// - Shows contrast issues
+// - Lists all contrast violations
+```
+
+### Color Blindness Simulators
+```
+Coblis: https://www.color-blindness.com/coblis-color-blindness-simulator/
+Chrome Extension: Colorblindly
+Firefox Extension: Let's get color blind
+```
+
+## 📝 Color Checklist
+
+Before launching, verify:
+- [ ] All text meets 4.5:1 contrast minimum (AA)
+- [ ] Large text meets 3:1 contrast minimum
+- [ ] UI components meet 3:1 contrast minimum
+- [ ] Links are distinguishable (underline or alternative)
+- [ ] Focus indicators are clearly visible
+- [ ] Status/errors don't rely on color alone
+- [ ] Dark mode maintains sufficient contrast
+- [ ] Tested with color blindness simulators
+- [ ] Color palette is limited (3-5 primary colors)
+- [ ] Semantic colors are consistently applied
+- [ ] Hover/focus states are clearly visible
+- [ ] Disabled states are distinguishable
+
+## 📊 Quick Reference: Contrast Ratios
+
+| Element Type | WCAG AA | WCAG AAA | Recommended |
+|--------------|---------|----------|-------------|
+| **Normal text** (<18pt) | 4.5:1 | 7:1 | 7:1+ |
+| **Large text** (≥18pt) | 3:1 | 4.5:1 | 4.5:1+ |
+| **UI components** | 3:1 | - | 3:1+ |
+| **Icons** | 3:1 | - | 3:1+ |
+| **Disabled elements** | - | - | 3:1 |
+| **Placeholder text** | - | - | 4.5:1 |
+
+## 📝 Key Points
+
+### Must Have
+- WCAG AA compliance (4.5:1 for text, 3:1 for UI)
+- Semantic color system with consistent usage
+- Color indicators + icons/text (not color alone)
+- Dark mode support with proper contrast
+- Limited color palette (3-5 primary colors)
+
+### Do
+- Test all color combinations with tools
+- Use pre-approved accessible color pairs
+- Create shade scales (50-900) for flexibility
+- Respect system color scheme preference
+- Provide visual feedback beyond color
+- Use dark grays in dark mode (not pure black)
+- Desaturate bright colors for dark mode
+- Document approved color combinations
+
+### Don't
+- Don't use color as the only indicator
+- Don't ignore WCAG contrast requirements
+- Don't use pure black/white in dark mode
+- Don't create too many color variations
+- Don't apply colors inconsistently
+- Don't forget to test with simulators
+- Don't remove link underlines without alternatives
+- Don't make disabled elements invisible
+
+---
+
+**Remember**: Color is powerful but never sufficient alone. Always provide multiple ways to perceive information—through contrast, icons, text, and patterns. Accessibility is not optional; it's a fundamental requirement for modern web design.

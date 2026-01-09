@@ -1,0 +1,802 @@
+---
+description: Comprehensive guide for creating effective visual hierarchy using typography, spacing, color, and layout patterns
+alwaysApply: false
+---
+# Visual Hierarchy
+
+> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into visual hierarchy specifics.
+
+## 📋 Overview
+
+Visual hierarchy is the arrangement and presentation of elements in order of importance, guiding users' attention through content naturally and efficiently. Effective visual hierarchy uses size, color, contrast, spacing, typography, and layout to create a clear path for the eye to follow.
+
+**Goal**: Help users understand what's most important, what to read first, and where to look next.
+
+## 🎯 Core Principles of Visual Hierarchy
+
+### 1. Size and Scale
+Larger elements naturally draw more attention:
+- Headlines > Subheadings > Body text
+- Primary buttons > Secondary buttons
+- Hero images > Supporting images
+
+### 2. Color and Contrast
+High contrast elements stand out:
+- Dark text on light backgrounds (or vice versa)
+- Accent colors for important elements
+- Muted colors for less important content
+
+### 3. Spacing and Proximity
+Related elements should be grouped together:
+- Items close together appear related
+- Generous whitespace creates separation
+- Consistent spacing creates visual rhythm
+
+### 4. Typography
+Font characteristics convey importance:
+- Weight (bold vs regular vs light)
+- Size (large vs small)
+- Style (italic, uppercase, decorative)
+- Font family (display vs text)
+
+### 5. Position and Layout
+Natural reading patterns:
+- Top-to-bottom: Users read from top first
+- Left-to-right: Western languages flow left to right
+- F-pattern: Users scan in F-shaped pattern
+- Z-pattern: Eye movement for less text-heavy pages
+
+## ✅ DO (Recommended Practices)
+
+### Typography Scale
+
+#### Modular Type Scale
+- ✅ **Use consistent scale ratios**: Common ratios: 1.2 (Minor Third), 1.25 (Major Third), 1.333 (Perfect Fourth), 1.5 (Perfect Fifth)
+- ✅ **Define complete type system**: Base size + scale up and down
+- ✅ **Maintain rhythm across breakpoints**
+- ✅ **Use CSS variables for maintainability**
+
+```css
+/* ✅ Good: Modular scale using 1.25 ratio (Major Third) */
+:root {
+  /* Base size */
+  --font-size-base: 1rem;        /* 16px */
+  
+  /* Scale down */
+  --font-size-sm: 0.8rem;        /* 12.8px - base ÷ 1.25 */
+  --font-size-xs: 0.64rem;       /* 10.24px - sm ÷ 1.25 */
+  
+  /* Scale up */
+  --font-size-lg: 1.25rem;       /* 20px - base × 1.25 */
+  --font-size-xl: 1.563rem;      /* 25px - lg × 1.25 */
+  --font-size-2xl: 1.953rem;     /* 31.25px - xl × 1.25 */
+  --font-size-3xl: 2.441rem;     /* 39px - 2xl × 1.25 */
+  --font-size-4xl: 3.052rem;     /* 48.8px - 3xl × 1.25 */
+  --font-size-5xl: 3.815rem;     /* 61px - 4xl × 1.25 */
+}
+
+/* Application */
+h1 { font-size: var(--font-size-5xl); }
+h2 { font-size: var(--font-size-4xl); }
+h3 { font-size: var(--font-size-3xl); }
+h4 { font-size: var(--font-size-2xl); }
+h5 { font-size: var(--font-size-xl); }
+h6 { font-size: var(--font-size-lg); }
+p  { font-size: var(--font-size-base); }
+small { font-size: var(--font-size-sm); }
+```
+
+#### Font Weight Hierarchy
+- ✅ **Use 2-4 weights maximum**
+- ✅ **Assign weights by importance**
+- ✅ **Ensure sufficient weight contrast**
+
+```css
+/* ✅ Good: Clear weight hierarchy */
+:root {
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+/* Primary headings */
+h1, h2 {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Secondary headings */
+h3, h4 {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Body text */
+body {
+  font-weight: var(--font-weight-regular);
+}
+
+/* Supporting text */
+.text-muted {
+  font-weight: var(--font-weight-regular);
+  opacity: 0.7;
+}
+
+/* Emphasized text */
+strong, b {
+  font-weight: var(--font-weight-semibold);
+}
+```
+
+#### Line Height and Spacing
+- ✅ **Match line height to font size**
+- ✅ **Looser for body text (1.5-1.75)**
+- ✅ **Tighter for headings (1.1-1.3)**
+- ✅ **Consider font characteristics**
+
+```css
+/* ✅ Good: Line height scales with purpose */
+:root {
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+}
+
+/* Headings: Tighter line height */
+h1, h2, h3 {
+  line-height: var(--line-height-tight);
+  margin-bottom: 0.5em;
+}
+
+/* Body text: Comfortable reading */
+p, li {
+  line-height: var(--line-height-normal);
+  margin-bottom: 1em;
+}
+
+/* Long-form content: More relaxed */
+.prose {
+  line-height: var(--line-height-relaxed);
+}
+
+/* Optimal line length */
+.readable-content {
+  max-width: 65ch; /* 50-75 characters optimal */
+}
+```
+
+### Spacing System
+
+#### Consistent Spacing Scale
+- ✅ **Use base unit system (4px or 8px)**
+- ✅ **Create predictable spacing rhythm**
+- ✅ **Apply consistently across components**
+- ✅ **Define semantic spacing variables**
+
+```css
+/* ✅ Good: 4px-based spacing system */
+:root {
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-5: 1.25rem;   /* 20px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+  --spacing-20: 5rem;     /* 80px */
+  --spacing-24: 6rem;     /* 96px */
+  --spacing-32: 8rem;     /* 128px */
+}
+
+/* Application: Component spacing */
+.card {
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.section {
+  padding-top: var(--spacing-16);
+  padding-bottom: var(--spacing-16);
+}
+
+.button {
+  padding: var(--spacing-3) var(--spacing-6);
+  margin-right: var(--spacing-2);
+}
+```
+
+#### Semantic Spacing
+- ✅ **Define purpose-based spacing**
+- ✅ **Consistent patterns for similar contexts**
+- ✅ **Vertical rhythm for text flow**
+
+```css
+/* ✅ Good: Semantic spacing variables */
+:root {
+  /* Component spacing */
+  --space-component-xs: var(--spacing-2);
+  --space-component-sm: var(--spacing-4);
+  --space-component-md: var(--spacing-6);
+  --space-component-lg: var(--spacing-8);
+  
+  /* Section spacing */
+  --space-section-sm: var(--spacing-12);
+  --space-section-md: var(--spacing-16);
+  --space-section-lg: var(--spacing-24);
+  
+  /* Content spacing */
+  --space-content-xs: var(--spacing-2);
+  --space-content-sm: var(--spacing-4);
+  --space-content-md: var(--spacing-6);
+}
+
+/* Vertical rhythm for typography */
+h1 { margin-bottom: var(--space-content-md); }
+h2 { margin-bottom: var(--space-content-sm); }
+h3 { margin-bottom: var(--space-content-sm); }
+p { margin-bottom: var(--space-content-md); }
+ul, ol { margin-bottom: var(--space-content-md); }
+li { margin-bottom: var(--space-content-xs); }
+```
+
+#### Whitespace for Emphasis
+- ✅ **Use generous whitespace around important elements**
+- ✅ **Isolate primary actions with space**
+- ✅ **Create breathing room in dense interfaces**
+
+```html
+<!-- ✅ Good: Whitespace creates focus on CTA -->
+<div class="hero" style="
+  padding: 4rem 1rem;
+  text-align: center;">
+  
+  <h1 style="margin-bottom: 1rem;">
+    Welcome to Our Platform
+  </h1>
+  
+  <p style="
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    font-size: 1.25rem;">
+    Start your journey today
+  </p>
+  
+  <!-- Generous space around primary action -->
+  <button style="
+    padding: 1rem 3rem;
+    font-size: 1.125rem;
+    margin-top: 2rem;">
+    Get Started
+  </button>
+</div>
+```
+
+### Color Hierarchy
+
+#### Color System for Importance
+- ✅ **Reserve bright/saturated colors for important elements**
+- ✅ **Use neutral colors for secondary content**
+- ✅ **Create clear color roles (primary, secondary, accent)**
+- ✅ **Maintain sufficient contrast ratios**
+
+```css
+/* ✅ Good: Color hierarchy system */
+:root {
+  /* Primary - Most important actions */
+  --color-primary: #0066cc;
+  --color-primary-dark: #0052a3;
+  --color-primary-light: #3385d6;
+  
+  /* Secondary - Supporting actions */
+  --color-secondary: #6b7280;
+  --color-secondary-dark: #4b5563;
+  --color-secondary-light: #9ca3af;
+  
+  /* Accent - Call attention */
+  --color-accent: #f59e0b;
+  
+  /* Text hierarchy */
+  --color-text-primary: #111827;     /* Highest importance */
+  --color-text-secondary: #6b7280;   /* Medium importance */
+  --color-text-tertiary: #9ca3af;    /* Lowest importance */
+  
+  /* Background hierarchy */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-tertiary: #f3f4f6;
+}
+
+/* Application */
+.heading {
+  color: var(--color-text-primary);
+}
+
+.body-text {
+  color: var(--color-text-secondary);
+}
+
+.meta-info {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--color-secondary);
+  color: white;
+}
+```
+
+#### Contrast for Emphasis
+- ✅ **High contrast for important elements**
+- ✅ **Lower contrast for supporting content**
+- ✅ **Test contrast ratios (WCAG AA: 4.5:1)**
+
+```css
+/* ✅ Good: Contrast hierarchy */
+.featured-card {
+  background: var(--color-primary);
+  color: white;
+  /* High contrast: 14.5:1 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.standard-card {
+  background: white;
+  color: var(--color-text-primary);
+  /* Good contrast: 16.5:1 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtle-card {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  /* Lower contrast, less prominent: 5.7:1 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+```
+
+### Layout Patterns
+
+#### F-Pattern Layout
+Best for text-heavy content:
+- ✅ **Important content in top-left**
+- ✅ **Horizontal scanning areas**
+- ✅ **Key information at line starts**
+
+```html
+<!-- ✅ Good: F-pattern for blog/article -->
+<article class="f-pattern-layout">
+  <!-- Top horizontal bar (header) -->
+  <header>
+    <h1>Article Title Goes Here</h1>
+    <p class="meta">By Author Name • 5 min read</p>
+  </header>
+  
+  <!-- Second horizontal bar (intro) -->
+  <div class="intro">
+    <p class="lead">Important introductory paragraph that draws attention...</p>
+  </div>
+  
+  <!-- Vertical stem (left-aligned content) -->
+  <div class="content">
+    <h2>First Section</h2>
+    <p>Content starting at left edge...</p>
+    
+    <h2>Second Section</h2>
+    <p>More content at left edge...</p>
+  </div>
+</article>
+
+<style>
+.f-pattern-layout {
+  max-width: 65ch;
+  margin: 0 auto;
+}
+
+.f-pattern-layout h1,
+.f-pattern-layout h2 {
+  /* Emphasized left alignment */
+  margin-left: 0;
+  font-weight: var(--font-weight-bold);
+}
+
+.f-pattern-layout .lead {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-8);
+}
+</style>
+```
+
+#### Z-Pattern Layout
+Best for simple pages with clear call-to-action:
+- ✅ **Logo/brand top-left**
+- ✅ **Navigation/CTA top-right**
+- ✅ **Secondary content diagonal**
+- ✅ **Final CTA bottom-right**
+
+```html
+<!-- ✅ Good: Z-pattern for landing page -->
+<div class="z-pattern-layout">
+  <!-- Top-left to top-right -->
+  <header class="header">
+    <div class="logo">Brand</div>
+    <nav class="nav">
+      <button class="btn-primary">Sign Up</button>
+    </nav>
+  </header>
+  
+  <!-- Diagonal: Hero content -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Big Bold Headline</h1>
+      <p>Supporting text...</p>
+    </div>
+    <div class="hero-image">
+      <img src="hero.jpg" alt="Hero">
+    </div>
+  </section>
+  
+  <!-- Bottom: Final CTA -->
+  <footer class="footer">
+    <button class="btn-large">Get Started Now</button>
+  </footer>
+</div>
+
+<style>
+.z-pattern-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-6);
+}
+
+.hero {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12);
+}
+
+.footer {
+  text-align: center;
+  padding: var(--spacing-8);
+}
+</style>
+```
+
+#### Card-Based Hierarchy
+- ✅ **Elevation for importance**
+- ✅ **Size differences**
+- ✅ **Color/border variations**
+
+```css
+/* ✅ Good: Card hierarchy through elevation and size */
+.card-featured {
+  /* Highest importance */
+  padding: var(--spacing-8);
+  background: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  transform: translateY(-8px);
+}
+
+.card-primary {
+  /* Medium importance */
+  padding: var(--spacing-6);
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.card-secondary {
+  /* Lower importance */
+  padding: var(--spacing-4);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+```
+
+### Visual Weight
+
+#### Combining Techniques
+- ✅ **Layer multiple hierarchy techniques**
+- ✅ **Size + Color + Position**
+- ✅ **Create clear levels of importance**
+
+```html
+<!-- ✅ Good: Multiple hierarchy techniques combined -->
+<div class="pricing-section">
+  <!-- Secondary plan (smaller, less prominent) -->
+  <div class="pricing-card pricing-card--secondary">
+    <h3 class="pricing-title">Basic</h3>
+    <div class="pricing-price">$9</div>
+    <ul class="pricing-features">
+      <li>Feature 1</li>
+      <li>Feature 2</li>
+    </ul>
+    <button class="btn-secondary">Choose Plan</button>
+  </div>
+  
+  <!-- Featured plan (larger, highlighted, elevated) -->
+  <div class="pricing-card pricing-card--featured">
+    <span class="pricing-badge">Most Popular</span>
+    <h3 class="pricing-title">Pro</h3>
+    <div class="pricing-price">$29</div>
+    <ul class="pricing-features">
+      <li>All Basic features</li>
+      <li>Feature 3</li>
+      <li>Feature 4</li>
+      <li>Feature 5</li>
+    </ul>
+    <button class="btn-primary btn-large">Choose Plan</button>
+  </div>
+  
+  <!-- Secondary plan -->
+  <div class="pricing-card pricing-card--secondary">
+    <h3 class="pricing-title">Enterprise</h3>
+    <div class="pricing-price">$99</div>
+    <ul class="pricing-features">
+      <li>All Pro features</li>
+      <li>Feature 6</li>
+    </ul>
+    <button class="btn-secondary">Choose Plan</button>
+  </div>
+</div>
+
+<style>
+.pricing-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+  align-items: center;
+}
+
+.pricing-card {
+  padding: var(--spacing-8);
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.pricing-card--secondary {
+  /* Smaller, less prominent */
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  opacity: 0.9;
+}
+
+.pricing-card--featured {
+  /* Larger, more prominent, highlighted */
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(0, 102, 204, 0.15);
+  border: 2px solid var(--color-primary);
+  position: relative;
+}
+
+.pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-accent);
+  color: white;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: 999px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.pricing-price {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin: var(--spacing-4) 0;
+}
+
+.pricing-card--featured .pricing-price {
+  font-size: var(--font-size-5xl);
+  color: var(--color-accent);
+}
+</style>
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Typography Mistakes
+- ❌ **Random font sizes**: Don't use arbitrary sizes without scale
+- ❌ **Too many sizes**: Don't use more than 7-8 sizes
+- ❌ **Inconsistent weights**: Don't mix too many font weights
+- ❌ **Poor readability**: Don't sacrifice readability for style
+
+```css
+/* ❌ Bad: Random sizes, no system */
+h1 { font-size: 37px; }
+h2 { font-size: 29px; }
+h3 { font-size: 22px; }
+p { font-size: 15px; }
+small { font-size: 11px; }
+
+/* ✅ Good: Consistent scale (1.25 ratio) */
+h1 { font-size: 3.052rem; }
+h2 { font-size: 2.441rem; }
+h3 { font-size: 1.953rem; }
+p { font-size: 1rem; }
+small { font-size: 0.8rem; }
+```
+
+### Spacing Mistakes
+- ❌ **Random spacing**: Don't use arbitrary margin/padding values
+- ❌ **Inconsistent spacing**: Don't mix spacing systems
+- ❌ **No whitespace**: Don't pack elements too tightly
+- ❌ **Too much spacing**: Don't separate related elements
+
+```css
+/* ❌ Bad: Random spacing values */
+.card { padding: 17px; margin-bottom: 23px; }
+.button { padding: 9px 21px; }
+.section { margin-top: 47px; }
+
+/* ✅ Good: Consistent 4px-based system */
+.card { padding: var(--spacing-4); margin-bottom: var(--spacing-6); }
+.button { padding: var(--spacing-2) var(--spacing-5); }
+.section { margin-top: var(--spacing-12); }
+```
+
+### Color Mistakes
+- ❌ **Too many colors**: Don't create rainbow interfaces
+- ❌ **No hierarchy**: Don't use same color weight everywhere
+- ❌ **Poor contrast**: Don't use similar shades for text and background
+- ❌ **Color-only hierarchy**: Don't rely solely on color differences
+
+```css
+/* ❌ Bad: Everything equally prominent */
+h1, h2, h3, p, small {
+  color: #000000;
+  font-weight: 400;
+}
+
+/* ✅ Good: Clear color hierarchy */
+h1 { color: var(--color-text-primary); font-weight: 700; }
+h2 { color: var(--color-text-primary); font-weight: 600; }
+p { color: var(--color-text-secondary); font-weight: 400; }
+small { color: var(--color-text-tertiary); font-weight: 400; }
+```
+
+### Layout Mistakes
+- ❌ **Flat hierarchy**: Don't make everything same size/weight
+- ❌ **Too many focal points**: Don't emphasize everything
+- ❌ **Ignoring reading patterns**: Don't fight natural eye movement
+- ❌ **No grouping**: Don't separate related elements
+
+```html
+<!-- ❌ Bad: Everything equally prominent, no grouping -->
+<div>
+  <h2>Title</h2>
+  <p>Content</p>
+  <button>Action 1</button>
+  <button>Action 2</button>
+  <button>Action 3</button>
+  <p>More content</p>
+</div>
+
+<!-- ✅ Good: Clear hierarchy and grouping -->
+<div class="card">
+  <h2 class="card-title">Title</h2>
+  <p class="card-content">Content</p>
+  
+  <div class="card-actions">
+    <button class="btn-primary">Primary Action</button>
+    <button class="btn-secondary">Secondary</button>
+    <button class="btn-tertiary">Tertiary</button>
+  </div>
+  
+  <p class="card-footer">More content</p>
+</div>
+```
+
+### Emphasis Mistakes
+- ❌ **Everything bold**: Don't bold everything important
+- ❌ **All uppercase**: Don't overuse uppercase text
+- ❌ **Too many highlights**: Don't highlight too many elements
+- ❌ **Competing elements**: Don't create multiple primary CTAs
+
+```html
+<!-- ❌ Bad: Too much emphasis everywhere -->
+<div>
+  <h1><strong>IMPORTANT TITLE!!!</strong></h1>
+  <p><strong>IMPORTANT</strong> information here!</p>
+  <button class="btn-primary">Click Here!</button>
+  <button class="btn-primary">Or Here!</button>
+  <button class="btn-primary">Or Maybe Here!</button>
+</div>
+
+<!-- ✅ Good: Single clear focal point -->
+<div>
+  <h1>Clear Title</h1>
+  <p>Important information here with <strong>selective emphasis</strong>.</p>
+  <button class="btn-primary">Primary Action</button>
+  <button class="btn-secondary">Alternative</button>
+</div>
+```
+
+## 📝 Visual Hierarchy Checklist
+
+Before launching, verify:
+- [ ] Clear primary focal point on each page
+- [ ] Consistent type scale across entire site
+- [ ] Spacing follows consistent system (4px or 8px base)
+- [ ] Color hierarchy: primary > secondary > tertiary
+- [ ] Important actions visually prominent
+- [ ] Related elements grouped together
+- [ ] Adequate whitespace around key elements
+- [ ] Headings form clear outline structure
+- [ ] Text contrast meets WCAG standards (4.5:1 minimum)
+- [ ] Visual weight matches content importance
+- [ ] No competing elements for attention
+- [ ] Natural reading flow (F or Z pattern)
+
+## 📊 Quick Reference: Hierarchy Techniques
+
+| Technique | High Importance | Medium Importance | Low Importance |
+|-----------|----------------|-------------------|----------------|
+| **Size** | Large (2-4rem) | Medium (1.25-1.75rem) | Small (0.875-1rem) |
+| **Weight** | Bold (700) | Semi-bold (600) | Regular (400) |
+| **Color** | High contrast (16:1) | Medium contrast (7:1) | Low contrast (4.5:1) |
+| **Spacing** | Generous whitespace | Moderate spacing | Compact |
+| **Position** | Top-left, above fold | Middle areas | Bottom, below fold |
+| **Elevation** | High shadow | Medium shadow | No/subtle shadow |
+
+## 📝 Key Points
+
+### Must Have
+- Consistent modular type scale (1.2 or 1.25 ratio)
+- Systematic spacing (4px or 8px base unit)
+- Clear color hierarchy (3-4 levels maximum)
+- Single primary focal point per page
+- Proper grouping of related elements
+
+### Do
+- Use size to indicate importance
+- Create clear levels of visual prominence
+- Group related items with proximity
+- Maintain generous whitespace
+- Follow natural reading patterns (F/Z)
+- Combine multiple hierarchy techniques
+- Test with actual content
+- Limit focal points (1 primary per section)
+
+### Don't
+- Don't use random font sizes
+- Don't apply equal emphasis everywhere
+- Don't separate related elements
+- Don't create competing focal points
+- Don't rely on color alone for hierarchy
+- Don't ignore reading patterns
+- Don't overcrowd interfaces
+- Don't bold/uppercase everything
+
+---
+
+**Remember**: Effective visual hierarchy is invisible—users shouldn't consciously notice it, but it should guide them effortlessly through content. When everything is emphasized, nothing is emphasized.
