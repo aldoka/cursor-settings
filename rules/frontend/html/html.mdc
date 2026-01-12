@@ -111,6 +111,7 @@ For advanced topics, see related rules:
 - ✅ **Input types**: Use appropriate input types (email, tel, url, date, etc.)
 - ✅ **Data attributes**: Use data-* attributes for custom data
 - ✅ **Essential meta tags**: Include charset, viewport, and title
+- ✅ **Semantic CSS classes**: Create meaningful class names for repeatable style combinations instead of multiple utility classes
 
 **Example:**
 ```html
@@ -136,13 +137,21 @@ For advanced topics, see related rules:
 </form>
 
 <!-- ✅ Correct: Data attributes for custom data -->
-<div 
-  data-user-id="12345" 
-  data-role="admin" 
+<div
+  data-user-id="12345"
+  data-role="admin"
   data-toggle="modal"
 >
   User content
 </div>
+
+<!-- ✅ Correct: Semantic CSS classes -->
+<button class="secondary-button">Cancel</button>
+<button class="primary-button">Submit</button>
+
+<!-- ❌ Incorrect: Multiple utility classes -->
+<button class="green large hover-effect rounded padding-medium">Cancel</button>
+<button class="blue large hover-effect rounded padding-medium">Submit</button>
 ```
 
 ### 4. Basic Performance
@@ -393,6 +402,7 @@ For advanced topics, see related rules:
 - ✅ Add skip links for keyboard navigation
 - ✅ Use HTML5 form validation attributes
 - ✅ Always specify image dimensions (width/height)
+- ✅ Create semantic CSS classes for repeatable style combinations instead of multiple utility classes
 
 ### Don't
 - ❌ Don't create div soup - use semantic elements
