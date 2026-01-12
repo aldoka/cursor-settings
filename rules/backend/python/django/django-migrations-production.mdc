@@ -1,0 +1,368 @@
+---
+description: Django Production Migration Strategies - Zero-Downtime Deployments, Concurrent Operations
+globs: **/migrations/*.py
+alwaysApply: false
+---
+# Django Production Migration Strategies
+
+> **Reference**: This guide extends the [Django Migration Standards](django-migrations.mdc). Make sure you're familiar with the common migration structure before using production strategies.
+
+## 📋 Overview
+
+Production migrations require special care to ensure zero-downtime deployments, handle large tables efficiently, and maintain data integrity. This guide covers two-phase deployments, concurrent operations, and production testing strategies.
+
+> **Django Version**: This guide follows Django 6.x best practices and migration patterns.
+
+## ✅ Two-Phase Deployment for Adding Columns
+
+For production deployments, use a two-phase approach to ensure zero-downtime:
+
+```python
+# ✅ Phase 1: Add nullable column (compatible with old code)
+# File: 0002_add_new_email_field.py
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    """
+    Phase 1: Add new_email field as nullable.
+    
+    This allows deployment without breaking existing code.
+    Old code continues to work, new code can use new_email.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='user',
+            name='new_email',
+            field=models.EmailField(
+                max_length=255, 
+                null=True, 
+                blank=True,
+                db_index=True,  # Add index for queries
+            ),
+        ),
+    ]
+
+# ✅ Phase 2: After code deployment, make it required
+# File: 0003_migrate_to_new_email.py
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    """
+    Phase 2: Make new_email required and remove old_email.
+    
+    Only run after all code is deployed and using new_email.
+    Ensure all users have new_email populated before this migration.
+    """
+    dependencies = [
+        ('myapp', '0002_add_new_email_field'),
+    ]
+
+    operations = [
+        # First, ensure all records have new_email (data migration should run before this)
+        migrations.AlterField(
+            model_name='user',
+            name='new_email',
+            field=models.EmailField(
+                max_length=255,
+                unique=True,  # Add unique constraint
+            ),
+        ),
+        # Remove old field only after new field is stable and code is deployed
+        migrations.RemoveField(
+            model_name='user',
+            name='old_email',
+        ),
+    ]
+```
+
+## ✅ Two-Phase Deployment for Removing Columns
+
+Use two-phase deployment for destructive changes to prevent downtime:
+
+```python
+# ❌ BAD: Drop column immediately (causes downtime)
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    ❌ DANGEROUS: Removing field immediately.
+    
+    If old code is still running, this will cause:
+    - Database errors when old code tries to access the field
+    - Application crashes
+    - Data loss if field had important data
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.RemoveField(
+            model_name='user',
+            name='old_field',  # ❌ Breaks if old code still references it
+        ),
+    ]
+
+# ✅ GOOD: Two-phase deployment (zero-downtime)
+# Phase 1: Deploy code that doesn't use old_field
+# File: 0002_remove_old_field_usage.py (code changes, no migration)
+
+# Phase 2: Remove field after code is fully deployed
+# File: 0003_remove_old_field.py
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    ✅ SAFE: Remove old_field after code deployment.
+    
+    Only run this after:
+    1. All code has been deployed that doesn't use old_field
+    2. All instances are running new code
+    3. Monitoring confirms no errors
+    """
+    dependencies = [
+        ('myapp', '0002_remove_old_field_usage'),  # Code deployment migration
+    ]
+    
+    operations = [
+        migrations.RemoveField(
+            model_name='user',
+            name='old_field',  # ✅ Safe to remove now
+        ),
+    ]
+```
+
+## ✅ Concurrent Index Creation
+
+For large tables, use concurrent index creation to avoid locking:
+
+```python
+# ❌ BAD: Blocking index on large table (locks table)
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    """
+    ❌ DANGEROUS: Creates blocking index.
+    
+    On large tables, this will:
+    - Lock the table during index creation
+    - Block all writes
+    - Cause downtime in production
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.AddIndex(
+            model_name='user',
+            index=models.Index(
+                fields=['email'], 
+                name='users_email_idx'
+            ),
+        ),
+    ]
+
+# ✅ GOOD: Concurrent index (PostgreSQL) - no locking
+from django.db import migrations, models
+from django.contrib.postgres.operations import AddIndexConcurrently
+
+class Migration(migrations.Migration):
+    """
+    ✅ SAFE: Creates index concurrently without locking.
+    
+    Requirements:
+    - PostgreSQL only
+    - atomic = False (migration cannot be in transaction)
+    - Index must not be unique or primary key
+    """
+    atomic = False  # Required for concurrent operations
+    
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        AddIndexConcurrently(
+            model_name='user',
+            index=models.Index(
+                fields=['email'], 
+                name='users_email_idx'
+            ),
+        ),
+    ]
+```
+
+## ✅ Transaction Safety
+
+Understand when migrations run in transactions:
+
+```python
+# ❌ BAD: Assuming all operations are transactional
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    ❌ Problem: Some operations can't run in transactions.
+    
+    If atomic=True (default), operations like:
+    - AddIndexConcurrently
+    - RunSQL with certain statements
+    Will fail.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.AddIndex(...),  # OK in transaction
+        # Some operation that requires atomic=False
+    ]
+
+# ✅ GOOD: Set atomic=False when needed
+from django.db import migrations
+from django.contrib.postgres.operations import AddIndexConcurrently
+
+class Migration(migrations.Migration):
+    """
+    ✅ Correct: atomic=False for concurrent operations.
+    
+    Note: When atomic=False, if migration fails partway,
+    you may need manual cleanup.
+    """
+    atomic = False  # Required for concurrent operations
+    
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        AddIndexConcurrently(...),  # Requires atomic=False
+    ]
+```
+
+## ✅ Testing Migrations for Production
+
+Always test both forward and backward migrations in isolated environments:
+
+```bash
+# ✅ Test forward migration
+python manage.py migrate
+
+# ✅ Test backward migration (rollback to specific migration)
+python manage.py migrate myapp 0001
+
+# ✅ Test forward again (ensure re-applying works)
+python manage.py migrate
+
+# ✅ Check migration status and plan
+python manage.py showmigrations
+python manage.py showmigrations --plan  # Show migration plan
+
+# ✅ Test with fresh database (catches missing dependencies)
+python manage.py migrate --run-syncdb
+
+# ✅ Test in isolated environment
+python manage.py test --keepdb  # Reuse test DB for faster tests
+python manage.py test myapp.tests.test_migrations  # Run migration tests
+
+# ✅ Validate migration files (Django 3.2+)
+python manage.py makemigrations --check --dry-run
+```
+
+### Testing Migration Script
+
+Create dedicated tests for migrations:
+
+```python
+# tests/test_migrations.py
+from django.test import TestCase
+from django.db import connection
+from django.core.management import call_command
+from io import StringIO
+
+class MigrationTestCase(TestCase):
+    """Test that migrations can be applied and reversed."""
+    
+    def test_migration_forwards_and_backwards(self):
+        """Test migration can be applied and rolled back."""
+        # Apply migration
+        call_command('migrate', 'myapp', '0002', verbosity=0)
+        
+        # Verify schema change
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='myapp_user' AND column_name='new_field'
+            """)
+            self.assertTrue(cursor.fetchone())
+        
+        # Rollback migration
+        call_command('migrate', 'myapp', '0001', verbosity=0)
+        
+        # Verify rollback
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='myapp_user' AND column_name='new_field'
+            """)
+            self.assertIsNone(cursor.fetchone())
+```
+
+## ✅ Squashing Migrations
+
+Consolidate multiple migrations to improve performance:
+
+```bash
+# ✅ Squash migrations (basic)
+python manage.py squashmigrations myapp 0001 0010
+
+# ✅ Nested squashing (Django 6.0+)
+# You can now squash already-squashed migrations before replacing them
+# This is useful when you have many migrations and want to consolidate further
+python manage.py squashmigrations myapp 0001_squashed_0010 0020
+```
+
+**Squashing Best Practices (Django 6.x):**
+1. Squash migrations periodically to reduce migration count
+2. In Django 6.0+, you can squash squashed migrations (nested squashing)
+3. Always commit both old and new migrations
+4. Deploy squashed migration and ensure all instances apply it
+5. Only remove old migrations after all instances have applied the squashed version
+6. Use nested squashing to further consolidate before replacing old migrations
+
+## 📝 Key Points
+
+### Must Have
+
+- **Two-phase deployment**: Always use two-phase approach for destructive changes
+- **Concurrent operations**: Use concurrent index creation for large tables (PostgreSQL)
+- **Transaction awareness**: Set `atomic=False` when using concurrent operations
+- **Testing**: Test both forward and backward migrations before production deployment
+
+### Do
+
+- **Add nullable first**: Add nullable fields, then populate, then make required
+- **Remove after code deploy**: Remove fields only after code is fully deployed
+- **Use concurrent indexes**: Use `AddIndexConcurrently` for large tables
+- **Test thoroughly**: Test migrations in isolated environments with production-like data
+- **Monitor deployments**: Monitor application after migration deployment
+- **Squash migrations**: Periodically squash migrations to improve performance
+
+### Don't
+
+- **Don't drop columns immediately**: Use two-phase deployment - remove after code is deployed
+- **Don't create blocking indexes**: Use concurrent index creation for large tables
+- **Don't ignore transactions**: Understand when to use `atomic=False`
+- **Don't skip testing**: Always test both forward and backward migrations
+- **Don't deploy without rollback plan**: Always have a rollback strategy
+
+---
+
+**Remember**: Production migrations require careful planning and testing. Always prioritize zero-downtime deployments and have a rollback plan ready.

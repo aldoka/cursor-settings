@@ -1,0 +1,421 @@
+---
+description: Django Advanced Migration Patterns - Raw SQL, Foreign Keys, ManyToMany, Unique Constraints, Renaming
+globs: **/migrations/*.py
+alwaysApply: false
+---
+# Django Advanced Migration Patterns
+
+> **Reference**: This guide extends the [Django Migration Standards](django-migrations.mdc). Make sure you're familiar with the common migration structure before using advanced patterns.
+
+## 📋 Overview
+
+This guide covers advanced migration patterns for complex database operations including Raw SQL, Foreign Keys, ManyToMany relationships, Unique Constraints, and Renaming operations.
+
+> **Django Version**: This guide follows Django 6.x best practices and migration patterns.
+
+## ✅ Using Raw SQL When Needed
+
+Use `RunSQL` for complex operations that are difficult with ORM:
+
+```python
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    Use raw SQL for complex database operations.
+    
+    Useful for:
+    - Complex WHERE clauses
+    - Database-specific functions
+    - Performance-critical operations
+    - Operations not easily expressible in ORM
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.RunSQL(
+            # Forward SQL
+            sql="""
+                UPDATE myapp_user 
+                SET status = 'active' 
+                WHERE status IS NULL 
+                  AND created_at > NOW() - INTERVAL '30 days';
+            """,
+            # Reverse SQL (for rollback)
+            reverse_sql="""
+                UPDATE myapp_user 
+                SET status = NULL 
+                WHERE status = 'active' 
+                  AND created_at > NOW() - INTERVAL '30 days';
+            """,
+            # Optional: state_operations for schema state
+            state_operations=[
+                migrations.AlterField(
+                    model_name='user',
+                    name='status',
+                    field=models.CharField(
+                        max_length=20,
+                        default='active',
+                    ),
+                ),
+            ],
+        ),
+    ]
+```
+
+## ✅ Working with Foreign Keys
+
+Handle foreign key relationships carefully:
+
+```python
+from django.db import migrations, models
+import django.db.models.deletion
+
+class Migration(migrations.Migration):
+    """
+    Add foreign key relationship.
+    
+    Django automatically creates the constraint, but you may need
+    to handle existing data that violates the constraint.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+        ('auth', '0012_alter_user_first_name_max_length'),  # User model
+    ]
+    
+    operations = [
+        # Step 1: Add nullable FK field
+        migrations.AddField(
+            model_name='profile',
+            name='user',
+            field=models.ForeignKey(
+                to='auth.User',
+                on_delete=django.db.models.deletion.CASCADE,
+                null=True,  # Allow null initially
+                blank=True,
+            ),
+        ),
+        # Step 2: Populate FK (separate data migration)
+        # Step 3: Make FK required (separate migration after data is populated)
+    ]
+```
+
+### Populating Foreign Keys
+
+```python
+# Separate data migration to populate foreign key
+from django.db import migrations
+
+def populate_user_profile(apps, schema_editor):
+    """
+    Populate user foreign key in Profile model.
+    
+    This assumes each profile should be linked to a user.
+    """
+    Profile = apps.get_model('myapp', 'Profile')
+    User = apps.get_model('auth', 'User')
+    
+    # Example: Link profiles to users based on email
+    for profile in Profile.objects.filter(user__isnull=True):
+        try:
+            user = User.objects.get(email=profile.email)
+            profile.user = user
+            profile.save(update_fields=['user'])
+        except User.DoesNotExist:
+            # Handle case where user doesn't exist
+            # Either create user or skip profile
+            pass
+
+def reverse_func(apps, schema_editor):
+    """Clear user foreign key on rollback."""
+    Profile = apps.get_model('myapp', 'Profile')
+    Profile.objects.all().update(user=None)
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('myapp', '0001_add_user_fk'),
+    ]
+    
+    operations = [
+        migrations.RunPython(populate_user_profile, reverse_func),
+    ]
+```
+
+## ✅ Working with ManyToMany Fields
+
+ManyToMany fields require special handling:
+
+```python
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    """
+    Add ManyToMany relationship.
+    
+    Django creates intermediate table automatically.
+    Use separate data migration to populate relationships.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.AddField(
+            model_name='article',
+            name='tags',
+            field=models.ManyToManyField(
+                to='myapp.Tag',
+                related_name='articles',
+                blank=True,
+            ),
+        ),
+        # Note: Populate ManyToMany in separate data migration using
+        # article.tags.add() or article.tags.set() in RunPython
+    ]
+```
+
+### Populating ManyToMany Relationships
+
+```python
+# Separate data migration for ManyToMany
+from django.db import migrations
+
+def populate_article_tags(apps, schema_editor):
+    """
+    Populate ManyToMany relationship between articles and tags.
+    
+    Uses historical models - ManyToMany manager is available.
+    """
+    Article = apps.get_model('myapp', 'Article')
+    Tag = apps.get_model('myapp', 'Tag')
+    
+    for article in Article.objects.all():
+        # Determine tags based on article content/category
+        if article.category == 'tech':
+            tags = Tag.objects.filter(name__in=['technology', 'programming'])
+            article.tags.set(tags)
+        elif article.category == 'news':
+            tags = Tag.objects.filter(name__in=['news', 'current-events'])
+            article.tags.set(tags)
+
+def reverse_func(apps, schema_editor):
+    """Clear ManyToMany relationships on rollback."""
+    Article = apps.get_model('myapp', 'Article')
+    for article in Article.objects.all():
+        article.tags.clear()
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('myapp', '0001_add_article_tags'),
+    ]
+    
+    operations = [
+        migrations.RunPython(populate_article_tags, reverse_func),
+    ]
+```
+
+## ✅ Working with Unique Constraints
+
+Add unique constraints carefully, especially on existing data:
+
+```python
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    """
+    Add unique constraint to existing field.
+    
+    Important: Ensure no duplicate values exist before adding constraint.
+    Use separate data migration to clean duplicates first.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        # Step 1: Ensure no duplicates (data migration should run first)
+        # Step 2: Add unique constraint
+        migrations.AlterField(
+            model_name='user',
+            name='email',
+            field=models.EmailField(
+                max_length=255,
+                unique=True,  # Add unique constraint
+                db_index=True,
+            ),
+        ),
+        # Or use AddConstraint for composite unique constraints
+        migrations.AddConstraint(
+            model_name='user',
+            constraint=models.UniqueConstraint(
+                fields=['email', 'username'],
+                name='unique_email_username',
+            ),
+        ),
+    ]
+```
+
+### Cleaning Duplicates Before Adding Unique Constraint
+
+```python
+# Data migration to clean duplicates before adding unique constraint
+from django.db import migrations
+from django.db.models import Count
+
+def clean_duplicate_emails(apps, schema_editor):
+    """
+    Clean duplicate emails before adding unique constraint.
+    
+    Keeps the oldest record, updates others with unique emails.
+    """
+    User = apps.get_model('myapp', 'User')
+    
+    # Find duplicate emails
+    duplicates = (
+        User.objects.values('email')
+        .annotate(count=Count('id'))
+        .filter(count__gt=1)
+    )
+    
+    for dup in duplicates:
+        email = dup['email']
+        users = User.objects.filter(email=email).order_by('created_at')
+        
+        # Keep first user, update others
+        for idx, user in enumerate(users[1:], start=1):
+            user.email = f"{email.split('@')[0]}+{idx}@{email.split('@')[1]}"
+            user.save(update_fields=['email'])
+
+def reverse_func(apps, schema_editor):
+    """Reverse is complex - may need manual intervention."""
+    # Reversing duplicate cleaning is not straightforward
+    # Consider if this migration really needs to be reversible
+    pass
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.RunPython(clean_duplicate_emails, reverse_func),
+    ]
+```
+
+## ✅ Renaming Fields and Tables
+
+Renaming requires special care to avoid data loss:
+
+```python
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    Rename field using RenameField operation.
+    
+    This is safer than dropping and adding - preserves data.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        # ✅ GOOD: Use RenameField (preserves data)
+        migrations.RenameField(
+            model_name='user',
+            old_name='old_field_name',
+            new_name='new_field_name',
+        ),
+        # ❌ BAD: Don't use RemoveField + AddField (loses data)
+    ]
+```
+
+### Renaming Tables
+
+```python
+# For renaming tables
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    Rename model/table.
+    
+    Django handles both model name and table name changes.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.RenameModel(
+            old_name='OldModelName',
+            new_name='NewModelName',
+        ),
+    ]
+```
+
+### Renaming with Custom Table Names
+
+If you have custom table names, you may need to handle both:
+
+```python
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    """
+    Rename model with custom table name.
+    
+    If model has db_table specified, you may need to:
+    1. Rename the model
+    2. Update db_table in model options
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+    
+    operations = [
+        # Step 1: Rename the model
+        migrations.RenameModel(
+            old_name='OldModelName',
+            new_name='NewModelName',
+        ),
+        # Step 2: Update db_table if needed (in separate migration or model change)
+        migrations.AlterModelTable(
+            name='newmodelname',
+            table='new_table_name',
+        ),
+    ]
+```
+
+## 📝 Key Points
+
+### Must Have
+
+- **Raw SQL reversibility**: Always provide reverse_sql for RunSQL operations
+- **Foreign key handling**: Add nullable FK first, populate, then make required
+- **ManyToMany population**: Use separate data migration to populate relationships
+- **Unique constraint preparation**: Clean duplicates before adding unique constraints
+- **Renaming safety**: Use RenameField/RenameModel instead of drop+add
+
+### Do
+
+- **Use Raw SQL when needed**: For complex operations not easily expressible in ORM
+- **Handle FK data**: Populate foreign keys in separate data migrations
+- **Populate ManyToMany separately**: Use data migrations to set relationships
+- **Clean duplicates first**: Ensure no duplicates before adding unique constraints
+- **Use RenameField**: Preserves data when renaming fields
+- **Test renaming**: Verify data integrity after renaming operations
+
+### Don't
+
+- **Don't use Raw SQL unnecessarily**: Prefer ORM operations when possible
+- **Don't add required FK immediately**: Add nullable first, populate, then make required
+- **Don't skip duplicate cleaning**: Always clean duplicates before unique constraints
+- **Don't use drop+add for renaming**: Use RenameField/RenameModel to preserve data
+- **Don't forget reverse operations**: Always provide reverse SQL/functions
+
+---
+
+**Remember**: Advanced patterns require careful planning and testing. Always verify data integrity after complex operations and have rollback strategies ready.

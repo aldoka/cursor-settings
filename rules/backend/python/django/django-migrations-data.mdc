@@ -1,0 +1,407 @@
+---
+description: Django Data Migrations - Batch Processing, Error Handling, Conditional Migrations
+globs: **/migrations/*.py
+alwaysApply: false
+---
+# Django Data Migrations
+
+> **Reference**: This guide extends the [Django Migration Standards](django-migrations.mdc). Make sure you're familiar with the common migration structure before using data migration patterns.
+
+## 📋 Overview
+
+Data migrations are used to transform or populate data in the database. This guide covers advanced patterns for handling large datasets, error handling, and conditional migrations.
+
+> **Django Version**: This guide follows Django 6.x best practices and migration patterns.
+
+## ✅ Using Historical Models
+
+Always use `apps.get_model()` to access models in data migrations. Historical models only have fields that existed at that migration point:
+
+```python
+# ✅ Good: using historical models with proper structure
+from django.db import migrations
+
+def calculate_full_name(user):
+    """Helper function to calculate full name from user fields."""
+    parts = [user.first_name, user.middle_name, user.last_name]
+    return ' '.join(part for part in parts if part)
+
+def forwards_func(apps, schema_editor):
+    """
+    Populate full_name field from first_name, middle_name, and last_name.
+    
+    Uses historical model - only fields available at migration time.
+    
+    Note: In multi-database setups, check schema_editor.connection.alias
+    to ensure migration runs on the correct database.
+    """
+    # Check database alias for multi-database setups (Django 6.x best practice)
+    if schema_editor.connection.alias != 'default':
+        return
+    
+    User = apps.get_model('myapp', 'User')
+    
+    # Use iterator() for memory efficiency on large datasets
+    for user in User.objects.all().iterator():
+        user.full_name = calculate_full_name(user)
+        user.save(update_fields=['full_name'])
+
+def reverse_func(apps, schema_editor):
+    """
+    Reverse migration: clear full_name field.
+    
+    This allows safe rollback of the migration.
+    """
+    User = apps.get_model('myapp', 'User')
+    User.objects.all().update(full_name=None)
+
+class Migration(migrations.Migration):
+    """
+    Data migration: populate full_name from component fields.
+    
+    This migration assumes full_name field already exists (from previous migration).
+    """
+    dependencies = [
+        ('myapp', '0001_add_full_name_field'),  # Schema migration first
+    ]
+
+    operations = [
+        migrations.RunPython(
+            forwards_func, 
+            reverse_func,
+            # elidable=True,  # Can be omitted when squashing migrations
+        ),
+    ]
+```
+
+## ✅ Batch Processing Large Datasets
+
+For large tables, process records in batches to avoid memory issues and reduce database locks:
+
+```python
+# ✅ Good: batch processing with progress tracking
+from django.db import migrations, transaction
+
+def calculate_user_score(user):
+    """Calculate user score based on various factors."""
+    # Replicate business logic here (don't call model methods)
+    base_score = 100
+    if user.is_active:
+        base_score += 50
+    if user.email_verified:
+        base_score += 25
+    return base_score
+
+def forwards_func(apps, schema_editor):
+    """
+    Populate user_score field for all users in batches.
+    
+    Uses batch processing to handle large datasets efficiently.
+    
+    Note: In multi-database setups, check schema_editor.connection.alias.
+    """
+    # Check database alias for multi-database setups (Django 6.x best practice)
+    if schema_editor.connection.alias != 'default':
+        return
+    
+    User = apps.get_model('myapp', 'User')
+    batch_size = 1000
+    total = User.objects.count()
+    processed = 0
+    
+    # Process in batches to avoid memory issues
+    for start in range(0, total, batch_size):
+        end = min(start + batch_size, total)
+        
+        # Use select_for_update() if you need to prevent concurrent modifications
+        batch = User.objects.filter(
+            id__gte=start,
+            id__lt=end
+        ).select_for_update(skip_locked=True)
+        
+        # Update in bulk for better performance
+        updates = []
+        for user in batch:
+            user.user_score = calculate_user_score(user)
+            updates.append(user)
+        
+        # Bulk update to reduce database queries
+        User.objects.bulk_update(updates, ['user_score'], batch_size=500)
+        
+        processed += len(updates)
+        # Log progress if needed (in production, use proper logging)
+        if processed % 5000 == 0:
+            print(f"Processed {processed}/{total} users")
+
+def reverse_func(apps, schema_editor):
+    """Clear user_score field."""
+    User = apps.get_model('myapp', 'User')
+    User.objects.all().update(user_score=None)
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('myapp', '0001_add_user_score_field'),
+    ]
+
+    operations = [
+        migrations.RunPython(forwards_func, reverse_func),
+    ]
+```
+
+## ✅ Separating Schema and Data Migrations
+
+Keep schema changes and data migrations separate. This allows:
+- Testing schema changes independently
+- Re-running data migrations if needed
+- Better error isolation
+
+```python
+# ✅ Migration 1: Schema change only
+# File: 0001_add_full_name_field.py
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    """
+    Add full_name field to User model.
+    
+    Schema-only migration - no data manipulation.
+    """
+    dependencies = [
+        ('myapp', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='user',
+            name='full_name',
+            field=models.CharField(
+                max_length=255, 
+                null=True,
+                blank=True,
+                db_index=True,  # Add index for queries
+            ),
+        ),
+    ]
+
+# ✅ Migration 2: Data migration (separate file)
+# File: 0002_populate_full_name.py
+from django.db import migrations
+
+def populate_full_name(apps, schema_editor):
+    """
+    Populate full_name from first_name and last_name.
+    
+    This runs after schema migration, so full_name field exists.
+    """
+    User = apps.get_model('myapp', 'User')
+    
+    # Use bulk_update for better performance
+    users_to_update = []
+    for user in User.objects.all().iterator():
+        if user.first_name and user.last_name:
+            user.full_name = f"{user.first_name} {user.last_name}"
+            users_to_update.append(user)
+    
+    User.objects.bulk_update(users_to_update, ['full_name'], batch_size=1000)
+
+def reverse_func(apps, schema_editor):
+    """Clear full_name field on rollback."""
+    User = apps.get_model('myapp', 'User')
+    User.objects.all().update(full_name=None)
+
+class Migration(migrations.Migration):
+    """
+    Data migration: populate full_name field.
+    
+    Depends on schema migration that added the field.
+    """
+    dependencies = [
+        ('myapp', '0001_add_full_name_field'),  # Schema migration
+    ]
+    
+    operations = [
+        migrations.RunPython(
+            populate_full_name, 
+            reverse_func,
+        ),
+    ]
+```
+
+## ✅ Data Migration with Error Handling
+
+Handle errors gracefully and provide detailed feedback:
+
+```python
+from django.db import migrations, transaction
+import logging
+
+logger = logging.getLogger(__name__)
+
+def calculate_user_rating(user):
+    """Calculate user rating with error handling."""
+    try:
+        # Replicate business logic
+        base_rating = 0
+        if user.is_active:
+            base_rating += 10
+        if hasattr(user, 'email_verified') and user.email_verified:
+            base_rating += 5
+        return min(base_rating, 100)  # Cap at 100
+    except Exception as e:
+        logger.warning(f"Error calculating rating for user {user.id}: {e}")
+        return 0  # Default value
+
+def forwards_func(apps, schema_editor):
+    """
+    Populate user_rating with comprehensive error handling.
+    
+    Continues processing even if individual records fail.
+    
+    Note: In multi-database setups, check schema_editor.connection.alias.
+    """
+    # Check database alias for multi-database setups (Django 6.x best practice)
+    if schema_editor.connection.alias != 'default':
+        return
+    
+    User = apps.get_model('myapp', 'User')
+    errors = []
+    success_count = 0
+    
+    # Process in batches for better error isolation
+    batch_size = 1000
+    total = User.objects.count()
+    
+    for start in range(0, total, batch_size):
+        try:
+            with transaction.atomic():
+                batch = User.objects.filter(
+                    id__gte=start,
+                    id__lt=start + batch_size
+                )
+                
+                users_to_update = []
+                for user in batch:
+                    try:
+                        user.user_rating = calculate_user_rating(user)
+                        users_to_update.append(user)
+                    except Exception as e:
+                        errors.append(f"User {user.id}: {str(e)}")
+                
+                if users_to_update:
+                    User.objects.bulk_update(users_to_update, ['user_rating'], batch_size=500)
+                    success_count += len(users_to_update)
+        except Exception as e:
+            errors.append(f"Batch {start}-{start + batch_size}: {str(e)}")
+    
+    # Log results
+    logger.info(f"Migration completed: {success_count} users updated, {len(errors)} errors")
+    
+    # Raise exception if too many errors
+    if errors and len(errors) > total * 0.1:  # More than 10% errors
+        raise Exception(f"Too many migration errors ({len(errors)}): {errors[:10]}")
+
+def reverse_func(apps, schema_editor):
+    """Clear user_rating field on rollback."""
+    User = apps.get_model('myapp', 'User')
+    User.objects.all().update(user_rating=None)
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('myapp', '0001_add_user_rating_field'),
+    ]
+    
+    operations = [
+        migrations.RunPython(forwards_func, reverse_func),
+    ]
+```
+
+## ✅ Conditional Migrations
+
+Run migrations only when certain conditions are met:
+
+```python
+from django.db import migrations
+
+def forwards_func(apps, schema_editor):
+    """
+    Conditionally populate field only if data exists.
+    
+    Useful for migrations that should only run in certain environments
+    or when specific data conditions are met.
+    
+    Note: In multi-database setups, check schema_editor.connection.alias.
+    """
+    # Check database alias for multi-database setups (Django 6.x best practice)
+    if schema_editor.connection.alias != 'default':
+        return
+    
+    User = apps.get_model('myapp', 'User')
+    
+    # Check if migration should run
+    if not User.objects.exists():
+        print("No users found, skipping data migration")
+        return
+    
+    # Check for specific conditions
+    users_without_field = User.objects.filter(new_field__isnull=True)
+    if not users_without_field.exists():
+        print("All users already have new_field populated")
+        return
+    
+    # Process only users that need updating
+    batch_size = 1000
+    for start in range(0, users_without_field.count(), batch_size):
+        batch = users_without_field[start:start + batch_size]
+        User.objects.filter(
+            id__in=[u.id for u in batch]
+        ).update(new_field='default')
+
+def reverse_func(apps, schema_editor):
+    """Clear new_field on rollback."""
+    User = apps.get_model('myapp', 'User')
+    User.objects.all().update(new_field=None)
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('myapp', '0001_add_new_field'),
+    ]
+    
+    operations = [
+        migrations.RunPython(
+            forwards_func, 
+            reverse_func,
+            # elidable=True,  # Can be omitted when squashing
+        ),
+    ]
+```
+
+## 📝 Key Points
+
+### Must Have
+
+- **Historical models**: Always use `apps.get_model()` - never import current models
+- **Reversibility**: Provide reverse functions for all data migrations
+- **Error handling**: Implement comprehensive error handling for production migrations
+- **Batch processing**: Use batching for datasets larger than 1000 records
+- **Multi-database awareness**: Check `schema_editor.connection.alias` in multi-database setups (Django 6.x)
+
+### Do
+
+- **Separate schema and data**: Keep schema changes and data migrations in separate files
+- **Use bulk operations**: Prefer `bulk_update()` and `bulk_create()` over individual saves
+- **Process in batches**: Use iterator() and batch processing for large datasets
+- **Handle errors gracefully**: Continue processing even if individual records fail
+- **Log progress**: Provide progress tracking for long-running migrations
+- **Check conditions**: Use conditional logic to skip migrations when appropriate
+
+### Don't
+
+- **Don't call model methods**: Historical models don't have custom methods - replicate logic
+- **Don't use current models**: Always use `apps.get_model()` to get historical models
+- **Don't process all at once**: Use batching to avoid memory issues
+- **Don't ignore errors**: Implement error handling and logging
+- **Don't mix schema and data**: Keep migrations separate for better testing and error isolation
+
+---
+
+**Remember**: Data migrations should be safe, reversible, and handle errors gracefully. Always test with production-like data volumes before deploying.
