@@ -252,29 +252,15 @@ li { margin-bottom: var(--space-content-xs); }
 - ✅ **Create breathing room in dense interfaces**
 
 ```html
-<!-- ✅ Good: Whitespace creates focus on CTA -->
-<div class="hero" style="
-  padding: 4rem 1rem;
-  text-align: center;">
-  
-  <h1 style="margin-bottom: 1rem;">
-    Welcome to Our Platform
-  </h1>
-  
-  <p style="
-    max-width: 600px;
-    margin: 0 auto 3rem;
-    font-size: 1.25rem;">
-    Start your journey today
-  </p>
-  
-  <!-- Generous space around primary action -->
+<!-- ✅ Good: Whitespace creates focus -->
+<div>
+  <h1>Welcome to Our Platform</h1>
+  <p>Start your journey today</p>
+    <!-- Generous space around primary action -->
   <button style="
     padding: 1rem 3rem;
     font-size: 1.125rem;
-    margin-top: 2rem;">
-    Get Started
-  </button>
+    margin-top: 2rem;">Get Started</button>
 </div>
 ```
 
@@ -289,54 +275,15 @@ li { margin-bottom: var(--space-content-xs); }
 ```css
 /* ✅ Good: Color hierarchy system */
 :root {
-  /* Primary - Most important actions */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
   --color-primary: #0066cc;
-  --color-primary-dark: #0052a3;
-  --color-primary-light: #3385d6;
-  
-  /* Secondary - Supporting actions */
   --color-secondary: #6b7280;
-  --color-secondary-dark: #4b5563;
-  --color-secondary-light: #9ca3af;
-  
-  /* Accent - Call attention */
-  --color-accent: #f59e0b;
-  
-  /* Text hierarchy */
-  --color-text-primary: #111827;     /* Highest importance */
-  --color-text-secondary: #6b7280;   /* Medium importance */
-  --color-text-tertiary: #9ca3af;    /* Lowest importance */
-  
-  /* Background hierarchy */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-bg-tertiary: #f3f4f6;
-}
-
-/* Application */
-.heading {
-  color: var(--color-text-primary);
-}
-
-.body-text {
-  color: var(--color-text-secondary);
-}
-
-.meta-info {
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-sm);
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
-}
-
-.btn-secondary {
-  background: var(--color-secondary);
-  color: white;
 }
 ```
+
+> **Reference**: See [Colors and Contrast](colors-contrast.mdc) for detailed color system guidelines.
 
 #### Contrast for Emphasis
 - ✅ **High contrast for important elements**
@@ -376,12 +323,12 @@ Best for text-heavy content:
 - ✅ **Key information at line starts**
 
 ```html
-<!-- ✅ Good: F-pattern for blog/article -->
-<article class="f-pattern-layout">
+<!-- ✅ Good: F-pattern layout -->
+<article>
   <!-- Top horizontal bar (header) -->
   <header>
-    <h1>Article Title Goes Here</h1>
-    <p class="meta">By Author Name • 5 min read</p>
+    <h1>Article Title</h1>
+    <p>By Author • 5 min read</p>
   </header>
   
   <!-- Second horizontal bar (intro) -->
@@ -390,7 +337,7 @@ Best for text-heavy content:
   </div>
   
   <!-- Vertical stem (left-aligned content) -->
-  <div class="content">
+  <div class="content">  
     <h2>First Section</h2>
     <p>Content starting at left edge...</p>
     
@@ -398,26 +345,6 @@ Best for text-heavy content:
     <p>More content at left edge...</p>
   </div>
 </article>
-
-<style>
-.f-pattern-layout {
-  max-width: 65ch;
-  margin: 0 auto;
-}
-
-.f-pattern-layout h1,
-.f-pattern-layout h2 {
-  /* Emphasized left alignment */
-  margin-left: 0;
-  font-weight: var(--font-weight-bold);
-}
-
-.f-pattern-layout .lead {
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-relaxed);
-  margin-bottom: var(--spacing-8);
-}
-</style>
 ```
 
 #### Z-Pattern Layout
@@ -428,17 +355,14 @@ Best for simple pages with clear call-to-action:
 - ✅ **Final CTA bottom-right**
 
 ```html
-<!-- ✅ Good: Z-pattern for landing page -->
-<div class="z-pattern-layout">
-  <!-- Top-left to top-right -->
-  <header class="header">
-    <div class="logo">Brand</div>
-    <nav class="nav">
-      <button class="btn-primary">Sign Up</button>
-    </nav>
-  </header>
-  
-  <!-- Diagonal: Hero content -->
+<!-- ✅ Good: Z-pattern layout -->
+<!-- Top-left to top-right -->
+<header>
+  <div>Brand</div>
+  <nav><button>Sign Up</button></nav>
+</header>
+
+<!-- Diagonal: Hero content -->
   <section class="hero">
     <div class="hero-content">
       <h1>Big Bold Headline</h1>
@@ -448,41 +372,11 @@ Best for simple pages with clear call-to-action:
       <img src="hero.jpg" alt="Hero">
     </div>
   </section>
-  
+
   <!-- Bottom: Final CTA -->
-  <footer class="footer">
-    <button class="btn-large">Get Started Now</button>
-  </footer>
-</div>
-
-<style>
-.z-pattern-layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-6);
-}
-
-.hero {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: var(--spacing-12);
-  padding: var(--spacing-12);
-}
-
-.footer {
-  text-align: center;
-  padding: var(--spacing-8);
-}
-</style>
+<footer>
+  <button>Get Started Now</button>
+</footer>
 ```
 
 #### Card-Based Hierarchy
@@ -491,30 +385,18 @@ Best for simple pages with clear call-to-action:
 - ✅ **Color/border variations**
 
 ```css
-/* ✅ Good: Card hierarchy through elevation and size */
+/* ✅ Good: Card hierarchy */
 .card-featured {
-  /* Highest importance */
-  padding: var(--spacing-8);
-  background: white;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
   transform: translateY(-8px);
 }
 
 .card-primary {
-  /* Medium importance */
-  padding: var(--spacing-6);
-  background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
 }
 
 .card-secondary {
-  /* Lower importance */
-  padding: var(--spacing-4);
-  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
 }
 ```
 
@@ -526,100 +408,23 @@ Best for simple pages with clear call-to-action:
 - ✅ **Create clear levels of importance**
 
 ```html
-<!-- ✅ Good: Multiple hierarchy techniques combined -->
-<div class="pricing-section">
+<!-- ✅ Good: Multiple hierarchy techniques -->
+<div>
   <!-- Secondary plan (smaller, less prominent) -->
-  <div class="pricing-card pricing-card--secondary">
-    <h3 class="pricing-title">Basic</h3>
-    <div class="pricing-price">$9</div>
-    <ul class="pricing-features">
-      <li>Feature 1</li>
-      <li>Feature 2</li>
-    </ul>
-    <button class="btn-secondary">Choose Plan</button>
+  <div>
+    <h3>Basic</h3>
+    <div>$9</div>
+    <button>Choose Plan</button>
   </div>
   
-  <!-- Featured plan (larger, highlighted, elevated) -->
-  <div class="pricing-card pricing-card--featured">
-    <span class="pricing-badge">Most Popular</span>
-    <h3 class="pricing-title">Pro</h3>
-    <div class="pricing-price">$29</div>
-    <ul class="pricing-features">
-      <li>All Basic features</li>
-      <li>Feature 3</li>
-      <li>Feature 4</li>
-      <li>Feature 5</li>
-    </ul>
-    <button class="btn-primary btn-large">Choose Plan</button>
-  </div>
-  
-  <!-- Secondary plan -->
-  <div class="pricing-card pricing-card--secondary">
-    <h3 class="pricing-title">Enterprise</h3>
-    <div class="pricing-price">$99</div>
-    <ul class="pricing-features">
-      <li>All Pro features</li>
-      <li>Feature 6</li>
-    </ul>
-    <button class="btn-secondary">Choose Plan</button>
+  <!-- Featured plan (larger, highlighted) -->
+  <div>
+    <span>Most Popular</span>
+    <h3>Pro</h3>
+    <div>$29</div>
+    <button>Choose Plan</button>
   </div>
 </div>
-
-<style>
-.pricing-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--spacing-6);
-  align-items: center;
-}
-
-.pricing-card {
-  padding: var(--spacing-8);
-  background: white;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.pricing-card--secondary {
-  /* Smaller, less prominent */
-  transform: scale(0.95);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  opacity: 0.9;
-}
-
-.pricing-card--featured {
-  /* Larger, more prominent, highlighted */
-  transform: scale(1.05);
-  box-shadow: 0 12px 32px rgba(0, 102, 204, 0.15);
-  border: 2px solid var(--color-primary);
-  position: relative;
-}
-
-.pricing-badge {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-accent);
-  color: white;
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: 999px;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-.pricing-price {
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  margin: var(--spacing-4) 0;
-}
-
-.pricing-card--featured .pricing-price {
-  font-size: var(--font-size-5xl);
-  color: var(--color-accent);
-}
-</style>
 ```
 
 ## ❌ DON'T (Anti-patterns)
@@ -691,28 +496,22 @@ small { color: var(--color-text-tertiary); font-weight: 400; }
 - ❌ **No grouping**: Don't separate related elements
 
 ```html
-<!-- ❌ Bad: Everything equally prominent, no grouping -->
+<!-- ❌ Bad: No hierarchy, no grouping -->
 <div>
   <h2>Title</h2>
   <p>Content</p>
   <button>Action 1</button>
   <button>Action 2</button>
-  <button>Action 3</button>
-  <p>More content</p>
 </div>
 
 <!-- ✅ Good: Clear hierarchy and grouping -->
-<div class="card">
-  <h2 class="card-title">Title</h2>
-  <p class="card-content">Content</p>
-  
-  <div class="card-actions">
-    <button class="btn-primary">Primary Action</button>
-    <button class="btn-secondary">Secondary</button>
-    <button class="btn-tertiary">Tertiary</button>
+<div>
+  <h2>Title</h2>
+  <p>Content</p>
+  <div>
+    <button>Primary Action</button>
+    <button>Secondary</button>
   </div>
-  
-  <p class="card-footer">More content</p>
 </div>
 ```
 
@@ -723,21 +522,19 @@ small { color: var(--color-text-tertiary); font-weight: 400; }
 - ❌ **Competing elements**: Don't create multiple primary CTAs
 
 ```html
-<!-- ❌ Bad: Too much emphasis everywhere -->
+<!-- ❌ Bad: Too much emphasis -->
 <div>
   <h1><strong>IMPORTANT TITLE!!!</strong></h1>
-  <p><strong>IMPORTANT</strong> information here!</p>
-  <button class="btn-primary">Click Here!</button>
-  <button class="btn-primary">Or Here!</button>
-  <button class="btn-primary">Or Maybe Here!</button>
+  <p><strong>IMPORTANT</strong> information!</p>
+  <button>Click Here!</button>
+  <button>Or Here!</button>
 </div>
 
-<!-- ✅ Good: Single clear focal point -->
+<!-- ✅ Good: Single focal point -->
 <div>
   <h1>Clear Title</h1>
-  <p>Important information here with <strong>selective emphasis</strong>.</p>
-  <button class="btn-primary">Primary Action</button>
-  <button class="btn-secondary">Alternative</button>
+  <p>Information with <strong>selective emphasis</strong>.</p>
+  <button>Primary Action</button>
 </div>
 ```
 

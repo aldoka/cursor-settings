@@ -4,7 +4,7 @@ alwaysApply: false
 ---
 # Responsive Design
 
-> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into responsive design specifics.
+> **Reference**: This guide extends the [UX/UI Design Principles](../ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into responsive design specifics.
 
 ## 📋 Overview
 
@@ -197,51 +197,26 @@ Start with mobile design and progressively enhance for larger screens:
 - ✅ **Serve modern formats (WebP, AVIF) with fallbacks**
 
 ```html
-<!-- ✅ Good: Responsive image with srcset -->
+<!-- ✅ Good: Responsive image -->
 <img 
   src="image-800w.jpg"
-  srcset="
-    image-400w.jpg 400w,
-    image-800w.jpg 800w,
-    image-1200w.jpg 1200w,
-    image-1600w.jpg 1600w"
-  sizes="
-    (max-width: 640px) 100vw,
-    (max-width: 1024px) 80vw,
-    1200px"
-  alt="Descriptive alt text"
+  srcset="image-400w.jpg 400w, image-800w.jpg 800w, image-1200w.jpg 1200w"
+  sizes="(max-width: 640px) 100vw, 800px"
+  alt="Description"
   loading="lazy"
-  width="1200"
-  height="800">
-
-<!-- ✅ Good: Art direction with picture element -->
-<picture>
-  <!-- Mobile: Square crop -->
-  <source 
-    media="(max-width: 639px)" 
-    srcset="hero-mobile-1x.jpg 1x, hero-mobile-2x.jpg 2x">
-  
-  <!-- Tablet: 16:9 crop -->
-  <source 
-    media="(max-width: 1023px)" 
-    srcset="hero-tablet-1x.jpg 1x, hero-tablet-2x.jpg 2x">
-  
-  <!-- Desktop: Wide crop -->
-  <source 
-    media="(min-width: 1024px)" 
-    srcset="hero-desktop-1x.jpg 1x, hero-desktop-2x.jpg 2x">
-  
-  <!-- Fallback -->
-  <img src="hero-desktop-1x.jpg" alt="Hero image" width="1920" height="1080">
-</picture>
+  width="800"
+  height="600">
 
 <!-- ✅ Good: Modern format with fallback -->
 <picture>
   <source srcset="image.avif" type="image/avif">
   <source srcset="image.webp" type="image/webp">
+  <!-- Fallback -->
   <img src="image.jpg" alt="Description" loading="lazy">
 </picture>
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed responsive image techniques including picture element and modern formats.
 
 #### CSS Background Images
 - ✅ **Use image-set() for responsive backgrounds**
@@ -251,8 +226,6 @@ Start with mobile design and progressively enhance for larger screens:
 /* ✅ Good: Responsive background images */
 .hero {
   background-image: url('hero-mobile.jpg');
-  background-size: cover;
-  background-position: center;
 }
 
 @media (min-width: 768px) {
@@ -263,17 +236,7 @@ Start with mobile design and progressively enhance for larger screens:
 
 @media (min-width: 1024px) {
   .hero {
-    background-image: image-set(
-      url('hero-desktop.webp') type('image/webp'),
-      url('hero-desktop.jpg') type('image/jpeg')
-    );
-  }
-}
-
-/* High DPI screens */
-@media (min-width: 1024px) and (min-resolution: 2dppx) {
-  .hero {
-    background-image: url('hero-desktop-2x.jpg');
+    background-image: url('hero-desktop.jpg');
   }
 }
 ```
@@ -287,40 +250,27 @@ Start with mobile design and progressively enhance for larger screens:
 - ✅ **Adjust line height with font size**
 
 ```css
-/* ✅ Good: Fluid typography with clamp() */
+/* ✅ Good: Fluid typography */
 :root {
-  /* Font sizes scale smoothly between min and max */
-  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
   --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
   --font-size-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
-  --font-size-2xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
 }
 
 h1 {
-  font-size: var(--font-size-2xl);
-  line-height: 1.1;
-  margin-bottom: 0.5em;
-}
-
-h2 {
   font-size: var(--font-size-xl);
-  line-height: 1.2;
-  margin-bottom: 0.5em;
 }
 
 body {
   font-size: var(--font-size-base);
-  line-height: 1.6;
 }
 
-/* ✅ Good: Responsive line length */
 .prose {
-  max-width: 65ch; /* 50-75 characters optimal */
+  max-width: 65ch;
   margin: 0 auto;
 }
 ```
+
+> **Reference**: See [Typography](../visual/typography.mdc) for detailed fluid typography guidelines.
 
 ### Touch-Friendly Design
 
@@ -418,25 +368,11 @@ input[type="radio"] {
 - ✅ **Allow user zoom for accessibility**
 
 ```html
-<!-- ✅ Good: Proper viewport configuration -->
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<!-- ✅ Good: iOS safe area support -->
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<style>
-  body {
-    /* Respect notch on iPhone X and similar */
-    padding: env(safe-area-inset-top) 
-             env(safe-area-inset-right) 
-             env(safe-area-inset-bottom) 
-             env(safe-area-inset-left);
-  }
-</style>
-
-<!-- ✅ Good: Theme color for mobile browsers -->
-<meta name="theme-color" content="#0066cc">
+<!-- ✅ Good: Viewport configuration -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
 ```
+
+> **Reference**: See [HTML Meta Tags](../../html/html-meta.mdc) for detailed viewport and meta tag configuration.
 
 ### Content Prioritization
 
@@ -447,7 +383,7 @@ input[type="radio"] {
 - ✅ **Maintain feature parity (don't hide important features)**
 
 ```html
-<!-- ✅ Good: Progressive disclosure with details/summary -->
+<!-- ✅ Good: Progressive disclosure -->
 <details class="expandable">
   <summary>Advanced Options</summary>
   <div class="advanced-content">
@@ -456,41 +392,8 @@ input[type="radio"] {
       <input type="checkbox" name="option1">
       Advanced option 1
     </label>
-    <!-- More options... -->
   </div>
 </details>
-
-<style>
-  .expandable {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
-  }
-  
-  summary {
-    cursor: pointer;
-    font-weight: 600;
-    user-select: none;
-  }
-  
-  .advanced-content {
-    margin-top: 1rem;
-  }
-  
-  /* On desktop you may want this section expanded by default.
-     Note: `open` is an HTML attribute on <details>, not a CSS property. */
-  @media (min-width: 1024px) {
-    /* If <details> is open, you can hide the summary to remove redundant chrome */
-    details[open] > summary { display: none; }
-  }
-</style>
-
-<script>
-  // Optional: open by default on desktop without forcing close on mobile.
-  const mq = window.matchMedia('(min-width: 1024px)');
-  const details = document.querySelector('details.expandable');
-  if (details && mq.matches) details.setAttribute('open', '');
-</script>
 ```
 
 #### Reordering Content
@@ -574,22 +477,21 @@ input[type="radio"] {
 - ❌ **Unoptimized formats**: Don't use only JPEG/PNG
 
 ```html
-<!-- ❌ Bad: Single image for all devices -->
-<img src="huge-image-4k.jpg" alt="Product">
-
-<!-- ❌ Bad: Missing dimensions causes layout shift -->
-<img src="image.jpg" alt="Product">
+<!-- ❌ Bad: Single image, missing dimensions -->
+<img src="huge-image.jpg" alt="Product">
 
 <!-- ✅ Good: Responsive with dimensions -->
 <img 
   src="image-800w.jpg"
-  srcset="image-400w.jpg 400w, image-800w.jpg 800w, image-1200w.jpg 1200w"
-  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+  srcset="image-400w.jpg 400w, image-800w.jpg 800w"
+  sizes="(max-width: 640px) 100vw, 800px"
   alt="Product"
   loading="lazy"
   width="800"
   height="600">
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed image optimization.
 
 ### Typography Mistakes
 - ❌ **Fixed font sizes**: Don't use only pixels for font sizes
@@ -598,12 +500,14 @@ input[type="radio"] {
 - ❌ **No scaling**: Don't prevent text zoom with `maximum-scale=1`
 
 ```html
-<!-- ❌ Bad: Prevents user zoom (accessibility issue) -->
+<!-- ❌ Bad: Prevents zoom -->
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <!-- ✅ Good: Allows zoom -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ```
+
+> **Reference**: See [HTML Meta Tags](../../html/html-meta.mdc) for viewport configuration details.
 
 ```css
 /* ❌ Bad: Fixed typography doesn't scale */

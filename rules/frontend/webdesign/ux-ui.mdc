@@ -51,12 +51,12 @@ This rule defines core principles and best practices for creating modern, user-c
 - ✅ **Logical grouping**: Group related items together with consistent spacing
 - ✅ **Flexible containers**: Use relative units (%, rem, em) over fixed pixels
 
-```html
-<!-- ✅ Good: Consistent spacing using utility classes or CSS variables -->
-<div style="padding: var(--spacing-4); margin-bottom: var(--spacing-6);">
-  <h2 style="margin-bottom: var(--spacing-2);">Title</h2>
-  <p style="line-height: 1.6;">Content with comfortable line height</p>
-</div>
+```css
+/* ✅ Good: Consistent spacing system */
+:root {
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+}
 ```
 
 ### Typography
@@ -68,23 +68,14 @@ This rule defines core principles and best practices for creating modern, user-c
 ```css
 /* ✅ Good: Type scale with consistent ratios */
 :root {
-  --font-size-xs: 0.75rem;    /* 12px */
-  --font-size-sm: 0.875rem;   /* 14px */
-  --font-size-base: 1rem;     /* 16px */
-  --font-size-lg: 1.25rem;    /* 20px */
-  --font-size-xl: 1.5rem;     /* 24px */
-  --font-size-2xl: 2rem;      /* 32px */
-  
-  --line-height-tight: 1.25;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
   --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-}
-
-body {
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
 }
 ```
+
+> **Reference**: See [Typography](visual/typography.mdc) for detailed type scale and typography guidelines.
 
 ### Colors & Contrast
 - ✅ **Limited palette**: Use 3-5 primary colors maximum
@@ -93,24 +84,17 @@ body {
 - ✅ **Color blindness**: Don't rely on color alone to convey information
 
 ```css
-/* ✅ Good: Semantic color system with sufficient contrast */
+/* ✅ Good: Semantic color system */
 :root {
-  /* Primary colors */
   --color-primary: #0066cc;
-  --color-primary-hover: #0052a3;
-  
-  /* Semantic colors */
   --color-success: #10b981;
-  --color-warning: #f59e0b;
   --color-error: #ef4444;
-  --color-info: #3b82f6;
-  
-  /* Neutral colors with good contrast */
-  --color-text-primary: #1f2937;    /* 16.5:1 on white */
-  --color-text-secondary: #6b7280;  /* 5.7:1 on white */
-  --color-background: #ffffff;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
 }
 ```
+
+> **Reference**: See [Colors and Contrast](visual/colors-contrast.mdc) for detailed color system and contrast guidelines.
 
 ### Interactive Elements
 - ✅ **Clear affordances**: Make clickable elements obviously interactive
@@ -119,18 +103,9 @@ body {
 - ✅ **Loading states**: Show loading indicators for async operations
 
 ```html
-<!-- ✅ Good: Clear button states with proper attributes -->
-<button 
-  class="btn btn-primary" 
-  disabled
-  aria-disabled="true">
-  Submit
-</button>
-
-<button class="btn btn-primary" aria-busy="true">
-  <span class="spinner" aria-hidden="true"></span>
-  Loading...
-</button>
+<!-- ✅ Good: Button states -->
+<button disabled aria-disabled="true">Submit</button>
+<button aria-busy="true">Loading...</button>
 ```
 
 ### Forms & Validation
@@ -140,22 +115,18 @@ body {
 - ✅ **Autocomplete**: Use appropriate autocomplete attributes
 
 ```html
-<!-- ✅ Good: Accessible form with proper labels and validation -->
-<div class="form-group">
-  <label for="email">Email Address</label>
-  <input 
-    type="email" 
-    id="email" 
-    name="email"
-    autocomplete="email"
-    required
-    aria-describedby="email-error"
-    aria-invalid="false">
-  <span id="email-error" class="error-message" role="alert">
-    <!-- Error message appears here -->
-  </span>
-</div>
+<!-- ✅ Good: Accessible form -->
+<label for="email">Email Address</label>
+<input 
+  type="email" 
+  id="email" 
+  name="email"
+  required
+  aria-describedby="email-error">
+<span id="email-error" role="alert"></span>
 ```
+
+> **Reference**: See [Forms and Validation](technical/forms-validation.mdc) for detailed form design patterns.
 
 ### Navigation
 - ✅ **Clear hierarchy**: Use proper heading levels (h1-h6) in order
@@ -164,18 +135,17 @@ body {
 - ✅ **Skip links**: Provide "skip to main content" for keyboard users
 
 ```html
-<!-- ✅ Good: Semantic navigation with proper structure -->
+<!-- ✅ Good: Semantic navigation -->
 <nav aria-label="Main navigation">
   <ul>
     <li><a href="/" aria-current="page">Home</a></li>
     <li><a href="/about">About</a></li>
-    <li><a href="/contact">Contact</a></li>
   </ul>
 </nav>
-
-<!-- Skip link for accessibility -->
-<a href="#main-content" class="skip-link">Skip to main content</a>
+<a href="#main-content">Skip to main content</a>
 ```
+
+> **Reference**: See [Navigation](layout/navigation.mdc) for detailed navigation patterns. See [HTML Best Practices](../../html/html.mdc) for semantic HTML structure.
 
 ### Micro-interactions
 - ✅ **Subtle animations**: Use transitions to guide attention (200-300ms)
@@ -184,9 +154,9 @@ body {
 - ✅ **Feedback loops**: Confirm user actions with visual feedback
 
 ```css
-/* ✅ Good: Smooth transitions with reduced motion support */
+/* ✅ Good: Respect motion preferences */
 .button {
-  transition: background-color 200ms ease-in-out;
+  transition: background-color 200ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -204,17 +174,15 @@ body {
 - ❌ **Overcrowding**: Don't pack too much content in limited space
 - ❌ **Horizontal scrolling**: Avoid horizontal scroll on mobile (except carousels)
 
-```html
-<!-- ❌ Bad: Fixed width container that breaks on small screens -->
-<div style="width: 1200px;">
-  Content
-</div>
+```css
+/* ❌ Bad: Fixed width */
+.container { width: 1200px; }
 
-<!-- ✅ Good: Flexible container -->
-<div style="max-width: 1200px; width: 100%; padding: 0 1rem;">
-  Content
-</div>
+/* ✅ Good: Flexible */
+.container { max-width: 1200px; width: 100%; }
 ```
+
+> **Reference**: See [Responsive Design](layout/responsive-design.mdc) for detailed responsive layout guidelines.
 
 ### Typography Mistakes
 - ❌ **Too many fonts**: Don't use more than 2-3 font families
@@ -223,17 +191,17 @@ body {
 - ❌ **All caps everywhere**: Don't overuse uppercase text (reduces readability)
 
 ```css
-/* ❌ Bad: Too many fonts and inconsistent sizing */
-h1 { font-family: 'Font1'; font-size: 33px; }
-h2 { font-family: 'Font2'; font-size: 27px; }
-p { font-family: 'Font3'; font-size: 13px; line-height: 1.1; }
+/* ❌ Bad: Too many fonts */
+h1 { font-family: 'Font1'; }
+h2 { font-family: 'Font2'; }
+p { font-family: 'Font3'; }
 
-/* ✅ Good: Consistent font system */
+/* ✅ Good: Consistent system */
 :root { --font-primary: 'Inter', sans-serif; }
-h1 { font-family: var(--font-primary); font-size: 2rem; }
-h2 { font-family: var(--font-primary); font-size: 1.5rem; }
-p { font-family: var(--font-primary); font-size: 1rem; line-height: 1.6; }
+h1, h2, p { font-family: var(--font-primary); }
 ```
+
+> **Reference**: See [Typography](visual/typography.mdc) for detailed typography guidelines.
 
 ### Color Mistakes
 - ❌ **Low contrast**: Don't use light gray text on white backgrounds
@@ -242,12 +210,14 @@ p { font-family: var(--font-primary); font-size: 1rem; line-height: 1.6; }
 - ❌ **Bright backgrounds**: Avoid bright colored backgrounds with text
 
 ```css
-/* ❌ Bad: Insufficient contrast (fails WCAG) */
-.text { color: #999999; background: #ffffff; } /* 2.8:1 ratio */
+/* ❌ Bad: Insufficient contrast */
+.text { color: #999999; background: #ffffff; }
 
 /* ✅ Good: Sufficient contrast */
-.text { color: #666666; background: #ffffff; } /* 5.7:1 ratio */
+.text { color: #666666; background: #ffffff; }
 ```
+
+> **Reference**: See [Colors and Contrast](visual/colors-contrast.mdc) for detailed contrast requirements.
 
 ### Interaction Mistakes
 - ❌ **Small tap targets**: Don't make buttons/links smaller than 44×44px
@@ -255,12 +225,12 @@ p { font-family: var(--font-primary); font-size: 1rem; line-height: 1.6; }
 - ❌ **Hidden interactions**: Don't rely on hover-only interactions on touch devices
 - ❌ **Auto-playing media**: Don't auto-play videos/audio without user consent
 
-```html
-<!-- ❌ Bad: Too small tap target for mobile -->
-<button style="padding: 4px 8px; font-size: 12px;">Click</button>
+```css
+/* ❌ Bad: Too small */
+.button { padding: 4px 8px; }
 
-<!-- ✅ Good: Touch-friendly button -->
-<button style="min-height: 44px; padding: 12px 24px;">Click</button>
+/* ✅ Good: Touch-friendly */
+.button { min-height: 44px; padding: 12px 24px; }
 ```
 
 ### Form Mistakes
@@ -270,13 +240,15 @@ p { font-family: var(--font-primary); font-size: 1rem; line-height: 1.6; }
 - ❌ **CAPTCHA overuse**: Don't use CAPTCHA unless absolutely necessary
 
 ```html
-<!-- ❌ Bad: Placeholder as label (disappears when typing) -->
+<!-- ❌ Bad: Placeholder as label -->
 <input type="text" placeholder="Enter your name">
 
-<!-- ✅ Good: Proper label with placeholder as hint -->
+<!-- ✅ Good: Proper label -->
 <label for="name">Name</label>
 <input type="text" id="name" placeholder="e.g., John Smith">
 ```
+
+> **Reference**: See [Forms and Validation](technical/forms-validation.mdc) for detailed form design patterns.
 
 ### Performance Mistakes
 - ❌ **Unoptimized images**: Don't use full-resolution images without optimization
@@ -287,14 +259,15 @@ p { font-family: var(--font-primary); font-size: 1rem; line-height: 1.6; }
 ## 📚 Related Detailed Rules
 
 For specific implementation cases, see:
-- [Responsive Design](responsive-design.mdc) - Mobile-first approach, breakpoints, flexible layouts, content prioritization
-- [Visual Hierarchy](visual-hierarchy.mdc) - Typography scale, spacing systems, color hierarchy, layout patterns
-- [Colors and Contrast](colors-contrast.mdc) - Color theory, contrast ratios, semantic colors, dark mode
-- [Typography](typography.mdc) - Font selection, type scale, line height, readability optimization
-- [Performance](performance.mdc) - Loading optimization, perceived performance, smooth animations
-- [Forms and Validation](forms-validation.mdc) - Form design, validation patterns, error handling, accessibility
-- [Navigation](navigation.mdc) - Navigation patterns, menu design, breadcrumbs, pagination
-- [Accessibility](accessibility.mdc) - WCAG guidelines, semantic HTML, ARIA attributes, keyboard navigation
+- [Website Design Principles](website-design.mdc) - Website structure, content organization, conversion optimization
+- [Responsive Design](layout/responsive-design.mdc) - Mobile-first approach, breakpoints, flexible layouts, content prioritization
+- [Visual Hierarchy](visual/visual-hierarchy.mdc) - Typography scale, spacing systems, color hierarchy, layout patterns
+- [Colors and Contrast](visual/colors-contrast.mdc) - Color theory, contrast ratios, semantic colors, dark mode
+- [Typography](visual/typography.mdc) - Font selection, type scale, line height, readability optimization
+- [Performance](technical/performance.mdc) - Loading optimization, perceived performance, smooth animations
+- [Forms and Validation](technical/forms-validation.mdc) - Form design, validation patterns, error handling, accessibility
+- [Navigation](layout/navigation.mdc) - Navigation patterns, menu design, breadcrumbs, pagination
+- [Accessibility](technical/accessibility.mdc) - WCAG guidelines, semantic HTML, ARIA attributes, keyboard navigation
 
 ## 📝 Key Points
 

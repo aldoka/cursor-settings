@@ -91,51 +91,17 @@ code, pre {
 - ✅ **Consider mood alignment**: Fonts should match brand tone
 
 ```css
-/* ✅ Good: Classic serif + sans-serif pairing */
-:root {
-  /* Playfair Display (elegant serif) for headings */
-  --font-heading: 'Playfair Display', Georgia, serif;
-  
-  /* Lato (clean sans-serif) for body */
-  --font-body: 'Lato', 'Helvetica Neue', sans-serif;
-}
-
-/* ✅ Good: Single family, multiple weights (safest) */
+/* ✅ Good: Single family (safest) */
 :root {
   --font-family: 'Inter', sans-serif;
-  
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
 }
 
-h1, h2 {
-  font-family: var(--font-family);
-  font-weight: var(--font-weight-bold);
-}
-
-body {
-  font-family: var(--font-family);
-  font-weight: var(--font-weight-regular);
-}
-
-/* ✅ Good: Modern geometric pairing */
+/* ✅ Good: Font pairing */
 :root {
-  /* Montserrat (geometric) for headings */
-  --font-heading: 'Montserrat', 'Arial', sans-serif;
-  
-  /* Merriweather (serif) for body - creates contrast */
-  --font-body: 'Merriweather', Georgia, serif;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Merriweather', serif;
 }
 ```
-
-**Recommended Pairings for 2025:**
-- **Modern Clean**: Poppins (heading) + Inter (body)
-- **Professional**: Montserrat (heading) + Merriweather (body)
-- **Elegant**: Playfair Display (heading) + Lato (body)
-- **Corporate**: Roboto (heading) + Open Sans (body)
-- **Tech**: Space Grotesk (heading) + IBM Plex Sans (body)
 
 ### Type Scale System
 
@@ -146,35 +112,18 @@ body {
 - ✅ **Test on actual devices**: Ensure sizes work in context
 
 ```css
-/* ✅ Good: Modular scale with 1.25 ratio (Major Third) */
+/* ✅ Good: Modular scale with 1.25 ratio */
 :root {
-  /* Base size */
-  --text-base: 1rem;           /* 16px */
-  
-  /* Scale down (÷ 1.25) */
-  --text-sm: 0.8rem;           /* 12.8px */
-  --text-xs: 0.64rem;          /* 10.24px */
-  
-  /* Scale up (× 1.25) */
-  --text-lg: 1.25rem;          /* 20px */
-  --text-xl: 1.563rem;         /* 25px */
-  --text-2xl: 1.953rem;        /* 31.25px */
-  --text-3xl: 2.441rem;        /* 39.06px */
-  --text-4xl: 3.052rem;        /* 48.83px */
-  --text-5xl: 3.815rem;        /* 61.04px */
+  --text-base: 1rem;
+  --text-sm: 0.8rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
 }
 
-/* Application to elements */
-h1 { font-size: var(--text-5xl); }
-h2 { font-size: var(--text-4xl); }
-h3 { font-size: var(--text-3xl); }
-h4 { font-size: var(--text-2xl); }
-h5 { font-size: var(--text-xl); }
-h6 { font-size: var(--text-lg); }
-
-p, li { font-size: var(--text-base); }
-small { font-size: var(--text-sm); }
-.caption { font-size: var(--text-xs); }
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+p { font-size: var(--text-base); }
 ```
 
 #### Fluid Typography with clamp()
@@ -184,37 +133,15 @@ small { font-size: var(--text-sm); }
 - ✅ **Test at various screen widths**
 
 ```css
-/* ✅ Good: Fluid typography that scales with viewport */
+/* ✅ Good: Fluid typography */
 :root {
-  /* clamp(min, preferred, max) */
-  --text-sm: clamp(0.875rem, 0.85rem + 0.125vw, 1rem);
   --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --text-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.5rem);
   --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 2rem);
   --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2.5rem);
-  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 3.5rem);
-  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 4.5rem);
-  --text-5xl: clamp(3rem, 2rem + 5vw, 6rem);
 }
 
-/* Headings scale automatically with viewport */
-h1 {
-  font-size: var(--text-5xl);
-  /* On mobile (375px): ~3rem (48px)
-     On desktop (1440px): ~6rem (96px) */
-}
-
-h2 {
-  font-size: var(--text-4xl);
-  /* On mobile: ~2.25rem (36px)
-     On desktop: ~4.5rem (72px) */
-}
-
-body {
-  font-size: var(--text-base);
-  /* On mobile: ~1rem (16px)
-     On desktop: ~1.125rem (18px) */
-}
+h1 { font-size: var(--text-2xl); }
+body { font-size: var(--text-base); }
 ```
 
 ### Line Height and Spacing
@@ -228,38 +155,14 @@ body {
 ```css
 /* ✅ Good: Line height system */
 :root {
-  --leading-none: 1;
   --leading-tight: 1.25;
-  --leading-snug: 1.375;
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
-  --leading-loose: 2;
 }
 
-/* Headings: Tight line height for impact */
-h1, h2, h3 {
-  line-height: var(--leading-tight);
-}
-
-/* Body: Comfortable reading */
-p, li {
-  line-height: var(--leading-normal);
-}
-
-/* Long-form content: More relaxed */
-article p {
-  line-height: var(--leading-relaxed);
-}
-
-/* Small text: Slightly tighter but still readable */
-small, .caption {
-  line-height: var(--leading-snug);
-}
-
-/* Code: Monospace needs more space */
-code, pre {
-  line-height: var(--leading-relaxed);
-}
+h1, h2 { line-height: var(--leading-tight); }
+p { line-height: var(--leading-normal); }
+article p { line-height: var(--leading-relaxed); }
 ```
 
 #### Letter Spacing (Tracking)
@@ -269,37 +172,18 @@ code, pre {
 - ✅ **Body text: usually default (0)**
 
 ```css
-/* ✅ Good: Letter spacing adjustments */
-:root {
-  --tracking-tighter: -0.05em;
-  --tracking-tight: -0.025em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.025em;
-  --tracking-wider: 0.05em;
-  --tracking-widest: 0.1em;
-}
-
-/* Large headings: Slightly tighter */
+/* ✅ Good: Letter spacing */
 h1, h2 {
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: -0.025em;
 }
 
-/* Uppercase text: More spacing */
 .uppercase {
   text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
+  letter-spacing: 0.05em;
 }
 
-/* Small labels: Slightly more space */
-label, .label {
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-
-/* Body text: Default spacing */
 p {
-  letter-spacing: var(--tracking-normal);
+  letter-spacing: 0;
 }
 ```
 
@@ -312,33 +196,10 @@ p {
 - ✅ **Consider reading context**
 
 ```css
-/* ✅ Good: Optimal line length for readability */
+/* ✅ Good: Optimal line length */
 .prose {
-  max-width: 65ch;              /* ~65 characters per line */
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Wider for short-form content */
-.card-text {
-  max-width: 45ch;              /* Shorter for cards */
-}
-
-/* Even wider for short headlines */
-.headline {
-  max-width: 20ch;              /* Short, impactful lines */
-}
-
-/* Full-width for certain contexts */
-.code-block {
-  max-width: 100%;              /* Code needs horizontal space */
-  overflow-x: auto;
-}
-
-/* Responsive line length */
-.article-body {
-  max-width: min(65ch, 90vw);   /* 65ch or 90% viewport, whichever is smaller */
-  padding: 0 1rem;
+  max-width: 65ch;
+  margin: 0 auto;
 }
 ```
 
@@ -440,52 +301,9 @@ strong {
 <!-- ✅ Good: Semantic emphasis -->
 <article>
   <h1>Article Title</h1>
-  
-  <p class="lead">
-    This is an introductory paragraph with <strong>important information</strong> 
-    that needs emphasis. Notice how we use semantic HTML.
-  </p>
-  
-  <p>
-    Regular paragraph text flows naturally. We can emphasize <em>specific words</em> 
-    when needed for <strong>critical points</strong>.
-  </p>
-  
-  <p>
-    Use <mark>highlighting</mark> sparingly for search results or 
-    particularly important notes.
-  </p>
+  <p>Paragraph with <strong>important information</strong>.</p>
+  <p>We can emphasize <em>specific words</em> when needed.</p>
 </article>
-
-<style>
-/* ✅ Good: Styled semantic elements */
-.lead {
-  font-size: var(--text-xl);
-  line-height: var(--leading-relaxed);
-  color: var(--color-text-secondary);
-  margin-bottom: 2rem;
-}
-
-p {
-  margin-bottom: 1.5rem;
-}
-
-strong, b {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-em, i {
-  font-style: italic;
-}
-
-mark {
-  background-color: #fef3c7;      /* Yellow highlight */
-  color: #78350f;                 /* Dark text for contrast */
-  padding: 0.125rem 0.25rem;
-  border-radius: 2px;
-}
-</style>
 ```
 
 ## ❌ DON'T (Anti-patterns)
@@ -497,20 +315,16 @@ mark {
 - ❌ **Inconsistent fonts**: Don't mix fonts randomly
 
 ```css
-/* ❌ Bad: Too many different fonts */
-h1 { font-family: 'Fancy Display', serif; }
-h2 { font-family: 'Another Font', sans-serif; }
-p { font-family: 'Yet Another', serif; }
-button { font-family: 'Fourth Font', sans-serif; }
+/* ❌ Bad: Too many fonts */
+h1 { font-family: 'Font1'; }
+h2 { font-family: 'Font2'; }
+p { font-family: 'Font3'; }
 
-/* ✅ Good: Consistent, limited fonts */
+/* ✅ Good: Consistent system */
 :root {
-  --font-heading: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-family: 'Inter', sans-serif;
 }
-
-h1, h2, h3 { font-family: var(--font-heading); }
-p, button { font-family: var(--font-body); }
+h1, h2, p { font-family: var(--font-family); }
 ```
 
 ### Size and Scale Mistakes
@@ -520,20 +334,15 @@ p, button { font-family: var(--font-body); }
 - ❌ **Inconsistent scaling**: Don't break the type scale
 
 ```css
-/* ❌ Bad: Random, arbitrary sizes */
+/* ❌ Bad: Random sizes */
 h1 { font-size: 37px; }
 h2 { font-size: 29px; }
 p { font-size: 15px; }
-small { font-size: 11px; }
 
-/* ❌ Bad: Too small for readability */
-body { font-size: 12px; }         /* Too small! */
-
-/* ✅ Good: Systematic scale, readable sizes */
-h1 { font-size: var(--text-5xl); }  /* 48px */
-h2 { font-size: var(--text-4xl); }  /* 36px */
-p { font-size: var(--text-base); }  /* 16px */
-small { font-size: var(--text-sm); } /* 14px */
+/* ✅ Good: Systematic scale */
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+p { font-size: var(--text-base); }
 ```
 
 ### Line Height Mistakes
@@ -543,30 +352,15 @@ small { font-size: var(--text-sm); } /* 14px */
 - ❌ **Fixed pixels**: Don't use px for line-height
 
 ```css
-/* ❌ Bad: Line height too tight for body text */
-p {
-  line-height: 1.2;               /* Too tight, hard to read */
-}
+/* ❌ Bad: Too tight */
+p { line-height: 1.2; }
 
-/* ❌ Bad: Same line-height for everything */
-* {
-  line-height: 1.5;               /* Headings look awkward */
-}
-
-/* ❌ Bad: Using pixels for line-height */
-p {
-  font-size: 16px;
-  line-height: 24px;              /* Doesn't scale with font-size */
-}
+/* ❌ Bad: Using pixels */
+p { font-size: 16px; line-height: 24px; }
 
 /* ✅ Good: Appropriate line-heights */
-h1, h2, h3 {
-  line-height: 1.25;              /* Tighter for headings */
-}
-
-p {
-  line-height: 1.6;               /* Comfortable for reading */
-}
+h1, h2 { line-height: 1.25; }
+p { line-height: 1.6; }
 ```
 
 ### Line Length Mistakes
@@ -576,21 +370,11 @@ p {
 - ❌ **Ignoring content**: Don't use same width for all content
 
 ```css
-/* ❌ Bad: No line length limit on wide screens */
-.article {
-  width: 100%;                    /* Could be 200+ characters! */
-}
-
-/* ❌ Bad: Too narrow */
-.article {
-  max-width: 30ch;                /* Too narrow, choppy reading */
-}
+/* ❌ Bad: No limit */
+.article { width: 100%; }
 
 /* ✅ Good: Optimal line length */
-.article {
-  max-width: 65ch;                /* 50-75 characters per line */
-  margin: 0 auto;
-}
+.article { max-width: 65ch; margin: 0 auto; }
 ```
 
 ### Performance Mistakes

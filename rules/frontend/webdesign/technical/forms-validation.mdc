@@ -1,0 +1,364 @@
+---
+description: Comprehensive guide for form design, validation patterns, error handling, and user-friendly input experiences
+alwaysApply: false
+---
+# Forms and Validation
+
+> **Reference**: This guide extends the [UX/UI Design Principles](../ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into forms and validation specifics.
+
+## 📋 Overview
+
+Forms are critical touchpoints where users interact directly with your application. Well-designed forms with effective validation reduce errors, increase completion rates, and create positive user experiences. This guide covers form design, real-time validation, error handling, and accessibility.
+
+**Why it matters:**
+- Complex forms increase abandonment.
+- Good inline validation reduces errors and frustration.
+- Clear, actionable errors improve completion rates.
+
+## 🎯 Core Form Principles
+
+### 1. Simplicity
+- Ask only for essential information
+- One column layout (faster completion)
+- Logical field order
+- Group related fields
+
+### 2. Clarity
+- Clear, visible labels (not just placeholders)
+- Helpful microcopy and examples
+- Explicit required fields
+- Obvious primary action
+
+### 3. Feedback
+- Real-time validation where appropriate
+- Clear error messages
+- Success confirmation
+- Progress indicators for multi-step forms
+
+### 4. Accessibility
+- Proper label associations
+- Keyboard navigation
+- Screen reader support
+- Sufficient color contrast
+
+## ✅ DO (Recommended Practices)
+
+### Form Structure
+
+#### Single Column Layout
+- ✅ **One column for faster completion**
+- ✅ **Logical top-to-bottom flow**
+- ✅ **Group related fields**
+- ✅ **Clear visual hierarchy**
+
+```html
+<!-- ✅ Good: Single column form -->
+<form>
+  <label for="fullName">Full Name *</label>
+  <input type="text" id="fullName" name="fullName" required>
+  
+  <label for="email">Email Address *</label>
+  <input type="email" id="email" name="email" required>
+  
+  <label for="phone">Phone Number</label>
+  <input type="tel" id="phone" name="phone" placeholder="(555) 555-5555">
+  
+  <button type="submit">Continue</button>
+</form>
+```
+
+> **Reference**: See [HTML Best Practices](../../html/html.mdc) for semantic HTML form structure and accessibility.
+
+#### Label Best Practices
+- ✅ **Always use explicit labels**
+- ✅ **Labels above inputs** (better for mobile)
+- ✅ **Never rely on placeholders as labels**
+- ✅ **Mark required fields clearly**
+
+```html
+<!-- ✅ Good: Clear labels -->
+<label for="username">Username *</label>
+<input type="text" id="username" name="username" required>
+
+<!-- ❌ Bad: Placeholder as label -->
+<input type="text" placeholder="Enter your username">
+
+<!-- ✅ Good: Label with hint -->
+<label for="password">Password</label>
+<input type="password" id="password" name="password" aria-describedby="password-hint">
+<span id="password-hint">Must be at least 8 characters</span>
+```
+
+> **Reference**: See [HTML Best Practices](../../html/html.mdc) for form labels and accessibility.
+
+### Input Types and Attributes
+
+#### Use Appropriate Input Types
+- ✅ **type="email" for emails**: Provides keyboard optimization
+- ✅ **type="tel" for phone numbers**: Shows numeric keyboard
+- ✅ **type="number" for numbers**: Prevents non-numeric input
+- ✅ **type="date" for dates**: Native date picker
+- ✅ **type="search" for search**: Adds clear button
+
+```html
+<!-- ✅ Good: Appropriate input types -->
+<label for="email">Email</label>
+<input type="email" id="email" name="email" autocomplete="email" required>
+
+<label for="phone">Phone</label>
+<input type="tel" id="phone" name="phone" autocomplete="tel">
+
+<label for="quantity">Quantity</label>
+<input type="number" id="quantity" name="quantity" min="1" max="99">
+
+<label for="birthdate">Birth Date</label>
+<input type="date" id="birthdate" name="birthdate" autocomplete="bday">
+```
+
+> **Reference**: See [HTML Best Practices](../../html/html.mdc) for input types and autocomplete attributes.
+
+#### Autocomplete Attributes
+- ✅ **Use autocomplete for common fields**
+- ✅ **Helps autofill and password managers**
+- ✅ **Improves completion speed**
+- ✅ **Better accessibility**
+
+```html
+<!-- ✅ Good: Autocomplete attributes -->
+<form>
+  <input type="text" name="name" autocomplete="name">
+  <input type="email" name="email" autocomplete="email">
+  <input type="tel" name="phone" autocomplete="tel">
+</form>
+```
+
+> **Reference**: See [HTML Best Practices](../../html/html.mdc) for autocomplete attribute values.
+
+### Real-Time Validation
+
+#### Inline Validation Patterns
+- ✅ **Validate on blur** (when user leaves field)
+- ✅ **Show success indicators** for correct input
+- ✅ **Update dynamically** as user types (after initial blur)
+- ✅ **Don't validate on focus** (annoying)
+
+```html
+<!-- ✅ Good: Inline validation -->
+<label for="email">Email Address</label>
+<input 
+  type="email" 
+  id="email" 
+  name="email"
+  aria-invalid="false"
+  aria-describedby="email-error">
+<span id="email-error" role="alert"></span>
+```
+
+#### Password Strength Indicators
+- ✅ **Visual strength meter**
+- ✅ **Clear requirements list**
+- ✅ **Real-time feedback**
+- ✅ **Show/hide password toggle**
+
+```html
+<!-- ✅ Good: Password with strength indicator -->
+<label for="password">Create Password</label>
+<input 
+  type="password" 
+  id="password" 
+  name="password"
+  minlength="8"
+  required
+  aria-describedby="password-requirements">
+<ul id="password-requirements">
+  <li>At least 8 characters</li>
+  <li>One uppercase letter</li>
+  <li>One number</li>
+</ul>
+```
+
+### Error Handling
+
+#### Clear Error Messages
+- ✅ **Specific about the problem**
+- ✅ **Explain how to fix it**
+- ✅ **Show next to the field**
+- ✅ **Use plain language**
+
+```html
+<!-- ✅ Good: Specific error message -->
+<label for="username">Username</label>
+<input 
+  type="text" 
+  id="username" 
+  name="username"
+  aria-invalid="true"
+  aria-describedby="username-error">
+<span id="username-error" role="alert">
+  Username must be 3-20 characters
+</span>
+
+<!-- ❌ Bad: Vague error -->
+<span class="error">Invalid input</span>
+```
+
+#### Error Summary
+- ✅ **List all errors at top of form**
+- ✅ **Link to fields with errors**
+- ✅ **Focus on first error**
+- ✅ **Preserve user input**
+
+```html
+<!-- ✅ Good: Error summary -->
+<div role="alert" tabindex="-1">
+  <h2>Please fix the following errors:</h2>
+  <ul>
+    <li><a href="#email">Email address is required</a></li>
+    <li><a href="#password">Password must be at least 8 characters</a></li>
+  </ul>
+</div>
+```
+
+### Multi-Step Forms
+
+#### Progress Indicators
+- ✅ **Show current step and total steps**
+- ✅ **Allow jumping to completed steps**
+- ✅ **Save progress automatically**
+- ✅ **Clear "Save and continue later" option**
+
+```html
+<!-- ✅ Good: Multi-step form with progress -->
+<div role="navigation" aria-label="Form progress">
+  <div>1. Personal Info</div>
+  <div>2. Address</div>
+  <div>3. Payment</div>
+</div>
+
+<div>
+  <h2>Step 2: Address Information</h2>
+  <!-- Form fields -->
+</div>
+
+<div>
+  <button type="button">← Back</button>
+  <button type="button">Save for Later</button>
+  <button type="button">Continue →</button>
+</div>
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### Form Structure Mistakes
+- ❌ **Multi-column layouts**: Confusing, slower completion
+- ❌ **Placeholders as labels**: Disappear when typing
+- ❌ **Too many fields**: Ask only what's needed
+- ❌ **Random field order**: Follow logical flow
+
+```html
+<!-- ❌ Bad: Multi-column layout -->
+<div style="display: grid; grid-template-columns: 1fr 1fr;">
+  <input placeholder="First Name">
+  <input placeholder="Email">
+</div>
+
+<!-- ✅ Good: Single column -->
+<form>
+  <label for="firstName">First Name</label>
+  <input type="text" id="firstName">
+  
+  <label for="email">Email</label>
+  <input type="email" id="email">
+</form>
+```
+
+### Validation Mistakes
+- ❌ **Validate on focus/typing**: Too early, annoying
+- ❌ **Generic error messages**: "Error", "Invalid"
+- ❌ **No success indicators**: Users uncertain if input is correct
+- ❌ **Clear form on error**: Preserve user input!
+
+```javascript
+// ❌ Bad: Validate immediately on typing
+input.addEventListener('input', validate);
+
+// ✅ Good: Validate on blur
+input.addEventListener('blur', validate);
+
+// ❌ Bad: Clear form on error
+if (hasErrors) form.reset();
+
+// ✅ Good: Preserve input
+if (hasErrors) showErrors(errors);
+```
+
+### Error Message Mistakes
+- ❌ **Vague errors**: "Something went wrong"
+- ❌ **Technical jargon**: "Error 422: Unprocessable Entity"
+- ❌ **No guidance**: Don't explain how to fix
+- ❌ **Color only**: Don't rely on red color alone
+
+```html
+<!-- ❌ Bad: Unhelpful error -->
+<span class="error">Error</span>
+
+<!-- ✅ Good: Specific error -->
+<span class="error" role="alert">
+  Email address invalid: Please enter a valid email (e.g., name@example.com)
+</span>
+```
+
+## 📝 Forms Checklist
+
+Before launching, verify:
+- [ ] Single column layout for main form fields
+- [ ] Visible labels (not placeholders) for all inputs
+- [ ] Required fields clearly marked
+- [ ] Appropriate input types (email, tel, number, date)
+- [ ] Autocomplete attributes for common fields
+- [ ] Inline validation on blur (not on input initially)
+- [ ] Clear, specific error messages
+- [ ] Success indicators for valid input
+- [ ] Error summary at top of form
+- [ ] Touch-friendly targets (44×44px minimum)
+- [ ] Keyboard accessible (tab order, enter to submit)
+- [ ] ARIA labels and descriptions
+- [ ] Progress indicators for multi-step forms
+- [ ] "Save for later" option for long forms
+- [ ] Disabled submit button while processing
+- [ ] Success confirmation after submission
+
+## 📝 Key Points
+
+### Must Have
+- Visible labels for all form fields
+- Clear required field indicators
+- Inline validation on blur
+- Specific, helpful error messages
+- Keyboard accessibility
+- Appropriate input types and autocomplete
+- Touch-friendly targets (44×44px)
+
+### Do
+- Use single column layouts
+- Validate on blur, update on input
+- Show success indicators for valid input
+- Preserve user input on errors
+- Group related fields together
+- Use native HTML validation when possible
+- Provide helpful microcopy and examples
+- Test with real users and data
+
+### Don't
+- Don't use placeholders as labels
+- Don't validate immediately on typing
+- Don't show generic error messages
+- Don't clear form on submission errors
+- Don't use multi-column layouts
+- Don't ask for unnecessary information
+- Don't rely on color alone for errors
+- Don't forget keyboard navigation
+
+---
+
+**Remember**: Forms are conversations with users. Make them friendly, forgiving, and helpful. Every field you remove increases completion rates. Every clear error message prevents frustration. Good form design directly impacts conversion rates and user satisfaction.

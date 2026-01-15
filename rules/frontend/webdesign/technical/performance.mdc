@@ -4,7 +4,7 @@ alwaysApply: false
 ---
 # Performance Optimization
 
-> **Reference**: This guide extends the [UX/UI Design Principles](ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into performance optimization specifics.
+> **Reference**: This guide extends the [UX/UI Design Principles](../ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into performance optimization specifics.
 
 ## 📋 Overview
 
@@ -14,6 +14,7 @@ Performance is a critical aspect of user experience. Users expect websites to lo
 - Slow sites increase abandonment and reduce trust.
 - Even small delays can measurably reduce conversion and satisfaction.
 - **Perceived performance** often matters as much as actual load time.
+- **Core Web Vitals 3.0 (2026)**: Google and platforms are expecting even faster load times—target 1–1.5 seconds where possible. Performance budgets are becoming stricter, and instant-load experiences are becoming the standard, not the exception.
 
 ## 🎯 Core Performance Principles
 
@@ -223,7 +224,7 @@ async function toggleLike(postId) {
 - ✅ **Provide dimensions**: Prevent layout shift
 
 ```html
-<!-- ✅ Good: Lazy loading for below-the-fold images -->
+<!-- ✅ Good: Lazy loading below fold -->
 <img 
   src="image-800w.jpg"
   srcset="image-400w.jpg 400w, image-800w.jpg 800w, image-1200w.jpg 1200w"
@@ -233,17 +234,19 @@ async function toggleLike(postId) {
   width="800"
   height="600">
 
-<!-- ✅ Good: Eager loading for hero image (above fold) -->
+<!-- ✅ Good: Eager loading above fold -->
 <img 
   src="hero.jpg"
   alt="Hero image"
   loading="eager"
   width="1920"
   height="1080">
-
+  
 <!-- ✅ Good: Preload critical images -->
 <link rel="preload" as="image" href="hero.jpg">
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed image optimization including srcset, picture element, and modern formats.
 
 #### Modern Image Formats
 - ✅ **Use WebP with fallback**: 25-35% smaller than JPEG
@@ -285,33 +288,16 @@ async function toggleLike(postId) {
 - ✅ **Responsive sizing**: Scale properly
 
 ```html
-<!-- ✅ Good: Image with dimensions to prevent layout shift -->
+<!-- ✅ Good: Image with dimensions -->
 <img 
   src="image.jpg"
   alt="Description"
   width="800"
   height="600"
-  loading="lazy"
-  style="width: 100%; height: auto;">
-
-<!-- ✅ Good: Using aspect-ratio CSS -->
-<div class="image-container">
-  <img src="image.jpg" alt="Description" loading="lazy">
-</div>
-
-<style>
-.image-container {
-  aspect-ratio: 16 / 9;          /* Maintains 16:9 ratio */
-  overflow: hidden;
-}
-
-.image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;             /* Fills container */
-}
-</style>
+  loading="lazy">
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for image dimensions and aspect-ratio techniques.
 
 ### Animation Performance
 
@@ -465,16 +451,14 @@ window.addEventListener('resize', handleResize);
 <head>
   <style>
     /* Critical above-the-fold styles */
-    body { margin: 0; font-family: system-ui, sans-serif; }
-    .header { background: #0066cc; padding: 1rem; }
-    .hero { min-height: 100vh; display: flex; align-items: center; }
+    body { margin: 0; }
+    .header { padding: 1rem; }
   </style>
-  
-  <!-- Preload main stylesheet -->
-  <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css"></noscript>
+  <link rel="preload" href="styles.css" as="style">
 </head>
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for resource hints and preload strategies.
 
 #### JavaScript Optimization
 - ✅ **Defer non-critical JS**: Use `defer` attribute
@@ -483,24 +467,12 @@ window.addEventListener('resize', handleResize);
 - ✅ **Tree shaking**: Remove unused code
 
 ```html
-<!-- ✅ Good: Proper script loading -->
-<head>
-  <!-- Critical scripts only -->
-  <script>
-    // Minimal critical inline JS (dark mode, etc.)
-  </script>
-</head>
-
-<body>
-  <!-- Content -->
-  
-  <!-- Non-critical scripts at end with defer -->
-  <script src="main.js" defer></script>
-  
-  <!-- Independent analytics with async -->
-  <script src="analytics.js" async></script>
-</body>
+<!-- ✅ Good: Script loading -->
+<script src="main.js" defer></script>
+<script src="analytics.js" async></script>
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed script loading strategies.
 
 #### Resource Hints
 - ✅ **dns-prefetch**: Resolve DNS early for external domains
@@ -509,25 +481,15 @@ window.addEventListener('resize', handleResize);
 - ✅ **preload**: Load critical resources early
 
 ```html
-<!-- ✅ Good: Resource hints for performance -->
+<!-- ✅ Good: Resource hints -->
 <head>
-  <!-- DNS prefetch for external domains -->
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://analytics.example.com">
-  
-  <!-- Preconnect for critical external resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  
-  <!-- Preload critical resources -->
-  <link rel="preload" href="/fonts/main-font.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/font.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/images/hero.jpg" as="image">
-  <link rel="preload" href="/styles/critical.css" as="style">
-  
-  <!-- Prefetch resources for next page -->
-  <link rel="prefetch" href="/page2.html">
-  <link rel="prefetch" href="/page2-assets.js">
 </head>
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed resource hints (preconnect, dns-prefetch, preload, prefetch).
 
 ### Caching Strategies
 
@@ -605,8 +567,8 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 - ❌ **Single format**: Don't ignore modern formats (WebP, AVIF)
 
 ```html
-<!-- ❌ Bad: Unoptimized image without dimensions -->
-<img src="huge-image-4k.jpg" alt="Image">
+<!-- ❌ Bad: Unoptimized image -->
+<img src="huge-image.jpg" alt="Image">
 
 <!-- ✅ Good: Optimized responsive image with dimensions -->
 <picture>
@@ -620,6 +582,8 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
     height="600">
 </picture>
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed image optimization including modern formats and responsive images.
 
 ### Animation Mistakes
 - ❌ **Animating expensive properties**: Don't animate width, height, top, left
@@ -662,18 +626,19 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 - ❌ **No compression**: Don't serve uncompressed assets
 
 ```html
-<!-- ❌ Bad: Render-blocking script in head -->
+<!-- ❌ Bad: Blocking script -->
 <head>
   <script src="huge-bundle.js"></script>
 </head>
 
-<!-- ✅ Good: Deferred, split bundles -->
+<!-- ✅ Good: Deferred scripts -->
 <body>
-  <script src="critical.js"></script>
   <script src="main.js" defer></script>
   <script src="analytics.js" async></script>
 </body>
 ```
+
+> **Reference**: See [HTML Performance](../../html/html-performance.mdc) for script loading strategies.
 
 ## 📝 Performance Checklist
 
@@ -703,6 +668,8 @@ Before launching, verify:
 | **First Input Delay (FID)** | < 100ms | 100ms - 300ms | > 300ms |
 | **Time to Interactive (TTI)** | < 3.8s | 3.8s - 7.3s | > 7.3s |
 | **Total Blocking Time (TBT)** | < 200ms | 200ms - 600ms | > 600ms |
+
+**Note (2026)**: Core Web Vitals 3.0 targets are becoming more aggressive. Aim for LCP < 1.5s, FID < 50ms, and TTI < 2.5s for optimal user experience. Instant-load experiences (under 1 second) are becoming the new standard for high-performing sites.
 
 ## 📝 Key Points
 

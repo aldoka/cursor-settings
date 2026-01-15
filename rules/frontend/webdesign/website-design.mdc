@@ -1,0 +1,413 @@
+---
+description: Core principles and best practices for website design, layout structure, content organization, and conversion optimization
+alwaysApply: false
+---
+# Website Design Principles
+
+> **Framework-agnostic**: This rule contains universal website design principles applicable to any web framework. Framework-specific implementations should be created separately.
+
+## 📋 Overview
+
+This rule defines core principles and best practices for designing effective websites, with special focus on one-page websites. It covers layout structure, content organization, navigation patterns, conversion optimization, and common anti-patterns to avoid. This is a foundational rule that references more specific detailed rules for implementation.
+
+## 🎯 Core Website Design Principles
+
+### 1. Clear Purpose & Goal
+- **Single primary objective**: Each website should have one clear primary goal (lead generation, product sales, information delivery, portfolio showcase)
+- **User-focused messaging**: Content should immediately communicate value proposition to target audience
+- **Conversion-oriented**: Design should guide users toward desired actions
+- **Content hierarchy**: Most important information should be most prominent
+
+### 2. Content Organization & Structure
+- **Logical flow**: Content should follow natural reading and scanning patterns (F-pattern, Z-pattern)
+- **Distinct sections**: Use visual separators (background colors, spacing, imagery) to create clear content blocks
+- **Progressive disclosure**: Show essential information first, reveal details on demand (especially important for one-page sites)
+- **Scannable content**: Break text into digestible chunks with headings, lists, and visual elements
+
+### 3. Navigation & Wayfinding
+- **Clear navigation structure**: Users should understand where they are and how to navigate
+- **Anchor-based navigation**: For one-page sites, use smooth scroll anchors with sticky navigation
+- **Breadcrumbs**: For multi-page sites, show current location in navigation hierarchy
+
+### 4. Visual Storytelling
+- **Compelling hero section**: First impression matters—use strong visuals and clear value proposition
+- **Visual hierarchy**: Guide attention through size, color, contrast, and placement
+- **Consistent branding**: Maintain visual identity throughout all sections
+- **Balanced media**: Use images, illustrations, and video purposefully without sacrificing performance
+
+### 5. Performance & Optimization
+- **Fast loading**: Prioritize quick initial load times for better user experience
+- **Performance-first mindset**: Consider performance impact of all design decisions
+- **Core Web Vitals**: Optimize for LCP (Largest Contentful Paint), FID (First Input Delay), CLS (Cumulative Layout Shift)
+
+## ✅ DO (Recommended Practices)
+
+### Website Structure
+
+#### One-Page Website Structure
+- ✅ **Hero section with clear value proposition**: Immediately communicate what you offer
+- ✅ **Distinct content blocks**: Organize into logical sections (Features, About, Testimonials, Contact)
+- ✅ **Sticky navigation with anchor links**: Help users jump to sections without losing context
+- ✅ **Multiple strategic CTAs**: Place primary call-to-action in hero, mid-scroll, and footer
+- ✅ **Visual section separators**: Use background colors, spacing, or imagery to distinguish sections
+
+```html
+<!-- ✅ Good: One-page website structure with clear sections -->
+<nav>
+  <a href="#hero">Home</a>
+  <a href="#features">Features</a>
+  <a href="#about">About</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<section id="hero">
+  <h1>Clear Value Proposition</h1>
+  <p>Supporting message</p>
+  <a href="#contact">Get Started</a>
+</section>
+
+<section id="features">
+  <h2>Features</h2>
+</section>
+
+<section id="contact">
+  <h2>Ready to Get Started?</h2>
+  <a href="#contact-form">Contact Us</a>
+</section>
+```
+
+#### Multi-Page Website Structure
+- ✅ **Clear site hierarchy**: Organize pages into logical categories
+- ✅ **Consistent navigation**: Maintain same navigation structure across all pages
+- ✅ **Breadcrumbs**: Show current location in deep navigation structures
+- ✅ **Footer navigation**: Include important links in footer for easy access
+- ✅ **Homepage as hub**: Homepage should clearly guide users to relevant sections
+
+### Content Organization
+
+- ✅ **Headline hierarchy**: Use proper H1-H6 structure (one H1 per page)
+- ✅ **Section IDs for anchors**: Use semantic IDs for anchor navigation
+- ✅ **Meaningful section names**: Each section should have clear purpose
+- ✅ **Content blocks**: Group related content together with consistent spacing
+- ✅ **Visual breaks**: Use whitespace, colors, or imagery to separate sections
+
+> **Reference**: See [HTML Best Practices](../../html/html.mdc) for semantic HTML structure and heading hierarchy details.
+
+### Call-to-Action (CTA) Strategy
+
+- ✅ **Primary CTA prominence**: Make primary action visually stand out
+- ✅ **Multiple CTA placements**: Place CTAs at key decision points (hero, after features, footer)
+- ✅ **Clear action language**: Use specific, benefit-focused copy ("Start Free Trial" vs "Click Here")
+- ✅ **Contrasting colors**: Use contrasting colors to make CTAs stand out
+- ✅ **Consistent CTA design**: Use same style for primary CTAs throughout site
+
+```html
+<!-- ✅ Good: Clear CTA with benefit-focused copy -->
+<section>
+  <h1>Transform Your Workflow</h1>
+  <p>Join thousands of teams already using our platform</p>
+  <a href="/signup">Start Free Trial</a>
+  <p>No credit card required</p>
+</section>
+```
+
+### Social Proof & Trust Elements
+
+- ✅ **Testimonials**: Include customer quotes with names and photos (if appropriate)
+- ✅ **Client logos**: Show recognizable client/partner logos
+- ✅ **Case studies**: Provide detailed examples of successful outcomes
+- ✅ **Reviews/ratings**: Display ratings or review scores when available
+- ✅ **Trust badges**: Include security certifications, guarantees, or awards
+
+```html
+<!-- ✅ Good: Social proof section -->
+<section id="testimonials">
+  <h2>What Our Customers Say</h2>
+  <blockquote>
+    <p>"This product transformed our workflow."</p>
+    <footer>
+      <cite>— Jane Smith, CEO</cite>
+    </footer>
+  </blockquote>
+</section>
+```
+
+### Performance Optimization
+
+- ✅ **Performance-first approach**: Consider performance impact in all design decisions
+- ✅ **Optimize critical path**: Prioritize above-fold content loading
+- ✅ **Test Core Web Vitals**: Monitor and optimize LCP, FID, and CLS metrics
+
+> **Reference**: See [Performance](technical/performance.mdc) for detailed optimization strategies. See [HTML Performance](../../html/html-performance.mdc) for image optimization and resource loading.
+
+### SEO Considerations
+
+- ✅ **Semantic HTML**: Use proper HTML5 semantic elements
+- ✅ **Meta tags**: Include descriptive title, description, and Open Graph tags
+- ✅ **Heading structure**: Use proper H1-H6 hierarchy (one H1 per page)
+- ✅ **Alt text**: Provide descriptive alt text for all meaningful images
+- ✅ **Structured data**: Use schema.org markup when appropriate
+
+> **Reference**: See [HTML Meta Tags](../../html/html-meta.mdc) for meta tags and structured data details. See [HTML Best Practices](../../html/html.mdc) for semantic HTML.
+
+### Machine-Friendly Design (AI Assistants & LLMs)
+
+- ✅ **Structured data for AI**: Use schema.org markup so AI assistants can understand content
+- ✅ **Clear content hierarchy**: Well-structured content helps both humans and AI parse information
+- ✅ **Semantic markup**: Use proper HTML5 elements (not just divs) for better machine understanding
+- ✅ **Descriptive metadata**: Rich meta descriptions help AI assistants provide accurate summaries
+- ✅ **Logical information architecture**: Clear content structure enables AI to navigate and reference content
+
+```html
+<!-- ✅ Good: Machine-friendly structure with schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Product Name",
+  "description": "Clear value proposition"
+}
+</script>
+
+<main>
+  <article>
+    <h1>Main Value Proposition</h1>
+    <p>Supporting information</p>
+  </article>
+</main>
+```
+
+**Why it matters (2026)**: As AI assistants become primary ways users find information, designing for machine understanding is essential. Well-structured, semantic content helps AI provide accurate answers.
+
+> **Reference**: See [HTML Meta Tags](../../html/html-meta.mdc) for structured data implementation details.
+
+## ❌ DON'T (Anti-patterns)
+
+### Structure & Layout Mistakes
+
+- ❌ **Cluttered layouts**: Don't pack too much information into limited space
+- ❌ **No clear hierarchy**: Don't make everything the same size/importance
+- ❌ **Hidden navigation**: Don't hide important navigation behind hamburger menus on desktop
+- ❌ **Inconsistent sections**: Don't use random spacing or styling between sections
+- ❌ **Horizontal scrolling**: Avoid horizontal scroll on mobile (except intentional carousels)
+
+### Content Mistakes
+
+- ❌ **Vague messaging**: Don't use generic phrases like "We're the best" without proof
+- ❌ **Jargon overload**: Don't use industry jargon without explanation
+- ❌ **Feature-focused copy**: Don't list features without explaining benefits
+- ❌ **Too much text**: Don't create walls of text without breaks
+- ❌ **Missing value proposition**: Don't make users guess what you offer
+
+```html
+<!-- ❌ Bad: Vague, feature-focused -->
+<section>
+  <h1>Our Revolutionary Solution</h1>
+  <p>We leverage cutting-edge technology with innovative features.</p>
+</section>
+
+<!-- ✅ Good: Clear value proposition -->
+<section>
+  <h1>Save 10 Hours Per Week on Reporting</h1>
+  <p>Our platform generates reports instantly, so you can focus on decisions.</p>
+</section>
+```
+
+### Navigation Mistakes
+
+- ❌ **Broken anchor links**: Don't create anchor links that don't scroll smoothly
+- ❌ **No back-to-top button**: Don't force users to scroll all the way back up on long pages
+- ❌ **Inconsistent menu**: Don't change navigation structure between pages
+- ❌ **Hidden important links**: Don't bury important pages in footer only
+- ❌ **No active states**: Don't forget to highlight current page/section
+
+### CTA Mistakes
+
+- ❌ **Weak CTA copy**: Don't use generic "Click Here" or "Learn More"
+- ❌ **Too many CTAs**: Don't overwhelm users with multiple competing actions
+- ❌ **Hidden CTAs**: Don't make primary action hard to find
+- ❌ **No urgency or benefit**: Don't use passive language in CTAs
+- ❌ **Inconsistent CTA styling**: Don't use different styles for same action type
+
+```html
+<!-- ❌ Bad: Weak, generic CTA -->
+<a href="/page">Click Here</a>
+<button>Submit</button>
+
+<!-- ✅ Good: Clear, benefit-focused CTA -->
+<a href="/signup">Start Free Trial</a>
+```
+
+### Performance Mistakes
+
+- ❌ **Ignoring performance**: Don't ignore performance impact of design decisions
+- ❌ **Heavy initial load**: Don't load all content immediately on one-page sites
+- ❌ **Blocking resources**: Don't block rendering with large JavaScript bundles
+- ❌ **No loading states**: Don't leave users with blank screens during loading
+
+> **Reference**: See [Performance](technical/performance.mdc) for detailed optimization strategies. See [HTML Performance](../../html/html-performance.mdc) for image optimization techniques.
+
+### Common Clichés & Overused Patterns
+
+- ❌ **Autoplay carousels**: Don't auto-rotate carousels too fast or without user control
+- ❌ **Stock photo overuse**: Don't use generic stock photos that add no value
+- ❌ **Gradient banners everywhere**: Don't use gradients just because "everyone does"
+- ❌ **Oversized hero sliders**: Don't create massive hero sections that push content below fold
+- ❌ **Page curl effects**: Don't use dated decorative effects like page curls or book metaphors
+
+```html
+<!-- ❌ Bad: Fast autoplay without control -->
+<div data-autoplay="true" data-interval="2000">
+  <!-- Slides rotate every 2 seconds -->
+</div>
+
+<!-- ✅ Good: User-controlled with pause -->
+<div data-autoplay="true" data-interval="5000" data-pause-on-hover="true">
+  <button aria-label="Pause">Pause</button>
+</div>
+```
+
+### Dark Patterns & Deceptive Practices
+
+- ❌ **Roach motel pattern**: Don't make it easy to sign up but hard to cancel
+- ❌ **Hidden costs**: Don't reveal additional fees only at checkout
+- ❌ **Fake urgency**: Don't use fake countdown timers or "only 1 left" without truth
+- ❌ **Sneaky upsells**: Don't add items to cart without explicit consent
+- ❌ **Forced registration**: Don't require sign-up before showing value
+
+### Privacy by Design & Ethical UX
+
+- ✅ **Transparent data collection**: Clearly explain what data is collected and why
+- ✅ **Privacy controls in UI**: Provide easy-to-find privacy settings and data controls
+- ✅ **Minimal data collection**: Only collect data that's necessary for functionality
+- ✅ **Clear consent**: Use explicit, understandable language for consent requests
+- ✅ **Easy opt-out**: Make it as easy to opt-out as it is to opt-in
+- ✅ **Explain data usage**: Tell users how their data will be used before collection
+
+```html
+<!-- ✅ Good: Transparent privacy controls -->
+<div>
+  <h2>Privacy Settings</h2>
+  <p>Control how your data is used:</p>
+  
+  <label>
+    <input type="checkbox" checked>
+    <span>Analytics: Share anonymous usage data</span>
+    <small>We use this to understand how users interact with our site</small>
+  </label>
+  
+  <button>Save Preferences</button>
+  <a href="/privacy-policy">Privacy policy</a>
+</div>
+```
+
+**Why it matters (2026)**: Privacy by Design is becoming a legal requirement. Users expect transparency and control over their data. Ethical UX builds trust.
+
+```html
+<!-- ❌ Bad: Hidden cost -->
+<div>
+  <h2>$9.99/month</h2>
+  <!-- Hidden: +$2.99 fee shown only at checkout -->
+</div>
+
+<!-- ✅ Good: Transparent pricing -->
+<div>
+  <h2>$9.99/month</h2>
+  <p>+ $2.99 processing fee</p>
+  <p>Total: $12.98/month</p>
+</div>
+```
+
+### Pop-up & Interruption Mistakes
+
+- ❌ **Immediate pop-ups**: Don't show pop-ups before user has time to see content
+- ❌ **Aggressive pop-ups**: Don't show pop-ups on every page visit
+- ❌ **Auto-play media**: Don't auto-play videos or audio without user consent
+- ❌ **Exit-intent abuse**: Don't use exit-intent pop-ups excessively
+- ❌ **No close button**: Don't make pop-ups hard to dismiss
+
+## 📚 Related Detailed Rules
+
+For specific implementation cases, see:
+- [UX/UI Design Principles](ux-ui.mdc) - Core UX/UI principles, visual hierarchy, user-centric design, micro-interactions
+- [Responsive Design](layout/responsive-design.mdc) - Mobile-first approach, breakpoints, flexible layouts, content prioritization
+- [Visual Hierarchy](visual/visual-hierarchy.mdc) - Typography scale, spacing systems, color hierarchy, layout patterns
+- [Colors and Contrast](visual/colors-contrast.mdc) - Color theory, contrast ratios, semantic colors, dark mode
+- [Typography](visual/typography.mdc) - Font selection, type scale, line height, readability optimization
+- [Performance](technical/performance.mdc) - Loading optimization, perceived performance, smooth animations, Core Web Vitals
+- [Forms and Validation](technical/forms-validation.mdc) - Form design, validation patterns, error handling, accessibility
+- [Navigation](layout/navigation.mdc) - Navigation patterns, menu design, breadcrumbs, pagination
+- [Accessibility](technical/accessibility.mdc) - WCAG guidelines, semantic HTML, ARIA attributes, keyboard navigation
+
+## 📝 Key Points
+
+### Must Have
+- Clear primary goal and value proposition
+- Logical content structure with distinct sections
+- Mobile-first responsive design
+- Fast loading and performance optimization
+- Strategic CTA placement
+- Social proof and trust elements
+
+### Do
+- Use semantic HTML5 elements
+- Implement smooth scroll for anchor navigation
+- Test on real devices and screen sizes
+- Monitor analytics (scroll depth, bounce rate, conversions)
+- Iterate based on user feedback and data
+- Follow WCAG 2.2 AA guidelines minimum
+- Use proper heading hierarchy (one H1 per page)
+- Provide clear visual section separators
+- Optimize performance (see [Performance](technical/performance.mdc) for details)
+
+### Don't
+- Don't create cluttered layouts with no hierarchy
+- Don't use vague or jargon-filled messaging
+- Don't hide important navigation or CTAs
+- Don't auto-play media without consent
+- Don't use deceptive patterns (fake urgency, hidden costs)
+- Don't show aggressive pop-ups immediately
+- Don't ignore mobile users (majority of traffic)
+- Don't sacrifice performance for visual effects
+- Don't use generic stock photos that add no value
+- Don't create "roach motel" experiences (easy in, hard out)
+
+## 🔧 One-Page Website Checklist
+
+When designing a one-page website, verify:
+
+### Structure
+- [ ] Clear hero section with value proposition
+- [ ] Distinct content sections (Features, About, Testimonials, Contact)
+- [ ] Sticky navigation with smooth anchor links
+- [ ] "Back to top" button for long pages
+- [ ] Proper heading hierarchy (one H1, logical H2-H6)
+
+### Content
+- [ ] Compelling headline that communicates value
+- [ ] Benefit-focused copy (not just features)
+- [ ] Social proof (testimonials, client logos)
+- [ ] Clear, specific CTAs (not generic "Click Here")
+- [ ] FAQ section if applicable
+
+### Performance
+- [ ] Fast initial load (< 3 seconds on 3G)
+- [ ] Smooth scroll behavior for anchor links
+- [ ] No blocking JavaScript
+- [ ] Optimized assets (images, fonts, scripts)
+
+### User Experience
+- [ ] Works perfectly on mobile devices
+- [ ] Clear visual section separators
+- [ ] Accessible and usable across devices
+
+### Conversion
+- [ ] Primary CTA in hero section
+- [ ] Secondary CTAs at key decision points
+- [ ] Contact form or clear contact method
+- [ ] Trust elements visible (testimonials, guarantees)
+- [ ] Analytics tracking set up
+
+---
+
+**Remember**: Great website design is invisible—users should accomplish their goals effortlessly. Focus on clear communication, logical structure, and user needs over decorative elements. Every design decision should serve the primary goal of the website.
