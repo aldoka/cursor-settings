@@ -100,12 +100,21 @@ Before creating a rule, research and gather information:
 
 ### Phase 2: Structural Decisions
 
-Make decisions about rule structure:
+Make decisions about rule structure and type:
 
 1. **Single file vs. folder**: Determine if rule should be universal (single file) or separated (folder with multiple files)
    - Consider if different approaches exist that warrant separation
    - Decide: single `rule-name.mdc` file OR `rule-name/` folder with multiple `.mdc` files
-2. **Framework-agnostic**: If framework-agnostic rule is needed, ensure it doesn't reference specific frameworks
+2. **Rule type**: Determine if rule should be **common/framework-agnostic** or **specific/detailed**
+   - **Common/framework-agnostic rules**: Universal principles, technology-agnostic patterns, general best practices
+     - Examples must use vanilla/standard syntax (framework-agnostic)
+     - Can reference framework-specific rules via links for detailed implementations
+     - Focus on concepts and principles, not framework-specific implementations
+   - **Specific/detailed rules**: Framework-specific implementations, detailed use cases, concrete patterns
+     - Include framework-specific syntax and patterns in examples
+     - Provide complete, working implementations
+     - Reference for common rule for basic context
+   - This decision affects the level of detail in examples (see Code Examples section)
 3. **Separation approach**: For complex rules, consider using hierarchical separation approach (common rules + detailed rules)
    - See [Rule Separation Guide](rules-separation.mdc) for detailed guidance
 
@@ -125,11 +134,9 @@ Clarify details with user if unclear:
 
 - Rule name and purpose
 - Structure decision (single file vs. folder)
-- Framework requirement (framework-agnostic vs. framework-specific)
+- Rule type (common/framework-agnostic vs. specific/detailed)
 - Target files (for globs)
-- Always apply setting
 - Related rules
-- Examples needed
 - Duplication warning (if similar rule exists)
 
 ### Phase 5: Creation
@@ -139,15 +146,19 @@ Create the rule:
 1. **Create directory structure**: Create directories if needed
 2. **Create file with YAML frontmatter**: Include description, globs, alwaysApply
 3. **Add content**: Follow standard rule structure
-4. **Include examples**: Add comprehensive examples (✅ correct, ❌ incorrect)
+4. **Include examples**: Add examples matching rule type
+   - **Common/framework-agnostic rules**: Simplified, minimal examples (remove unnecessary details, skip self-explanatory ones)
+   - **Specific/detailed rules**: Complete, working examples (✅ correct, ❌ incorrect)
 
 ### Phase 6: Verification
 
 Verify compliance:
 
 1. **Check structure**: Ensure all sections are present (DO, DON'T, Key Points, etc.)
-2. **Validate examples**: Check code examples are complete and working
-3. **Validate links**: Check links to related rules
+2. **Validate examples**: Check code examples match rule type
+   - **Common rules**: Examples are simplified, minimal, no unnecessary details
+   - **Specific rules**: Examples are complete and working
+3. **Validate links**: Check links to related rules (or TODO if detailed rule doesn't exist)
 4. **Go through checklist**: Verify all checklist items are met
 
 
@@ -177,10 +188,26 @@ Verify compliance:
 
 ### 3. Code Examples
 
+**Important**: Example detail level depends on rule type:
+
+#### For Common/Framework-Agnostic Rules:
+- ✅ **Simplified examples**: Remove unnecessary details that don't illustrate the current point
+- ✅ **Minimal variants**: Show only the minimum necessary to demonstrate the concept, not all possible variants
+- ✅ **Remove self-explanatory examples**: If the text is clear (e.g., "Don't exceed 7 main items"), no example needed
+- ✅ **Reference detailed rules**: Link to more specific rules for detailed implementations (if they exist, otherwise leave TODO)
+- ✅ **Vanilla code**: Use vanilla/standard syntax, refer to framework-specific rules for real implementations
+- ✅ **Focus on concept**: Examples should illustrate the principle, not provide complete production-ready code
+
+#### For Specific/Detailed Rules:
 - ✅ **Complete examples**: Provide complete, working examples
-- ✅ **Templates with placeholders**: Use `{Entity}`, `{entity}` for templates
-- ✅ **Code comments**: Add explanatory comments
+- ✅ **Comprehensive coverage**: Include all necessary details for implementation
 - ✅ **Real scenarios**: Examples should reflect real use cases
+- ✅ **Framework-specific**: Include framework-specific syntax and patterns
+
+#### General Guidelines:
+- ✅ **Templates with placeholders**: Use `{Entity}`, `{entity}` for templates
+- ✅ **Code comments**: Add explanatory comments where needed
+- ✅ **Avoid duplication**: If a more detailed rule exists, reference it instead of duplicating examples
 
 ### 4. Pattern Description
 
@@ -219,7 +246,9 @@ For complex rules, consider using hierarchical separation approach (common rules
 To make rules more effective for AI agents:
 
 - ✅ **Clear structure**: Use consistent section headings and emojis for easy parsing
-- ✅ **Explicit examples**: Provide complete, working code examples (not snippets)
+- ✅ **Explicit examples**: Provide examples matching rule type
+  - **Common rules**: Simplified examples illustrating concepts (not full implementations)
+  - **Specific rules**: Complete, working code examples (not snippets)
 - ✅ **Negative examples**: Always include ❌ incorrect examples alongside ✅ correct ones
 - ✅ **Summary section**: Include summary or checklist for quick reference
 - ✅ **Metadata**: Ensure YAML frontmatter is complete and accurate
@@ -233,6 +262,12 @@ When creating framework-agnostic rules (e.g., HTML, CSS, general patterns):
 
 - ✅ **Focus on core technology**: Not framework-specific implementations
 - ✅ **Use vanilla syntax**: Use vanilla/standard syntax in examples
+- ✅ **Simplified examples**: Keep examples minimal - remove extra details not needed to explain the current point
+  - Example: Don't include full CSS with colors unless describing color usage
+  - Example: Don't show all possible variants, just the minimum to illustrate the concept
+- ✅ **Self-explanatory points**: Skip examples if the text itself is clear (e.g., "Don't exceed 7 main items")
+- ✅ **Reference detailed rules**: Link to more specific rules for detailed implementations
+  - If detailed rule doesn't exist yet, leave a TODO comment
 - ✅ **Separate framework rules**: Note that framework-specific rules will be created separately
 - ✅ **Example naming**: `rules/frontend/html.mdc` (framework-agnostic) vs. `rules/frontend/react/html-in-jsx.mdc` (framework-specific)
 
@@ -256,10 +291,14 @@ When creating framework-agnostic rules (e.g., HTML, CSS, general patterns):
 ### 3. Content
 
 - ❌ **Abstract examples**: Avoid examples without context
-- ❌ **Incomplete examples**: Always provide complete, working examples
+- ❌ **Overly detailed examples in common rules**: Don't include excessive details in framework-agnostic rules
+- ❌ **All variants shown**: Don't show all possible variants in examples - keep it minimal
+- ❌ **Self-explanatory examples**: Don't add examples when the text itself is clear
+- ❌ **Incomplete examples in specific rules**: Specific rules should have complete, working examples
 - ❌ **Missing negative examples**: Show not only what to do, but also what not to do
-- ❌ **Missing code examples**: Don't create rules without code examples
+- ❌ **Missing code examples**: Don't create rules without code examples (unless text is self-explanatory)
 - ❌ **Missing DO/DON'T sections**: Don't forget to include both DO and DON'T sections
+- ❌ **Duplicating examples**: Don't duplicate examples from detailed rules - reference them instead
 
 ### 4. Organization
 
@@ -280,22 +319,29 @@ Before creating a new rule, ensure:
 
 ### Structure Phase
 - [ ] Decision made: single file vs. folder structure
+- [ ] Rule type determined (common/framework-agnostic vs. specific/detailed)
 - [ ] Framework-agnostic requirement considered (if applicable)
 - [ ] Separation needs evaluated (multiple approaches?)
 
 ### Content Phase
 - [ ] YAML frontmatter with `description` is created
 - [ ] Correct `globs` are specified (if needed)
+- [ ] Rule type determined (common/framework-agnostic vs. specific/detailed)
 - [ ] Rule is focused on one topic
-- [ ] Examples of correct code (✅) are included
+- [ ] Examples of correct code (✅) are included (unless self-explanatory)
 - [ ] Examples of incorrect code (❌) are included
 - [ ] DO and DON'T sections are clearly separated
 - [ ] Logical heading hierarchy (H2, H3, H4) is used
 - [ ] Code blocks have specified language
 - [ ] Emojis are used for sections
-- [ ] Code examples are complete and working
-- [ ] Code examples include explanatory comments
+- [ ] Code examples match rule type:
+  - [ ] Common rules: simplified, minimal examples
+  - [ ] Specific rules: complete, working examples
+- [ ] Code examples include explanatory comments (where needed)
 - [ ] Templates with placeholders are used (if applicable)
+- [ ] Self-explanatory points don't have unnecessary examples
+- [ ] Examples don't show all variants, only minimum necessary
+- [ ] Links to detailed rules added (or TODO if detailed rule doesn't exist)
 - [ ] Rule size is within 300-500 lines (or split if larger)
 - [ ] File has descriptive name in kebab-case
 - [ ] File is placed in correct directory (logical structure)
