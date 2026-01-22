@@ -10,39 +10,72 @@ alwaysApply: false
 
 This rule defines core principles and best practices for designing effective websites, with special focus on one-page websites. It covers layout structure, content organization, navigation patterns, conversion optimization, and common anti-patterns to avoid. This is a foundational rule that references more specific detailed rules for implementation.
 
-## 🎯 Core Website Design Principles
+## 📋 Table of Contents
+1. 🎯 Core Website Design Principles
+    - 1.1. [Clear Purpose and Goal](#11-clear-purpose-and-goal)
+    - 1.2. [Content Organization and Structure](#12-content-organization-and-structure)
+    - 1.3. [Navigation and Wayfinding](#13-navigation-and-wayfinding)
+    - 1.4. [Visual Storytelling](#14-visual-storytelling)
+    - 1.5. [Performance and Optimization](#15-performance-and-optimization)
+2. ✅ DO (Recommended Practices)
+    - 2.1. [Website Structure](#21-website-structure)
+    - 2.2. [Content Organization](#22-content-organization)
+    - 2.3. [Call-to-Action (CTA) Strategy](#23-call-to-action-cta-strategy)
+    - 2.4. [Social Proof and Trust Elements](#24-social-proof-and-trust-elements)
+    - 2.5. [Performance Optimization](#25-performance-optimization)
+    - 2.6. [SEO Considerations](#26-seo-considerations)
+    - 2.7. [Machine-Friendly Design (AI Assistants and LLMs)](#27-machine-friendly-design-ai-assistants-and-llms)
+3. ❌ DON'T (Anti-patterns)
+    - 3.1. [Structure and Layout Mistakes](#31-structure-and-layout-mistakes)
+    - 3.2. [Content Mistakes](#32-content-mistakes)
+    - 3.3. [Navigation Mistakes](#33-navigation-mistakes)
+    - 3.4. [CTA Mistakes](#34-cta-mistakes)
+    - 3.5. [Performance Mistakes](#35-performance-mistakes)
+    - 3.6. [Common Clichés and Overused Patterns](#36-common-cliches-and-overused-patterns)
+    - 3.7. [Dark Patterns and Deceptive Practices](#37-dark-patterns-and-deceptive-practices)
+    - 3.8. [Privacy by Design and Ethical UX](#38-privacy-by-design-and-ethical-ux)
+    - 3.9. [Pop-up and Interruption Mistakes](#39-pop-up-and-interruption-mistakes)
+4. 📝 Key Points
+    - 4.1. [One-Page Website Checklist](#41-one-page-website-checklist)
+    - 4.2. [Must Have](#42-must-have)
+    - 4.3. [Do](#43-do)
+    - 4.4. [Don't](#44-dont)
+5. 📚 References
+    - 5.1. [Related Detailed Rules](#51-related-detailed-rules)
 
-### 1. Clear Purpose & Goal
+## 1. 🎯 Core Website Design Principles
+
+### 1.1. Clear Purpose and Goal
 - **Single primary objective**: Each website should have one clear primary goal (lead generation, product sales, information delivery, portfolio showcase)
 - **User-focused messaging**: Content should immediately communicate value proposition to target audience
 - **Conversion-oriented**: Design should guide users toward desired actions
 - **Content hierarchy**: Most important information should be most prominent
 
-### 2. Content Organization & Structure
+### 1.2. Content Organization and Structure
 - **Logical flow**: Content should follow natural reading and scanning patterns (F-pattern, Z-pattern)
 - **Distinct sections**: Use visual separators (background colors, spacing, imagery) to create clear content blocks
 - **Progressive disclosure**: Show essential information first, reveal details on demand (especially important for one-page sites)
 - **Scannable content**: Break text into digestible chunks with headings, lists, and visual elements
 
-### 3. Navigation & Wayfinding
+### 1.3. Navigation and Wayfinding
 - **Clear navigation structure**: Users should understand where they are and how to navigate
 - **Anchor-based navigation**: For one-page sites, use smooth scroll anchors with sticky navigation
 - **Breadcrumbs**: For multi-page sites, show current location in navigation hierarchy
 
-### 4. Visual Storytelling
+### 1.4. Visual Storytelling
 - **Compelling hero section**: First impression matters—use strong visuals and clear value proposition
 - **Visual hierarchy**: Guide attention through size, color, contrast, and placement
 - **Consistent branding**: Maintain visual identity throughout all sections
 - **Balanced media**: Use images, illustrations, and video purposefully without sacrificing performance
 
-### 5. Performance & Optimization
+### 1.5. Performance and Optimization
 - **Fast loading**: Prioritize quick initial load times for better user experience
 - **Performance-first mindset**: Consider performance impact of all design decisions
 - **Core Web Vitals**: Optimize for LCP (Largest Contentful Paint), FID (First Input Delay), CLS (Cumulative Layout Shift)
 
-## ✅ DO (Recommended Practices)
+## 2. ✅ DO (Recommended Practices)
 
-### Website Structure
+### 2.1. Website Structure
 
 #### One-Page Website Structure
 - ✅ **Hero section with clear value proposition**: Immediately communicate what you offer
@@ -83,7 +116,7 @@ This rule defines core principles and best practices for designing effective web
 - ✅ **Footer navigation**: Include important links in footer for easy access
 - ✅ **Homepage as hub**: Homepage should clearly guide users to relevant sections
 
-### Content Organization
+### 2.2. Content Organization
 
 - ✅ **Headline hierarchy**: Use proper H1-H6 structure (one H1 per page)
 - ✅ **Section IDs for anchors**: Use semantic IDs for anchor navigation
@@ -93,7 +126,7 @@ This rule defines core principles and best practices for designing effective web
 
 > **Reference**: See [HTML Best Practices](../../html/html.mdc) for semantic HTML structure and heading hierarchy details.
 
-### Call-to-Action (CTA) Strategy
+### 2.3. Call-to-Action (CTA) Strategy
 
 - ✅ **Primary CTA prominence**: Make primary action visually stand out
 - ✅ **Multiple CTA placements**: Place CTAs at key decision points (hero, after features, footer)
@@ -111,7 +144,7 @@ This rule defines core principles and best practices for designing effective web
 </section>
 ```
 
-### Social Proof & Trust Elements
+### 2.4. Social Proof and Trust Elements
 
 - ✅ **Testimonials**: Include customer quotes with names and photos (if appropriate)
 - ✅ **Client logos**: Show recognizable client/partner logos
@@ -132,7 +165,7 @@ This rule defines core principles and best practices for designing effective web
 </section>
 ```
 
-### Performance Optimization
+### 2.5. Performance Optimization
 
 - ✅ **Performance-first approach**: Consider performance impact in all design decisions
 - ✅ **Optimize critical path**: Prioritize above-fold content loading
@@ -140,7 +173,7 @@ This rule defines core principles and best practices for designing effective web
 
 > **Reference**: See [Performance](technical/performance.mdc) for detailed optimization strategies. See [HTML Performance](../../html/html-performance.mdc) for image optimization and resource loading.
 
-### SEO Considerations
+### 2.6. SEO Considerations
 
 - ✅ **Semantic HTML**: Use proper HTML5 semantic elements
 - ✅ **Meta tags**: Include descriptive title, description, and Open Graph tags
@@ -150,7 +183,7 @@ This rule defines core principles and best practices for designing effective web
 
 > **Reference**: See [HTML Meta Tags](../../html/html-meta.mdc) for meta tags and structured data details. See [HTML Best Practices](../../html/html.mdc) for semantic HTML.
 
-### Machine-Friendly Design (AI Assistants & LLMs)
+### 2.7. Machine-Friendly Design (AI Assistants and LLMs)
 
 - ✅ **Structured data for AI**: Use schema.org markup so AI assistants can understand content
 - ✅ **Clear content hierarchy**: Well-structured content helps both humans and AI parse information
@@ -181,9 +214,9 @@ This rule defines core principles and best practices for designing effective web
 
 > **Reference**: See [HTML Meta Tags](../../html/html-meta.mdc) for structured data implementation details.
 
-## ❌ DON'T (Anti-patterns)
+## 3. ❌ DON'T (Anti-patterns)
 
-### Structure & Layout Mistakes
+### 3.1. Structure and Layout Mistakes
 
 - ❌ **Cluttered layouts**: Don't pack too much information into limited space
 - ❌ **No clear hierarchy**: Don't make everything the same size/importance
@@ -191,7 +224,7 @@ This rule defines core principles and best practices for designing effective web
 - ❌ **Inconsistent sections**: Don't use random spacing or styling between sections
 - ❌ **Horizontal scrolling**: Avoid horizontal scroll on mobile (except intentional carousels)
 
-### Content Mistakes
+### 3.2. Content Mistakes
 
 - ❌ **Vague messaging**: Don't use generic phrases like "We're the best" without proof
 - ❌ **Jargon overload**: Don't use industry jargon without explanation
@@ -213,7 +246,7 @@ This rule defines core principles and best practices for designing effective web
 </section>
 ```
 
-### Navigation Mistakes
+### 3.3. Navigation Mistakes
 
 - ❌ **Broken anchor links**: Don't create anchor links that don't scroll smoothly
 - ❌ **No back-to-top button**: Don't force users to scroll all the way back up on long pages
@@ -221,7 +254,7 @@ This rule defines core principles and best practices for designing effective web
 - ❌ **Hidden important links**: Don't bury important pages in footer only
 - ❌ **No active states**: Don't forget to highlight current page/section
 
-### CTA Mistakes
+### 3.4. CTA Mistakes
 
 - ❌ **Weak CTA copy**: Don't use generic "Click Here" or "Learn More"
 - ❌ **Too many CTAs**: Don't overwhelm users with multiple competing actions
@@ -238,7 +271,7 @@ This rule defines core principles and best practices for designing effective web
 <a href="/signup">Start Free Trial</a>
 ```
 
-### Performance Mistakes
+### 3.5. Performance Mistakes
 
 - ❌ **Ignoring performance**: Don't ignore performance impact of design decisions
 - ❌ **Heavy initial load**: Don't load all content immediately on one-page sites
@@ -247,7 +280,7 @@ This rule defines core principles and best practices for designing effective web
 
 > **Reference**: See [Performance](technical/performance.mdc) for detailed optimization strategies. See [HTML Performance](../../html/html-performance.mdc) for image optimization techniques.
 
-### Common Clichés & Overused Patterns
+### 3.6. Common Cliches and Overused Patterns
 
 - ❌ **Autoplay carousels**: Don't auto-rotate carousels too fast or without user control
 - ❌ **Stock photo overuse**: Don't use generic stock photos that add no value
@@ -267,7 +300,7 @@ This rule defines core principles and best practices for designing effective web
 </div>
 ```
 
-### Dark Patterns & Deceptive Practices
+### 3.7. Dark Patterns and Deceptive Practices
 
 - ❌ **Roach motel pattern**: Don't make it easy to sign up but hard to cancel
 - ❌ **Hidden costs**: Don't reveal additional fees only at checkout
@@ -275,7 +308,7 @@ This rule defines core principles and best practices for designing effective web
 - ❌ **Sneaky upsells**: Don't add items to cart without explicit consent
 - ❌ **Forced registration**: Don't require sign-up before showing value
 
-### Privacy by Design & Ethical UX
+### 3.8. Privacy by Design and Ethical UX
 
 - ✅ **Transparent data collection**: Clearly explain what data is collected and why
 - ✅ **Privacy controls in UI**: Provide easy-to-find privacy settings and data controls
@@ -318,7 +351,7 @@ This rule defines core principles and best practices for designing effective web
 </div>
 ```
 
-### Pop-up & Interruption Mistakes
+### 3.9. Pop-up and Interruption Mistakes
 
 - ❌ **Immediate pop-ups**: Don't show pop-ups before user has time to see content
 - ❌ **Aggressive pop-ups**: Don't show pop-ups on every page visit
@@ -326,22 +359,46 @@ This rule defines core principles and best practices for designing effective web
 - ❌ **Exit-intent abuse**: Don't use exit-intent pop-ups excessively
 - ❌ **No close button**: Don't make pop-ups hard to dismiss
 
-## 📚 Related Detailed Rules
 
-For specific implementation cases, see:
-- [UX/UI Design Principles](ux-ui.mdc) - Core UX/UI principles, visual hierarchy, user-centric design, micro-interactions
-- [Responsive Design](layout/responsive-design.mdc) - Mobile-first approach, breakpoints, flexible layouts, content prioritization
-- [Visual Hierarchy](visual/visual-hierarchy.mdc) - Typography scale, spacing systems, color hierarchy, layout patterns
-- [Colors and Contrast](visual/colors-contrast.mdc) - Color theory, contrast ratios, semantic colors, dark mode
-- [Typography](visual/typography.mdc) - Font selection, type scale, line height, readability optimization
-- [Performance](technical/performance.mdc) - Loading optimization, perceived performance, smooth animations, Core Web Vitals
-- [Forms and Validation](technical/forms-validation.mdc) - Form design, validation patterns, error handling, accessibility
-- [Navigation](layout/navigation.mdc) - Navigation patterns, menu design, breadcrumbs, pagination
-- [Accessibility](technical/accessibility.mdc) - WCAG guidelines, semantic HTML, ARIA attributes, keyboard navigation
+## 4. 📝 Key Points
 
-## 📝 Key Points
+### 4.1. One-Page Website Checklist
 
-### Must Have
+When designing a one-page website, verify:
+
+#### Structure
+- [ ] Clear hero section with value proposition
+- [ ] Distinct content sections (Features, About, Testimonials, Contact)
+- [ ] Sticky navigation with smooth anchor links
+- [ ] "Back to top" button for long pages
+- [ ] Proper heading hierarchy (one H1, logical H2-H6)
+
+#### Content
+- [ ] Compelling headline that communicates value
+- [ ] Benefit-focused copy (not just features)
+- [ ] Social proof (testimonials, client logos)
+- [ ] Clear, specific CTAs (not generic "Click Here")
+- [ ] FAQ section if applicable
+
+#### Performance
+- [ ] Fast initial load (< 3 seconds on 3G)
+- [ ] Smooth scroll behavior for anchor links
+- [ ] No blocking JavaScript
+- [ ] Optimized assets (images, fonts, scripts)
+
+#### User Experience
+- [ ] Works perfectly on mobile devices
+- [ ] Clear visual section separators
+- [ ] Accessible and usable across devices
+
+#### Conversion
+- [ ] Primary CTA in hero section
+- [ ] Secondary CTAs at key decision points
+- [ ] Contact form or clear contact method
+- [ ] Trust elements visible (testimonials, guarantees)
+- [ ] Analytics tracking set up
+
+### 4.2. Must Have
 - Clear primary goal and value proposition
 - Logical content structure with distinct sections
 - Mobile-first responsive design
@@ -349,7 +406,7 @@ For specific implementation cases, see:
 - Strategic CTA placement
 - Social proof and trust elements
 
-### Do
+### 4.3. Do
 - Use semantic HTML5 elements
 - Implement smooth scroll for anchor navigation
 - Test on real devices and screen sizes
@@ -360,7 +417,7 @@ For specific implementation cases, see:
 - Provide clear visual section separators
 - Optimize performance (see [Performance](technical/performance.mdc) for details)
 
-### Don't
+### 4.4. Don't
 - Don't create cluttered layouts with no hierarchy
 - Don't use vague or jargon-filled messaging
 - Don't hide important navigation or CTAs
@@ -372,41 +429,23 @@ For specific implementation cases, see:
 - Don't use generic stock photos that add no value
 - Don't create "roach motel" experiences (easy in, hard out)
 
-## 🔧 One-Page Website Checklist
+---
 
-When designing a one-page website, verify:
+## 5. 📚 References
 
-### Structure
-- [ ] Clear hero section with value proposition
-- [ ] Distinct content sections (Features, About, Testimonials, Contact)
-- [ ] Sticky navigation with smooth anchor links
-- [ ] "Back to top" button for long pages
-- [ ] Proper heading hierarchy (one H1, logical H2-H6)
+### 5.1 Related Detailed Rules
 
-### Content
-- [ ] Compelling headline that communicates value
-- [ ] Benefit-focused copy (not just features)
-- [ ] Social proof (testimonials, client logos)
-- [ ] Clear, specific CTAs (not generic "Click Here")
-- [ ] FAQ section if applicable
+For specific implementation cases, see:
+- [UX/UI Design Principles](ux-ui.mdc) - Core UX/UI principles, visual hierarchy, user-centric design, micro-interactions
+- [Responsive Design](layout/responsive-design.mdc) - Mobile-first approach, breakpoints, flexible layouts, content prioritization
+- [Visual Hierarchy](visual/visual-hierarchy.mdc) - Typography scale, spacing systems, color hierarchy, layout patterns
+- [Color System](visual/color-system.mdc) - Color theory, contrast ratios, semantic colors, dark mode
+- [Typography](visual/typography.mdc) - Font selection, type scale, line height, readability optimization
+- [Performance](technical/performance.mdc) - Loading optimization, perceived performance, smooth animations, Core Web Vitals
+- [Forms and Validation](technical/forms-validation.mdc) - Form design, validation patterns, error handling, accessibility
+- [Navigation](layout/navigation.mdc) - Navigation patterns, menu design, breadcrumbs, pagination
+- [Accessibility](technical/accessibility.mdc) - WCAG guidelines, semantic HTML, ARIA attributes, keyboard navigation
 
-### Performance
-- [ ] Fast initial load (< 3 seconds on 3G)
-- [ ] Smooth scroll behavior for anchor links
-- [ ] No blocking JavaScript
-- [ ] Optimized assets (images, fonts, scripts)
-
-### User Experience
-- [ ] Works perfectly on mobile devices
-- [ ] Clear visual section separators
-- [ ] Accessible and usable across devices
-
-### Conversion
-- [ ] Primary CTA in hero section
-- [ ] Secondary CTAs at key decision points
-- [ ] Contact form or clear contact method
-- [ ] Trust elements visible (testimonials, guarantees)
-- [ ] Analytics tracking set up
 
 ---
 

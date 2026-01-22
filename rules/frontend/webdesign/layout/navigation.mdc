@@ -14,35 +14,58 @@ Navigation is the roadmap of your website—it helps users find what they need a
 - Confusing navigation increases abandonment and support requests.
 - Good navigation improves discovery, time-on-site, and conversion.
 
+## 📋 Table of Contents
+1. 🎯 Core Navigation Principles
+    - 1.1. [Clarity](#11-clarity)
+    - 1.2. [Consistency](#12-consistency)
+    - 1.3. [Simplicity](#13-simplicity)
+    - 1.4. [Accessibility](#14-accessibility)
+2. ✅ DO (Recommended Practices)
+    - 2.1. [Primary Navigation](#21-primary-navigation)
+    - 2.2. [Dropdown Menus](#22-dropdown-menus)
+    - 2.3. [Mega Menus](#23-mega-menus)
+    - 2.4. [Breadcrumbs](#24-breadcrumbs)
+    - 2.5. [Pagination](#25-pagination)
+3. ❌ DON'T (Anti-patterns)
+    - 3.1. [Navigation Structure Mistakes](#31-navigation-structure-mistakes)
+    - 3.2. [Mobile Navigation Mistakes](#32-mobile-navigation-mistakes)
+    - 3.3. [Dropdown Mistakes](#33-dropdown-mistakes)
+    - 3.4. [Breadcrumb Mistakes](#34-breadcrumb-mistakes)
+4. 📝 Key Points
+    - 4.1. [Testing Checklist](#41-testing-checklist)
+    - 4.2. [Must Have](#42-must-have)
+    - 4.3. [Do](#43-do)
+    - 4.4. [Don't](#44-dont)
+
 ## 🎯 Core Navigation Principles
 
-### 1. Clarity
+### 1.1. Clarity
 - Use clear, descriptive labels
 - Avoid jargon and internal terminology
 - Make links obviously clickable
 - Show current location
 
-### 2. Consistency
+### 1.2. Consistency
 - Keep navigation in the same place
 - Use consistent styling
 - Maintain hierarchy across pages
 - Predictable interaction patterns
 
-### 3. Simplicity
+### 1.3. Simplicity
 - Limit top-level items (5-7 maximum)
 - Group related items logically
 - Use progressive disclosure
 - Avoid deep hierarchies (max 3 levels)
 
-### 4. Accessibility
+### 1.4. Accessibility
 - Keyboard navigable
 - Screen reader friendly
 - Clear focus indicators
 - ARIA landmarks and labels
 
-## ✅ DO (Recommended Practices)
+## 2. ✅ DO (Recommended Practices)
 
-### Primary Navigation
+### 2.1. Primary Navigation
 
 #### Horizontal Navigation Bar
 - ✅ **5-7 main items maximum** (Hick's Law)
@@ -87,7 +110,7 @@ Navigation is the roadmap of your website—it helps users find what they need a
 </div>
 ```
 
-### Dropdown Menus
+### 2.2. Dropdown Menus
 
 #### Hover and Click Dropdowns
 - ✅ **Keyboard accessible**
@@ -112,7 +135,7 @@ Navigation is the roadmap of your website—it helps users find what they need a
 </nav>
 ```
 
-### Mega Menus
+### 2.3. Mega Menus
 
 #### For Content-Rich Sites
 - ✅ **Organized into clear categories**
@@ -144,7 +167,7 @@ Navigation is the roadmap of your website—it helps users find what they need a
 </nav>
 ```
 
-### Breadcrumbs
+### 2.4. Breadcrumbs
 
 #### Show Current Location
 - ✅ **Start with "Home"**
@@ -163,7 +186,7 @@ Navigation is the roadmap of your website—it helps users find what they need a
 </nav>
 ```
 
-### Pagination
+### 2.5. Pagination
 
 #### For Long Lists
 - ✅ **Show current page**
@@ -185,33 +208,35 @@ Navigation is the roadmap of your website—it helps users find what they need a
 </nav>
 ```
 
-## ❌ DON'T (Anti-patterns)
+## 3. ❌ DON'T (Anti-patterns)
 
-### Navigation Structure Mistakes
+### 3.1. Navigation Structure Mistakes
 - ❌ **Too many items**: Don't exceed 7 main items
 - ❌ **Unclear labels**: Don't use vague terms
 - ❌ **Inconsistent placement**: Don't move navigation around
 - ❌ **Hidden navigation**: Don't hide without clear trigger
 
-### Mobile Navigation Mistakes
+### 3.2. Mobile Navigation Mistakes
 - ❌ **Tiny tap targets**: Don't make items too small
 - ❌ **Unclear menu icon**: Don't use unusual icons
 - ❌ **No way to close**: Don't trap users
 - ❌ **Hover-only menus**: Don't work on touch devices
 
-### Dropdown Mistakes
+### 3.3. Dropdown Mistakes
 - ❌ **Instant hover dropdowns**: Don't open immediately
 - ❌ **Not keyboard accessible**: Don't ignore keyboard users
 - ❌ **Too deep hierarchy**: Don't go beyond 2 levels
 - ❌ **Close on hover-out**: Don't close too quickly
 
-### Breadcrumb Mistakes
+### 3.4. Breadcrumb Mistakes
 - ❌ **Missing on deep pages**: Don't omit when needed
 - ❌ **Current page clickable**: Don't link to current page
 - ❌ **Too long paths**: Don't show every level
 - ❌ **Small touch targets**: Don't make links tiny
 
-## 📝 Navigation Checklist
+## 4. 📝 Key Points
+
+### 4.1. Testing Checklist
 
 Before launching, verify:
 - [ ] Primary navigation has 5-7 items maximum
@@ -229,9 +254,7 @@ Before launching, verify:
 - [ ] Mobile menu can be closed easily
 - [ ] Skip links for keyboard users
 
-## 📝 Key Points
-
-### Must Have
+### 4.2. Must Have
 - Clear, descriptive navigation labels
 - 5-7 main navigation items maximum
 - Active page indicator
@@ -240,7 +263,7 @@ Before launching, verify:
 - Touch-friendly targets (44×44px)
 - Consistent placement across pages
 
-### Do
+### 4.3. Do
 - Use clear, plain language for labels
 - Show current location (active states, breadcrumbs)
 - Keep navigation in same place on every page
@@ -250,7 +273,7 @@ Before launching, verify:
 - Group related items together
 - Test on actual mobile devices
 
-### Don't
+### 4.4. Don't
 - Don't exceed 7 main navigation items
 - Don't use jargon or unclear labels
 - Don't hide navigation without clear trigger

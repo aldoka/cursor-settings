@@ -16,39 +16,66 @@ Accessibility ensures that websites and applications are usable by everyone, inc
 - Accessible design improves usability for everyone (keyboard power-users, mobile users, users in bright environments, aging users).
 - **WCAG 3.0 (2026)**: The upcoming WCAG 3.0 standard introduces more flexible, outcome-oriented accessibility guidelines that focus on user outcomes rather than rigid technical requirements. Design with outcomes in mind—can users accomplish their goals?—not just checkbox compliance.
 
-## 🎯 Core Accessibility Principles (POUR)
+## 📋 Table of Contents 
+1. 🎯 Core Accessibility Principles (POUR)
+    - 1.1. [Perceivable](#11-perceivable)
+    - 1.2. [Operable](#12-operable)
+    - 1.3. [Understandable](#13-understandable)
+    - 1.4. [Robust](#14-robust)
+2. ✅ Do (Recommended Practices)
+    - 2.1. [Semantic HTML](#21-semantic-html)
+    - 2.2. [ARIA (Accessible Rich Internet Applications)](#22-aria-accessible-rich-internet-applications)
+    - 2.3. [Keyboard Navigation](#23-keyboard-navigation)
+    - 2.4. [Images and Media](#24-images-and-media)
+    - 2.5. [Forms Accessibility](#25-forms-accessibility)
+    - 2.6. [Color Contrast](#26-color-contrast)
+    - 2.7. [Screen Reader Support](#27-screen-reader-support)
+3. ❌ Don't (Anti-patterns)
+    - 3.1. [Semantic HTML Mistakes](#31-semantic-html-mistakes)
+    - 3.2. [ARIA Mistakes](#32-aria-mistakes)
+    - 3.3. [Keyboard Mistakes](#33-keyboard-mistakes)
+    - 3.4. [Content Mistakes](#34-content-mistakes)
+4. Quick Reference Guide
+    - 4.1. [WCAG Compliance Levels](#41-wcag-compliance-levels)
+5. 📝 Key Points
+    - 5.1. [Accessibility Checklist](#51-accessibility-checklist)
+    - 5.2. [Must Have](#52-must-have)
+    - 5.3. [Do](#53-do)
+    - 5.4. [Don't](#54-dont)
 
-### 1. Perceivable
+## 1. 🎯 Core Accessibility Principles (POUR)
+
+### 1.1. Perceivable
 Information must be presentable to users in ways they can perceive:
 - Text alternatives for images
 - Captions for audio/video
 - Sufficient color contrast
 - Resizable text
 
-### 2. Operable
+### 1.2. Operable
 Interface must be operable by all users:
 - Keyboard accessible
 - Sufficient time to read/use
 - No seizure-inducing content
 - Clear navigation
 
-### 3. Understandable
+### 1.3. Understandable
 Information and interface must be understandable:
 - Readable text
 - Predictable functionality
 - Input assistance (error messages)
 - Consistent navigation
 
-### 4. Robust
+### 1.4. Robust
 Content must work with assistive technologies:
 - Valid HTML
 - Compatible with screen readers
 - Future-proof markup
 - Progressive enhancement
 
-## ✅ DO (Recommended Practices)
+## 2. ✅ DO (Recommended Practices)
 
-### Semantic HTML
+### 2.1. Semantic HTML
 
 #### Use Appropriate Elements
 - ✅ **Use native HTML elements**: Better accessibility built-in
@@ -99,7 +126,7 @@ Content must work with assistive technologies:
 
 > **Reference**: See [HTML Best Practices](../../html/html.mdc) for semantic HTML and proper element usage.
 
-### ARIA (Accessible Rich Internet Applications)
+### 2.2. ARIA (Accessible Rich Internet Applications)
 
 #### ARIA Roles
 - ✅ **Use native HTML first**: ARIA should supplement, not replace
@@ -157,7 +184,7 @@ Content must work with assistive technologies:
 <div role="status" aria-live="polite">Notification message</div>
 ```
 
-### Keyboard Navigation
+### 2.3. Keyboard Navigation
 
 #### Focus Management
 - ✅ **All interactive elements focusable**: Tab index 0 or native
@@ -198,7 +225,7 @@ dropdown.addEventListener('keydown', (e) => {
 });
 ```
 
-### Images and Media
+### 2.4. Images and Media
 
 #### Alternative Text
 - ✅ **Descriptive alt text**: Describe image purpose/content
@@ -239,7 +266,7 @@ dropdown.addEventListener('keydown', (e) => {
 </details>
 ```
 
-### Forms Accessibility
+### 2.5. Forms Accessibility
 
 #### Labels and Instructions
 - ✅ **Explicit labels**: Always use `<label>` element
@@ -268,7 +295,7 @@ dropdown.addEventListener('keydown', (e) => {
 
 > **Reference**: See [Forms and Validation](forms-validation.mdc) for detailed form accessibility patterns. See [HTML Best Practices](../../html/html.mdc) for semantic HTML form structure.
 
-### Color Contrast
+### 2.6. Color Contrast
 
 #### WCAG Requirements
 - ✅ **Normal text**: 4.5:1 minimum (AA), 7:1 (AAA)
@@ -291,9 +318,9 @@ dropdown.addEventListener('keydown', (e) => {
 }
 ```
 
-> **Reference**: See [Colors and Contrast](../visual/colors-contrast.mdc) for detailed contrast requirements and testing.
+> **Reference**: See [Color System](../visual/color-system.mdc) for detailed contrast requirements and testing.
 
-### Screen Reader Support
+### 2.7. Screen Reader Support
 
 #### Screen Reader Only Text
 - ✅ **Visually hidden, screen reader visible**
@@ -319,33 +346,48 @@ dropdown.addEventListener('keydown', (e) => {
 }
 ```
 
-## ❌ DON'T (Anti-patterns)
+## 3. ❌ DON'T (Anti-patterns)
 
-### Semantic HTML Mistakes
+### 3.1. Semantic HTML Mistakes
 - ❌ **Div/span for buttons/links**: Not accessible
 - ❌ **Skipping heading levels**: h1 → h3 (skip h2)
 - ❌ **Multiple h1 per page**: Confuses hierarchy
 - ❌ **Tables for layout**: Use CSS Grid/Flexbox
 
-### ARIA Mistakes
+### 3.2. ARIA Mistakes
 - ❌ **Overusing ARIA**: Use native HTML first
 - ❌ **Conflicting roles**: Don't override native semantics
 - ❌ **Incorrect relationships**: aria-labelledby pointing to non-existent ID
 - ❌ **Missing required attributes**: role="button" without tabindex
 
-### Keyboard Mistakes
+### 3.3. Keyboard Mistakes
 - ❌ **Removing focus indicators**: Never `outline: none` without alternative
 - ❌ **Non-focusable interactives**: Div buttons without tabindex
 - ❌ **Focus traps**: Can't escape modal/dropdown
 - ❌ **Illogical tab order**: Using tabindex > 0
 
-### Content Mistakes
+### 3.4. Content Mistakes
 - ❌ **Missing alt text**: Empty or missing alt attributes
 - ❌ **Color-only information**: "Click the red button"
 - ❌ **Auto-playing media**: Without controls or way to stop
 - ❌ **Time limits**: Without way to extend or disable
 
-## 📝 Accessibility Checklist
+## 4. Quick Reference Guide
+
+### 4.1. WCAG Compliance Levels
+
+| Level | Description | Requirements |
+|-------|-------------|--------------|
+| **A** | Minimum | Essential accessibility features |
+| **AA** | Recommended | Standard for most sites (legal requirement) |
+| **AAA** | Optimal | Enhanced accessibility (not always possible) |
+
+**Target**: WCAG **2.2** Level **AA** compliance minimum (2.1 AA as baseline where needed).
+_Note_: WCAG 3.0 introduces more flexible, outcome-oriented standards. When WCAG 3.0 becomes official, prioritize outcome-based accessibility over rigid point-based compliance.
+
+## 5. 📝 Key Points
+
+### 5.1. Accessibility Checklist
 
 Before launching, verify:
 - [ ] All images have appropriate alt text
@@ -364,19 +406,7 @@ Before launching, verify:
 - [ ] Tested with screen reader (NVDA, JAWS, VoiceOver)
 - [ ] No keyboard traps
 
-## 📊 WCAG Compliance Levels
-
-| Level | Description | Requirements |
-|-------|-------------|--------------|
-| **A** | Minimum | Essential accessibility features |
-| **AA** | Recommended | Standard for most sites (legal requirement) |
-| **AAA** | Optimal | Enhanced accessibility (not always possible) |
-
-**Target**: WCAG **2.2** Level **AA** compliance minimum (2.1 AA as baseline where needed). Note: WCAG 3.0 introduces more flexible, outcome-oriented standards. When WCAG 3.0 becomes official, prioritize outcome-based accessibility over rigid point-based compliance.
-
-## 📝 Key Points
-
-### Must Have
+### 5.2. Must Have
 - Semantic HTML elements
 - Keyboard accessibility for all interactions
 - Sufficient color contrast (4.5:1 minimum)
@@ -385,7 +415,7 @@ Before launching, verify:
 - Visible focus indicators
 - ARIA where native HTML insufficient
 
-### Do
+### 5.3. Do
 - Use native HTML elements first
 - Test with keyboard only
 - Test with screen readers
@@ -395,7 +425,7 @@ Before launching, verify:
 - Maintain logical heading hierarchy
 - Include skip links
 
-### Don't
+### 5.4. Don't
 - Don't use div/span for buttons/links
 - Don't remove focus indicators without replacement
 - Don't rely on color alone

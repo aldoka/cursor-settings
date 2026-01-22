@@ -16,31 +16,56 @@ Performance is a critical aspect of user experience. Users expect websites to lo
 - **Perceived performance** often matters as much as actual load time.
 - **Core Web Vitals 3.0 (2026)**: Google and platforms are expecting even faster load times—target 1–1.5 seconds where possible. Performance budgets are becoming stricter, and instant-load experiences are becoming the standard, not the exception.
 
-## 🎯 Core Performance Principles
+## 📋 Table of Contents
+1. 🎯 Core Performance Principles
+    - 1.1. [Actual vs Perceived Performance](#11-actual-vs-perceived-performance)
+    - 1.2. [Critical Rendering Path](#12-critical-rendering-path)
+    - 1.3. [Progressive Enhancement](#13-progressive-enhancement)
+    - 1.4. [Performance Budget](#14-performance-budget)
+2. ✅ Do (Recommended Practices)
+    - 2.1. [Perceived Performance](#21-perceived-performance)
+    - 2.2. [Image Optimization](#22-image-optimization)
+    - 2.3. [Animation Performance](#23-animation-performance)
+    - 2.4. [60 FPS Performance](#24-60-fps-performance)
+    - 2.5. [Resource Loading](#25-resource-loading)
+    - 2.6. [Caching Strategies](#26-caching-strategies)
+3. ❌ Don't (Anti-patterns)
+    - 3.1. [Loading Mistakes](#31-loading-mistakes)
+    - 3.2. [Image Mistakes](#32-image-mistakes)
+    - 3.3. [Animation Mistakes](#33-animation-mistakes)
+    - 3.4. [Resource Loading Mistakes](#34-resource-loading-mistakes)
+4. 📝 Key Points
+    - 4.1. [Performance Checklist](#41-performance-checklist)
+    - 4.2. [Performance Metrics](#42-performance-metrics)
+    - 4.3. [Must Have](#43-must-have)
+    - 4.4. [Do](#44-do)
+    - 4.5. [Don't](#45-dont)
 
-### 1. Actual vs Perceived Performance
+## 1.🎯 Core Performance Principles
+
+### 1.1. Actual vs Perceived Performance
 - **Actual**: Technical metrics (load time, Time to Interactive)
 - **Perceived**: User's subjective experience of speed
 - Focus on what users *feel*, not just what metrics show
 
-### 2. Critical Rendering Path
+### 1.2. Critical Rendering Path
 - Optimize resources that block initial render
 - Prioritize above-the-fold content
 - Defer non-critical resources
 
-### 3. Progressive Enhancement
+### 1.3. Progressive Enhancement
 - Show content as soon as possible
 - Load enhancements progressively
 - Ensure basic functionality works immediately
 
-### 4. Performance Budget
+### 1.4. Performance Budget
 - Set limits on resource sizes
 - Monitor bundle sizes
 - Balance features with performance
 
-## ✅ DO (Recommended Practices)
+## 2. ✅ Do (Recommended Practices)
 
-### Perceived Performance
+### 2.1. Perceived Performance
 
 #### Loading States and Skeletons
 - ✅ **Show immediate feedback**: Don't leave users with blank screens
@@ -215,7 +240,7 @@ async function toggleLike(postId) {
 }
 ```
 
-### Image Optimization
+### 2.2. Image Optimization
 
 #### Lazy Loading
 - ✅ **Use native lazy loading**: `loading="lazy"` attribute
@@ -299,7 +324,7 @@ async function toggleLike(postId) {
 
 > **Reference**: See [HTML Performance](../../html/html-performance.mdc) for image dimensions and aspect-ratio techniques.
 
-### Animation Performance
+### 2.3. Animation Performance
 
 #### Use Hardware-Accelerated Properties
 - ✅ **Transform over position**: GPU accelerated
@@ -383,7 +408,7 @@ async function toggleLike(postId) {
 }
 ```
 
-#### 60 FPS Performance
+#### 2.4. 60 FPS Performance
 - ✅ **Target 60 fps**: 16.67ms per frame
 - ✅ **Use requestAnimationFrame**: For smooth animations
 - ✅ **Throttle/debounce**: Limit expensive operations
@@ -438,7 +463,7 @@ const handleResize = debounce(() => {
 window.addEventListener('resize', handleResize);
 ```
 
-### Resource Loading
+### 2.5. Resource Loading
 
 #### Critical CSS
 - ✅ **Inline critical CSS**: Above-the-fold styles in `<head>`
@@ -491,7 +516,7 @@ window.addEventListener('resize', handleResize);
 
 > **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed resource hints (preconnect, dns-prefetch, preload, prefetch).
 
-### Caching Strategies
+### 2.6. Caching Strategies
 
 #### Browser Caching
 - ✅ **Set appropriate cache headers**: Long cache for static assets
@@ -538,9 +563,9 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 }
 ```
 
-## ❌ DON'T (Anti-patterns)
+## 3. ❌ Don't (Anti-patterns)
 
-### Loading Mistakes
+### 3.1. Loading Mistakes
 - ❌ **Blank screens**: Don't show nothing while loading
 - ❌ **No feedback**: Don't leave users wondering if something is happening
 - ❌ **Synchronous operations**: Don't block UI with long operations
@@ -560,7 +585,7 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 </div>
 ```
 
-### Image Mistakes
+### 3.2. Image Mistakes
 - ❌ **Large unoptimized images**: Don't serve full-res images
 - ❌ **No dimensions**: Don't omit width/height (causes layout shift)
 - ❌ **All eager loading**: Don't load all images immediately
@@ -585,7 +610,7 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 
 > **Reference**: See [HTML Performance](../../html/html-performance.mdc) for detailed image optimization including modern formats and responsive images.
 
-### Animation Mistakes
+### 3.3. Animation Mistakes
 - ❌ **Animating expensive properties**: Don't animate width, height, top, left
 - ❌ **Ignoring reduced motion**: Don't ignore accessibility preferences
 - ❌ **Too many animations**: Don't animate everything
@@ -619,7 +644,7 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 }
 ```
 
-### Resource Loading Mistakes
+### 3.4. Resource Loading Mistakes
 - ❌ **Blocking resources**: Don't block render with large JS
 - ❌ **No code splitting**: Don't load entire app upfront
 - ❌ **Render-blocking CSS**: Don't block with non-critical CSS
@@ -640,7 +665,9 @@ async function fetchWithCache(url, cacheTime = 5 * 60 * 1000) {
 
 > **Reference**: See [HTML Performance](../../html/html-performance.mdc) for script loading strategies.
 
-## 📝 Performance Checklist
+## 4. 📝 Key Points
+
+### 4.1. Performance Checklist
 
 Before launching, verify:
 - [ ] Images have width/height attributes
@@ -658,7 +685,7 @@ Before launching, verify:
 - [ ] First Contentful Paint < 1.8s
 - [ ] Time to Interactive < 3.5s
 
-## 📊 Performance Metrics
+### 4.2. Performance Metrics
 
 | Metric | Good | Needs Improvement | Poor |
 |--------|------|-------------------|------|
@@ -671,9 +698,7 @@ Before launching, verify:
 
 **Note (2026)**: Core Web Vitals 3.0 targets are becoming more aggressive. Aim for LCP < 1.5s, FID < 50ms, and TTI < 2.5s for optimal user experience. Instant-load experiences (under 1 second) are becoming the new standard for high-performing sites.
 
-## 📝 Key Points
-
-### Must Have
+### 4.3. Must Have
 - Loading indicators for all async operations
 - Skeleton screens for content loading
 - Image optimization (dimensions, lazy loading, modern formats)
@@ -681,7 +706,7 @@ Before launching, verify:
 - Respect prefers-reduced-motion
 - Resource optimization (defer, async, preload)
 
-### Do
+### 4.4. Do
 - Show immediate feedback (optimistic UI)
 - Use skeleton screens and loading states
 - Lazy load below-the-fold images
@@ -692,7 +717,7 @@ Before launching, verify:
 - Set cache headers appropriately
 - Monitor Core Web Vitals
 
-### Don't
+### 4.5. Don't
 - Don't show blank screens while loading
 - Don't load all images eagerly
 - Don't animate width, height, top, left

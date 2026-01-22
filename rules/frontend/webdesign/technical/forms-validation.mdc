@@ -15,35 +15,56 @@ Forms are critical touchpoints where users interact directly with your applicati
 - Good inline validation reduces errors and frustration.
 - Clear, actionable errors improve completion rates.
 
-## 🎯 Core Form Principles
+## 📋 Table of Contents
+1. 🎯 Core Form Principles
+    - 1.1. [Simplicity](#11-simplicity)
+    - 1.2. [Clarity](#12-clarity)
+    - 1.3. [Feedback](#13-feedback)
+    - 1.4. [Accessibility](#14-accessibility)
+2. ✅ Do (Recommended Practices)
+    - 2.1. [Form Structure](#21-form-structure)
+    - 2.2. [Input Types and Attributes](#22-input-types-and-attributes)
+    - 2.3. [Real-Time Validation](#23-real-time-validation)
+    - 2.4. [Error Handling](#24-error-handling)
+    - 2.5. [Multi-Step Forms](#25-multi-step-forms)
+3. ❌ Don't (Anti-patterns)
+    - 3.1. [Form Structure Mistakes](#31-form-structure-mistakes)
+    - 3.2. [Validation Mistakes](#32-validation-mistakes)
+    - 3.3. [Error Message Mistakes](#33-error-message-mistakes)
+4. 📝 Key Points
+    - 4.1. [Forms Checklist](#41-forms-checklist)
+    - 4.2. [Must Have](#42-must-have)
+    - 4.3. [Do](#43-do)
+    - 4.4. [Don't](#44-dont)
+## 1. 🎯 Core Form Principles
 
-### 1. Simplicity
+### 1.1. Simplicity
 - Ask only for essential information
 - One column layout (faster completion)
 - Logical field order
 - Group related fields
 
-### 2. Clarity
+### 1.2. Clarity
 - Clear, visible labels (not just placeholders)
 - Helpful microcopy and examples
 - Explicit required fields
 - Obvious primary action
 
-### 3. Feedback
+### 1.3. Feedback
 - Real-time validation where appropriate
 - Clear error messages
 - Success confirmation
 - Progress indicators for multi-step forms
 
-### 4. Accessibility
+### 1.4. Accessibility
 - Proper label associations
 - Keyboard navigation
 - Screen reader support
 - Sufficient color contrast
 
-## ✅ DO (Recommended Practices)
+## 2. ✅ Do (Recommended Practices)
 
-### Form Structure
+### 2.1. Form Structure
 
 #### Single Column Layout
 - ✅ **One column for faster completion**
@@ -91,7 +112,7 @@ Forms are critical touchpoints where users interact directly with your applicati
 
 > **Reference**: See [HTML Best Practices](../../html/html.mdc) for form labels and accessibility.
 
-### Input Types and Attributes
+### 2.2. Input Types and Attributes
 
 #### Use Appropriate Input Types
 - ✅ **type="email" for emails**: Provides keyboard optimization
@@ -134,7 +155,7 @@ Forms are critical touchpoints where users interact directly with your applicati
 
 > **Reference**: See [HTML Best Practices](../../html/html.mdc) for autocomplete attribute values.
 
-### Real-Time Validation
+### 2.3. Real-Time Validation
 
 #### Inline Validation Patterns
 - ✅ **Validate on blur** (when user leaves field)
@@ -177,7 +198,7 @@ Forms are critical touchpoints where users interact directly with your applicati
 </ul>
 ```
 
-### Error Handling
+### 2.4. Error Handling
 
 #### Clear Error Messages
 - ✅ **Specific about the problem**
@@ -219,7 +240,7 @@ Forms are critical touchpoints where users interact directly with your applicati
 </div>
 ```
 
-### Multi-Step Forms
+### 2.5. Multi-Step Forms
 
 #### Progress Indicators
 - ✅ **Show current step and total steps**
@@ -247,9 +268,9 @@ Forms are critical touchpoints where users interact directly with your applicati
 </div>
 ```
 
-## ❌ DON'T (Anti-patterns)
+## 3. ❌ Don't (Anti-patterns)
 
-### Form Structure Mistakes
+### 3.1. Form Structure Mistakes
 - ❌ **Multi-column layouts**: Confusing, slower completion
 - ❌ **Placeholders as labels**: Disappear when typing
 - ❌ **Too many fields**: Ask only what's needed
@@ -272,7 +293,7 @@ Forms are critical touchpoints where users interact directly with your applicati
 </form>
 ```
 
-### Validation Mistakes
+### 3.2. Validation Mistakes
 - ❌ **Validate on focus/typing**: Too early, annoying
 - ❌ **Generic error messages**: "Error", "Invalid"
 - ❌ **No success indicators**: Users uncertain if input is correct
@@ -292,7 +313,7 @@ if (hasErrors) form.reset();
 if (hasErrors) showErrors(errors);
 ```
 
-### Error Message Mistakes
+### 3.3. Error Message Mistakes
 - ❌ **Vague errors**: "Something went wrong"
 - ❌ **Technical jargon**: "Error 422: Unprocessable Entity"
 - ❌ **No guidance**: Don't explain how to fix
@@ -308,7 +329,9 @@ if (hasErrors) showErrors(errors);
 </span>
 ```
 
-## 📝 Forms Checklist
+## 4. 📝 Key Points
+
+### 4.1. Forms Checklist
 
 Before launching, verify:
 - [ ] Single column layout for main form fields
@@ -328,9 +351,7 @@ Before launching, verify:
 - [ ] Disabled submit button while processing
 - [ ] Success confirmation after submission
 
-## 📝 Key Points
-
-### Must Have
+### 4.2. Must Have
 - Visible labels for all form fields
 - Clear required field indicators
 - Inline validation on blur
@@ -339,7 +360,7 @@ Before launching, verify:
 - Appropriate input types and autocomplete
 - Touch-friendly targets (44×44px)
 
-### Do
+### 4.3. Do
 - Use single column layouts
 - Validate on blur, update on input
 - Show success indicators for valid input
@@ -349,7 +370,7 @@ Before launching, verify:
 - Provide helpful microcopy and examples
 - Test with real users and data
 
-### Don't
+### 4.4. Don't
 - Don't use placeholders as labels
 - Don't validate immediately on typing
 - Don't show generic error messages
