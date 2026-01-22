@@ -84,10 +84,12 @@ Complex rules should be structured in layers:
 
 ## 🔗 Linking Strategy
 
-In common/base rules, use clear links to detailed rules:
+In common/base rules, use clear links to detailed rules at the end of the file:
 
 ```markdown
-## 📚 Related Detailed Rules
+## 5. 📚 References
+
+### 5.1. Related rules
 
 For specific implementation cases, see:
 - [Specific case 1](specific-case-1.mdc) - Description of specific case 1

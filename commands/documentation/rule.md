@@ -22,7 +22,7 @@ This command creates a new cursor rule (`.mdc` file) in the `rules/` directory. 
 - **Rule location**: `rules/` directory
 - **File format**: `.mdc` with YAML frontmatter
 - **Naming**: kebab-case (e.g., `html.mdc`, `fastapi-settings.mdc`)
-- **Required sections**: DO, DON'T, Key Points, Examples (✅ and ❌)
+- **Required sections**: Overview, Table of Contents, Core Principles, Do, Don't, Key Points, References
 
 ## Constraints
 

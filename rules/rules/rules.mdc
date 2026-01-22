@@ -58,33 +58,60 @@ alwaysApply: false
 
 Brief description of the rule's purpose and scope.
 
-## 📚 Related or Detailed Rules
-[Related Rule 1](related-rule-1.mdc) - Description of related rule 1
+## 📋 Table of Contents
+1. 🎯 Core Principles
+  - 1.1. [Point 1](#11-point-1)
+2. ✅ DO (Recommended Practices)
+  - 2.1. [Subsection 1](#21-subsection-1)
+3. ❌ DON'T (Forbidden Practices)
+  - 3.1. [Anti-pattern 1](#31-anti-pattern-1)
+4. 📝 Key Points
+  - 4.1. [Checklist](#41-checklist)
+  - 4.2. [Must Have](#42-must-have)
+  - 4.3. [Do](#43-do)
+  - 4.4. [Don't](#44-dont)
+5. 📚 References
+  - 5.1. [Related rules](#51-related-rules)
+
+# 1. 🎯 Core Principles
+
+### 1.1. [Point 1](#11-point-1)
+
 ...
 
-## ✅ DO (Recommended Practices)
 
-### Subsection 1
+## 2. ✅ DO (Recommended Practices)
+
+### 2.1 Subsection 1
 Description with examples...
 
 # Example of correct code
 
-## ❌ DON'T (Forbidden Practices)
+## 3. ❌ DON'T (Forbidden Practices)
 
-### Anti-pattern 1
+### 3.1. Anti-pattern 1
 Description with examples...
 
 # Example of incorrect code
 
-## 🔧 Usage Examples
+## 4. 📝 Key Points
 
-Complete examples...
+### 4.1. Checklist
+- [ ] Checklist item 1
 
-## 📝 Key Points
-
+### 4.2. Must Have
 - Key point 1
-- Key point 2
-- Key point 3
+
+### 4.3. Do
+- Do item 1
+
+### 4.4. Don't
+- Don't item 1
+
+## 5. 📚 References
+
+### 5.1. Related rules
+- [Related rule 1](#51-related-rule-1)
 ```
 
 ## 🚀 Rule Creation Process
@@ -93,10 +120,9 @@ Complete examples...
 
 Before creating a rule, research and gather information:
 
-1. **Research modern best practices**: Use web search to find current industry standards
+1. **Research modern best practices**: Use web search to find latest industry standards, conventions and best practices
 2. **Check documentation sources**: Check if latest documentation is available in context7 MCP or other sources (if applicable)
 3. **Compile practices list**: Gather must-have, do, and don't practices
-4. **Understand standards**: Understand current industry standards and conventions
 
 ### Phase 2: Structural Decisions
 
