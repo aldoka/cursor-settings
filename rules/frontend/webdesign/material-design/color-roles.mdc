@@ -1,0 +1,450 @@
+---
+description: Material Design 3 color roles system - semantic color roles for UI components
+globs: **/*.css,**/*.scss,**/*.less,**/*.tsx,**/*.jsx,**/*.vue
+alwaysApply: false
+---
+# Material Design 3 Color Roles
+
+> **Reference**: This guide extends the [Color Instructions](visual/color-instruction.md) guide. Make sure you're familiar with color theory and contrast requirements before implementing Material Design 3 color roles.
+
+## 📋 Overview
+
+Material Design 3 (M3) uses a **semantic color role system** where colors are defined by their purpose in the UI, not by their appearance. This ensures consistency, accessibility, and proper contrast across light and dark themes.
+
+**Key Concepts:**
+- **HCT Color Model**: Material Design 3 uses **HCT** (Hue, Chroma, Tone) color space, not HSL. HCT uses CAM16 for hue/chroma and CIE-L* (perceptual lightness) for tone. Tone ranges from 0 (black) to 100 (white).
+- **Tonal Palettes**: Each key color (Primary, Secondary, Tertiary, Neutral, Neutral Variant) has a tonal palette of 13 tones (from lightest to darkest: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100)
+- **Color Roles**: Semantic names for how colors are used in UI components (e.g., "Primary", "OnPrimary", "PrimaryContainer")
+- **Dynamic vs. Static**: Dynamic color schemes generate palettes algorithmically (often from a source color), whereas static color schemes use fixed values for brand identity
+- **Tone Mapping**: Each role maps to specific tones in light and dark themes (e.g., Primary uses tone 40 in light mode, tone 80 in dark mode)
+- **Chroma Values**: Chroma (colorfulness) varies per palette type—accent colors (Primary, Secondary, Tertiary, Error) have higher chroma (C = 40–90), while neutral colors (Surface, Outline) have lower chroma (C = 0–10)
+
+**Important Note on Deprecated Roles:**
+- ❌ **Deprecated**: `background`, `onBackground`, `surfaceVariant`, `onSurfaceVariant` are deprecated in Material Design 3
+- ✅ **Use instead**: `surface` and `onSurface` replace `background`/`onBackground`; `surfaceContainer*` roles replace `surfaceVariant`/`onSurfaceVariant`
+
+## 🎨 Color Role Groups
+
+### 1. Accent / Brand Roles
+
+#### Primary Color Group
+- **Primary color `--md-sys-color-primary`:**
+  - _Light mode:_ T = 40, C = 40–80, `oklch(h, ≈0.40–0.45, ≈0.15–0.30)`, `hsl(h, ≈40%, ≈50–100%)`
+  - _Dark mode:_ T = 80, C = 20–50, `oklch(h, ≈0.75–0.80, ≈0.10–0.20)`, `hsl(h, ≈80%, ≈30–70%)`
+  - _Goal:_ Brand recognition, maximum emphasis elements
+  - _Avoid:_ Using as a background and surfaces
+  - _Application:_ CTAs, most important buttons, FABs (if high-emphasis actions), active states (bars, tabs, menus), primary emphasized container in bigger section (active item in list), header (if applicable sometimes)
+
+- **OnPrimary color `--md-sys-color-on-primary`:**
+  - _Light mode:_ T = 100, C = 0–2, `oklch(h, ≈0.95–1.0, ≈0–0.01)`, `hsl(h, ≈100%, ≈0–10%)`
+  - _Dark mode:_ T = 20, C = 0–5, `oklch(h, ≈0.30–0.35, ≈0–0.02)`, `hsl(h, ≈20%, ≈0–20%)`
+  - _Avoid:_ Using on non-Primary backgrounds
+  - _Application:_ Text and icons placed on Primary color backgrounds
+
+- **PrimaryContainer color `--md-sys-color-primary-container`:**
+  - _Light mode:_ T = 90, C = 5–15, `oklch(h, ≈0.85–0.90, ≈0.02–0.08)`, `hsl(h, ≈90%, ≈0–30%)`
+  - _Dark mode:_ T = 30, C = 5–15, `oklch(h, ≈0.40–0.45, ≈0.02–0.08)`, `hsl(h, ≈30%, ≈0–30%)`
+  - _Avoid:_ Using for high-emphasis elements (use Primary instead)
+  - _Application:_ Subtle backgrounds requiring less emphasis than Primary, secondary action areas, selected states in lists, chips backgrounds
+
+- **OnPrimaryContainer color `--md-sys-color-on-primary-container`:**
+  - _Light mode:_ T = 10, C = 0–10, `oklch(h, ≈0.15–0.20, ≈0–0.05)`, `hsl(h, ≈10%, ≈0–30%)`
+  - _Dark mode:_ T = 90, C = 0–2, `oklch(h, ≈0.85–0.90, ≈0–0.01)`, `hsl(h, ≈90%, ≈0–10%)`
+  - _Avoid:_ Using on non-PrimaryContainer backgrounds
+  - _Application:_ Text and icons placed on PrimaryContainer backgrounds
+
+- **InversePrimary color `--md-sys-color-inverse-primary`:**
+  - _Light mode:_ T = 70–85, C = 15–40, `oklch(h, ≈0.06–0.15, ≈0.65–0.75)`, `hsl(h, ≈70-85%, ≈30–70%)`
+  - _Dark mode:_ T = 70–85, C = 15–40, `oklch(h, ≈0.06–0.15, ≈0.65–0.75)`, `hsl(h, ≈70–85%, ≈30–70%)`
+  - _Goal:_ Primary color suitable for inverse surfaces (high contrast environments)
+  - _Avoid:_ Using on regular surfaces (use Primary instead)
+  - _Application:_ Primary color on inverse surfaces, high contrast mode elements
+
+#### Secondary Color Group
+- **Secondary color `--md-sys-color-secondary`:**
+  - _Light mode:_ T = 40, C = 40–80 (L ≈ 40%, S ≈ 50–100%, OKLCH: L ≈ 0.40–0.45, C ≈ 0.15–0.30)
+  - _Dark mode:_ T = 80, C = 20–50 (L ≈ 80%, S ≈ 30–70%, OKLCH: L ≈ 0.75–0.80, C ≈ 0.10–0.20)
+  - _Goal:_ Supporting accent color, less prominent than Primary
+  - _Avoid:_ Using as a background and surfaces, overuse (should be ~30% in 60-30-10 rule)
+  - _Application:_ Secondary buttons, filters, less important actions, supporting UI elements
+
+- **OnSecondary color `--md-sys-color-on-secondary`:**
+  - _Light mode:_ T = 100, C = 0–2 (`oklch(h, ≈0.95–1.0, ≈0–0.01)`, `hsl(h, ≈100%, ≈0–10%)`)
+  - _Dark mode:_ T = 20, C = 0–5 (`oklch(h, ≈0.30–0.35, ≈0–0.02)`, `hsl(h, ≈20%, ≈0–20%)`)
+  - _Avoid:_ Using on non-Secondary backgrounds
+  - _Application:_ Text and icons placed on Secondary color backgrounds
+
+- **SecondaryContainer color `--md-sys-color-secondary-container`:**
+  - _Light mode:_ T = 90, C = 5–15, `oklch(h, ≈0.85–0.90, ≈0.02–0.08)`, `hsl(h, ≈90%, ≈0–30%)`
+  - _Dark mode:_ T = 30, C = 5–15, `oklch(h, ≈0.40–0.45, ≈0.02–0.08)`, `hsl(h, ≈30%, ≈0–30%)`
+  - _Avoid:_ Using for high-emphasis elements
+  - _Application:_ Subtle backgrounds for secondary actions, supporting container elements
+
+- **OnSecondaryContainer color `--md-sys-color-on-secondary-container`:**
+  - _Light mode:_ T = 10, C = 0–10, `oklch(h, ≈0.15–0.20, ≈0–0.05)`, `hsl(h, ≈10%, ≈0–30%)`
+  - _Dark mode:_ T = 90, C = 0–2, `oklch(h, ≈0.85–0.90, ≈0–0.01)`, `hsl(h, ≈90%, ≈0–10%)`
+  - _Avoid:_ Using on non-SecondaryContainer backgrounds
+  - _Application:_ Text and icons placed on SecondaryContainer backgrounds
+
+#### Tertiary Color Group
+- **Tertiary color `--md-sys-color-tertiary`:**
+  - _Light mode:_ T = 40, C = 40–80, `oklch(h, ≈0.40–0.45, ≈0.15–0.30)`, `hsl(h, ≈40%, ≈50–100%)`
+  - _Dark mode:_ T = 80, C = 20–50, `oklch(h, ≈0.75–0.80, ≈0.10–0.20)`, `hsl(h, ≈80%, ≈30–70%)`
+  - _Goal:_ Additional accent for contrast or decorative use, balance Primary & Secondary
+  - _Avoid:_ Using as a background and surfaces, overuse
+  - _Application:_ Charts, avatars, decorative elements, tertiary actions, accent highlights
+
+- **OnTertiary color `--md-sys-color-on-tertiary`:**
+  - _Light mode:_ T = 100, C = 0–2, `oklch(h, ≈1.0, ≈0–0.01)`, `hsl(h, ≈100%, ≈0–10%)`
+  - _Dark mode:_ T = 20, C = 0–5, `oklch(h, ≈0.30–0.35, ≈0–0.02)`, `hsl(h, ≈20%, ≈0–20%)`
+  - _Avoid:_ Using on non-Tertiary backgrounds
+  - _Application:_ Text and icons placed on Tertiary color backgrounds
+
+- **TertiaryContainer color `--md-sys-color-tertiary-container`:**
+  - _Light mode:_ T = 90, C = 5–15, `oklch(h, ≈0.85–0.90, ≈0.02–0.08)`, `hsl(h, ≈90%, ≈0–30%)`
+  - _Dark mode:_ T = 30, C = 5–15, `oklch(h, ≈0.40–0.45, ≈0.02–0.08)`, `hsl(h, ≈30%, ≈0–30%)`
+  - _Avoid:_ Using for high-emphasis elements
+  - _Application:_ Subtle backgrounds for tertiary actions, decorative container elements
+
+- **OnTertiaryContainer color `--md-sys-color-on-tertiary-container`:**
+  - _Light mode:_ T = 10, C = 0–10, `oklch(h, ≈0.15–0.20, ≈0–0.05)`, `hsl(h, ≈10%, ≈0–30%)`
+  - _Dark mode:_ T = 90, C = 0–2, `oklch(h, ≈0.85–0.90, ≈0–0.01)`, `hsl(h, ≈90%, ≈0–10%)`
+  - _Avoid:_ Using on non-TertiaryContainer backgrounds
+  - _Application:_ Text and icons placed on TertiaryContainer backgrounds
+
+### 2. Neutral / Surface Roles
+
+These cover surfaces, containers, backgrounds, and structural areas of UI.
+
+#### Surface Roles
+- **Surface color `--md-sys-color-surface`:**
+  - _Light mode:_ T = 99–100, C = 0–5, `oklch(h, ≈0.95–1.0, ≈0–0.02)`, `hsl(h, ≈98–100%, ≈0–20%)`
+  - _Dark mode:_ T = 10–20, C = 0–5, `oklch(h, ≈0.15–0.25, ≈0–0.02)`, `hsl(h, ≈8–12%, ≈0–20%)`
+  - _Avoid:_ Pure white (T = 100) in light mode, pure black (T = 0) in dark mode
+  - _Application:_ Main UI panels, cards, sheets, dialogs, bottom sheets, default app background (replaces deprecated `background` role)
+
+- **OnSurface color `--md-sys-color-on-surface`:**
+  - _Light mode:_ T = 0–10, C = 0–8, `oklch(h, ≈0.10–0.20, ≈0–0.03)`, `hsl(h, ≈0–10%, ≈0–30%)`
+  - _Dark mode:_ T = 88–95, C = 0–5, `oklch(h, ≈0.85–0.92, ≈0–0.02)`, `hsl(h, ≈88–95%, ≈0–20%)`
+  - _Avoid:_ Pure black (T = 0) in light mode, pure white (T = 100) in dark mode
+  - _Application:_ Primary text and icons on Surface (replaces deprecated `onBackground` role)
+
+- **SurfaceDim color `--md-sys-color-surface-dim`:**
+  - _Light mode:_ T = 95–98, C = 0–5, `oklch(h, ≈0.90–0.95, ≈0–0.02)`, `hsl(h, ≈85–90%, ≈0–20%)`
+  - _Dark mode:_ T = 5–10, C = 0–5, `oklch(h, ≈0.10–0.15, ≈0–0.02)`, `hsl(h, ≈5–8%, ≈0–20%)`
+  - _Avoid:_ Using for primary surfaces
+  - _Application:_ Extra tonal variation for darker surfaces, visual depth, lower elevation areas
+
+- **SurfaceBright color `--md-sys-color-surface-bright`:**
+  - _Light mode:_ T = 100, C = 0–5, `oklch(h, ≈0.95–1.0, ≈0–0.02)`, `hsl(h, ≈98–100%, ≈0–20%)`
+  - _Dark mode:_ T = 20–30, C = 0–5, `oklch(h, ≈0.30–0.40, ≈0–0.02)`, `hsl(h, ≈20–30%, ≈0–20%)`
+  - _Avoid:_ Pure white (T = 100) in light mode
+  - _Application:_ Extra tonal variation for lighter surfaces, visual depth, higher elevation areas
+
+- **SurfaceTint color `--md-sys-color-surface-tint`:**
+  - _Light mode:_ T = 40, C = 40–80, `oklch(h, ≈0.40–0.45, ≈0.15–0.30)`, `hsl(h, ≈40–50%, ≈50–100%)`
+  - _Dark mode:_ T = 80, C = 20–50, `oklch(h, ≈0.75–0.80, ≈0.10–0.20)`, `hsl(h, ≈70–85%, ≈30–70%)`
+  - _Avoid:_ Using as a standalone background
+  - _Application:_ Tinting elevated surfaces with Primary accent color, brand recognition on elevated elements (tonal elevation overlay effects)
+
+#### Surface Container Roles
+- **SurfaceContainerLowest color `--md-sys-color-surface-container-lowest`:**
+  - _Light mode:_ T = 98, C = 0–5, `oklch(h, ≈0.95–0.98, ≈0–0.02)`, `hsl(h, ≈100%, ≈0–20%)`
+  - _Dark mode:_ T = 12–15, C = 0–5, `oklch(h, ≈0.18–0.22, ≈0–0.02)`, `hsl(h, ≈4–8%, ≈0–20%)`
+  - _Avoid:_ Pure white (T = 100) in light mode, pure black (T = 0) in dark mode
+  - _Application:_ Lowest elevation surface container, minimal-emphasis base layer containers
+
+- **SurfaceContainerLow color `--md-sys-color-surface-container-low`:**
+  - _Light mode:_ T = 94–96, C = 0–5, `oklch(h, ≈0.90–0.93, ≈0–0.02)`, `hsl(h, ≈96–98%, ≈0–20%)`
+  - _Dark mode:_ T = 15–18, C = 0–5, `oklch(h, ≈0.22–0.26, ≈0–0.02)`, `hsl(h, ≈10–15%, ≈0–20%)`
+  - _Application:_ Low elevation surface container, low-emphasis slightly raised elements
+
+- **SurfaceContainer color `--md-sys-color-surface-container`:**
+  - _Light mode:_ T = 90, C = 0–5, `oklch(h, ≈0.85–0.90, ≈0–0.02)`, `hsl(h, ≈92–96%, ≈0–20%)`
+  - _Dark mode:_ T = 20–25, C = 0–5, `oklch(h, ≈0.30–0.35, ≈0–0.02)`, `hsl(h, ≈12–18%, ≈0–20%)`
+  - _Application:_ Normal elevation surface container, moderate-emphasis standard raised elements (cards, panels)
+
+- **SurfaceContainerHigh color `--md-sys-color-surface-container-high`:**
+  - _Light mode:_ T = 80, C = 0–5, `oklch(h, ≈0.75–0.80, ≈0–0.02)`, `hsl(h, ≈88–92%, ≈0–20%)`
+  - _Dark mode:_ T = 30, C = 0–5, `oklch(h, ≈0.40–0.45, ≈0–0.02)`, `hsl(h, ≈18–25%, ≈0–20%)`
+  - _Application:_ High elevation surface container, higher-emphasis modals, dropdowns, tooltips
+
+- **SurfaceContainerHighest color `--md-sys-color-surface-container-highest`:**
+  - _Light mode:_ T = 70–75, C = 0–5, `oklch(h, ≈0.65–0.70, ≈0–0.02)`, `hsl(h, ≈85–88%, ≈0–20%)`
+  - _Dark mode:_ T = 35–40, C = 0–5, `oklch(h, ≈0.45–0.50, ≈0–0.02)`, `hsl(h, ≈25–30%, ≈0–20%)`
+  - _Application:_ Highest elevation surface container, highest-emphasis top-layer modals, dialogs
+
+#### Inverse Surface Roles
+- **InverseSurface color `--md-sys-color-inverse-surface`:**
+  - _Light mode:_ T = 10–20, C = 0–5, `oklch(h, ≈0.20–0.30, ≈0–0.02)`, `hsl(h, ≈10–20%, ≈0–20%)`
+  - _Dark mode:_ T = 90–100, C = 0–5, `oklch(h, ≈0.85–0.95, ≈0–0.02)`, `hsl(h, ≈90–100%, ≈0–20%)`
+  - _Goal:_ Surfaces with inverse (flipped) background relative to main surface
+  - _Avoid:_ Using on regular surfaces
+  - _Application:_ Inverse surfaces for high contrast, special emphasis areas, bottom bars, snackbars
+
+- **InverseOnSurface color `--md-sys-color-inverse-on-surface`:**
+  - _Light mode:_ T = 90–100, C = 0–2, `oklch(h, ≈0.85–0.95, ≈0–0.01)`, `hsl(h, ≈90–100%, ≈0–10%)`
+  - _Dark mode:_ T = 10–20, C = 0–5, `oklch(h, ≈0.20–0.30, ≈0–0.02)`, `hsl(h, ≈10–20%, ≈0–20%)`
+  - _Avoid:_ Using on non-InverseSurface backgrounds
+  - _Application:_ Content color on InverseSurface
+
+### 3. Error Roles
+
+Used to show critical or destructive states (errors, alerts).
+
+- **Error color `--md-sys-color-error`:**
+  - _Light mode:_ T = 40, C = 50–90, `oklch(h, ≈0.40–0.45, ≈0.18–0.35)`, `hsl(h, ≈40%, ≈60–100%)`
+  - _Dark mode:_ T = 80, C = 30–60, `oklch(h, ≈0.75–0.80, ≈0.12–0.25)`, `hsl(h, ≈80%, ≈40–70%)`
+  - _Goal:_ Critical or destructive state indication
+  - _Avoid:_ Using as a background, overuse (only for errors)
+  - _Application:_ Error states, destructive actions, critical alerts, validation errors
+
+- **OnError color `--md-sys-color-on-error`:**
+  - _Light mode:_ T = 100, C = 0–2, `oklch(h, ≈0.95–1.0, ≈0–0.01)`, `hsl(h, ≈95–100%, ≈0–10%)`
+  - _Dark mode:_ T = 20, C = 0–5, `oklch(h, ≈0.30–0.35, ≈0–0.02)`, `hsl(h, ≈10–25%, ≈0–20%)`
+  - _Avoid:_ Using on non-Error backgrounds
+  - _Application:_ Text and icons placed on Error color backgrounds
+
+- **ErrorContainer color `--md-sys-color-error-container`:**
+  - _Light mode:_ T = 90, C = 5–15, `oklch(h, ≈0.85–0.90, ≈0.02–0.08)`, `hsl(h, ≈85–95%, ≈0–30%)`
+  - _Dark mode:_ T = 30, C = 5–15, `oklch(h, ≈0.40–0.45, ≈0.02–0.08)`, `hsl(h, ≈25–35%, ≈0–30%)`
+  - _Avoid:_ Using for high-emphasis error elements (use Error instead)
+  - _Application:_ Subtle error backgrounds, error message containers, warning areas
+
+- **OnErrorContainer color `--md-sys-color-on-error-container`:**
+  - _Light mode:_ T = 10, C = 0–10, `oklch(h, ≈0.15–0.20, ≈0–0.05)`, `hsl(h, ≈5–15%, ≈0–30%)`
+  - _Dark mode:_ T = 90, C = 0–2, `oklch(h, ≈0.85–0.90, ≈0–0.01)`, `hsl(h, ≈85–95%, ≈0–10%)`
+  - _Avoid:_ Using on non-ErrorContainer backgrounds
+  - _Application:_ Text and icons placed on ErrorContainer backgrounds
+
+### 4. Outline Roles
+
+Used for borders, dividers, outlines around components.
+
+- **Outline color `--md-sys-color-outline`:**
+  - _Light mode:_ T = 45–55, C = 0–10, `oklch(h, ≈0.50–0.60, ≈0–0.04)`, `hsl(h, ≈45–55%, ≈0–30%)`
+  - _Dark mode:_ T = 55–65, C = 0–10, `oklch(h, ≈0.60–0.70, ≈0–0.04)`, `hsl(h, ≈55–65%, ≈0–30%)`
+  - _Goal:_ Standard outline for borders and dividers with sufficient contrast
+  - _Avoid:_ Too high chroma (C > 10), too low contrast
+  - _Application:_ Borders, dividers, input field borders, component outlines, boundaries, strokes
+
+- **OutlineVariant color `--md-sys-color-outline-variant`:**
+  - _Light mode:_ T = 60–80, C = 0–5, `oklch(h, ≈0.65–0.80, ≈0–0.02)`, `hsl(h, ≈60–80%, ≈0–20%)`
+  - _Dark mode:_ T = 30–50, C = 0–5, `oklch(h, ≈0.40–0.55, ≈0–0.02)`, `hsl(h, ≈30–50%, ≈0–20%)`
+  - _Goal:_ Softer or more subtle version of Outline, less contrast/highly decorative boundary variant
+  - _Avoid:_ Too low contrast (should still be visible)
+  - _Application:_ Subtle dividers, disabled state borders, less emphasized separators
+
+## 🌓 Light vs. Dark Themes
+
+Each role gets different tone mappings depending on whether it's light or dark theme to maintain contrast and accessibility.
+
+### Light Theme Guidelines
+- ✅ **Surfaces**: Lighter tones (T = 99–100, C = 0–5)
+- ✅ **Text**: Darker tones (T = 0–10, C = 0–8)
+- ✅ **Accents**: Medium tones (T = 40, C = 40–80)
+- ✅ **Containers**: Light tones (T = 90, C = 5–15)
+
+### Dark Theme Guidelines
+- ✅ **Surfaces**: Darker tones (T = 10–20, C = 0–5)
+- ✅ **Text**: Lighter tones (T = 88–95, C = 0–5)
+- ✅ **Accents**: Lighter and less chroma (T = 80, C = 20–50, reduced by 20+ points)
+- ✅ **Containers**: Darker tones (T = 30, C = 5–15)
+
+## ✅ DO (Recommended Practices)
+
+### 1. Use Semantic Role Names
+- ✅ **Define colors by purpose, not appearance**: Use `--md-sys-color-primary` instead of `--color-blue`
+- ✅ **Use role pairs correctly**: Always pair base roles with "on" roles (e.g., Primary + OnPrimary)
+- ✅ **Maintain consistency**: Use the same role for the same purpose across the application
+
+```css
+/* ✅ Good: Semantic role names */
+:root {
+  --md-sys-color-primary: hsl(212, 100%, 50%);
+  --md-sys-color-on-primary: hsl(0, 0%, 100%);
+}
+
+/* ❌ Bad: Non-semantic names */
+:root {
+  --color-blue: hsl(212, 100%, 50%);
+  --color-white: hsl(0, 0%, 100%);
+}
+```
+
+### 2. Implement Complete Role Sets
+- ✅ **Include all roles in a group**: When using Primary, include OnPrimary, PrimaryContainer, OnPrimaryContainer
+- ✅ **Define both light and dark themes**: Ensure all roles are defined for both themes
+- ✅ **Test contrast ratios**: Verify all "on" roles meet WCAG AA (4.5:1) minimum
+
+```css
+/* ✅ Good: Complete role set */
+:root {
+  --md-sys-color-primary: hsl(212, 100%, 50%);
+  --md-sys-color-on-primary: hsl(0, 0%, 100%);
+  --md-sys-color-primary-container: hsl(212, 100%, 95%);
+  --md-sys-color-on-primary-container: hsl(212, 100%, 10%);
+}
+```
+
+### 3. Use Container Roles for Elevation
+- ✅ **Use SurfaceContainer roles for elevation**: SurfaceContainerLow, SurfaceContainer, SurfaceContainerHigh, etc.
+- ✅ **Apply SurfaceTint for elevated surfaces**: Use SurfaceTint to add brand color to elevated surfaces
+- ✅ **Maintain proper contrast**: Ensure content on containers meets contrast requirements
+
+```css
+/* ✅ Good: Using container roles for elevation */
+.modal {
+  background: var(--md-sys-color-surface-container-high);
+  /* Add surface tint for brand recognition */
+  border-top: 2px solid var(--md-sys-color-surface-tint);
+}
+```
+
+### 4. Follow Material Design 3 Naming Convention
+- ✅ **Use `md-sys-color-` prefix**: Follow Material Design 3 naming convention
+- ✅ **Use kebab-case**: Use kebab-case for role names (e.g., `on-primary-container`)
+- ✅ **Document role purposes**: Add comments explaining each role's purpose
+
+```css
+/* ✅ Good: Material Design 3 naming */
+:root {
+  /* Primary brand color for high-emphasis elements */
+  --md-sys-color-primary: hsl(212, 100%, 50%);
+  /* Content color on primary (text/icons) */
+  --md-sys-color-on-primary: hsl(0, 0%, 100%);
+}
+```
+
+## ❌ DON'T (Anti-patterns)
+
+### 1. Don't Mix Role Systems
+- ❌ **Don't mix Material Design 3 roles with custom color systems**: Stick to one system
+- ❌ **Don't use role names for non-semantic purposes**: Don't use `--md-sys-color-primary` for a color that isn't actually primary
+- ❌ **Don't skip "on" roles**: Always define content colors for surfaces
+
+```css
+/* ❌ Bad: Mixing systems */
+:root {
+  --md-sys-color-primary: hsl(212, 100%, 50%);
+  --custom-blue: hsl(200, 100%, 50%);
+}
+
+/* ❌ Bad: Missing "on" roles */
+:root {
+  --md-sys-color-primary: hsl(212, 100%, 50%);
+  /* Missing --md-sys-color-on-primary */
+}
+```
+
+### 2. Don't Ignore Theme Variations
+- ❌ **Don't use the same values for light and dark themes**: Adjust tones for proper contrast
+- ❌ **Don't forget to test both themes**: Ensure all roles work in both light and dark modes
+- ❌ **Don't use pure black/white**: Use appropriate tones (L = 7–15% for dark backgrounds, not L = 0%)
+
+```css
+/* ❌ Bad: Same values for both themes */
+:root {
+  --md-sys-color-primary: hsl(212, 100%, 50%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Same value - won't work well in dark mode */
+    --md-sys-color-primary: hsl(212, 100%, 50%);
+  }
+}
+```
+
+### 3. Don't Overuse Accent Colors
+- ❌ **Don't use Primary for everything**: Use Secondary and Tertiary for variety
+- ❌ **Don't ignore Neutral roles**: Use Surface, SurfaceContainer, and Outline roles for structure
+- ❌ **Don't create too many custom roles**: Stick to Material Design 3 standard roles
+- ❌ **Don't use deprecated roles**: Avoid `background`, `onBackground`, `surfaceVariant`, `onSurfaceVariant` (use `surface`, `onSurface`, and `surfaceContainer*` roles instead)
+
+```css
+/* ❌ Bad: Overusing primary */
+.button-primary { background: var(--md-sys-color-primary); }
+.button-secondary { background: var(--md-sys-color-primary); }
+.button-tertiary { background: var(--md-sys-color-primary); }
+
+/* ✅ Good: Using appropriate roles */
+.button-primary { background: var(--md-sys-color-primary); }
+.button-secondary { background: var(--md-sys-color-secondary); }
+.button-tertiary { background: var(--md-sys-color-tertiary); }
+```
+
+## 🔧 Component Usage Examples
+
+```css
+/* Button Components */
+.button-primary {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.button-outlined {
+  border: 1px solid var(--md-sys-color-outline);
+  color: var(--md-sys-color-primary);
+  background: transparent;
+}
+
+/* Card Components */
+.card {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+.card-elevated {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Alert Components */
+.alert-error {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border-left: 4px solid var(--md-sys-color-error);
+}
+
+/* Input Components */
+.input {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+}
+
+.input:focus {
+  border-color: var(--md-sys-color-primary);
+  outline: 2px solid var(--md-sys-color-primary);
+}
+```
+
+## 📝 Key Points
+
+### Must Have
+- Complete color role sets (base + "on" + container roles)
+- Both light and dark theme definitions
+- WCAG AA contrast compliance (4.5:1 minimum)
+- Material Design 3 naming convention (`md-sys-color-` prefix)
+
+### Do
+- Use semantic role names by purpose, not appearance
+- Include all roles in a group when using one
+- Adjust tones for light/dark themes (preserve hue, adjust lightness and saturation)
+- Use SurfaceContainer roles for elevation
+- Test contrast ratios for all "on" roles
+- Document role purposes with comments
+
+### Don't
+- Don't mix Material Design 3 roles with custom color systems
+- Don't use the same values for light and dark themes
+- Don't skip "on" roles (always define content colors)
+- Don't use pure black (L = 0%) or pure white (L = 100%) inappropriately
+- Don't overuse Primary color—use Secondary and Tertiary for variety, follow the 60-30-10 rule
+- Don't create too many custom roles—stick to standard Material Design 3 roles
+- Don't use deprecated roles (`background`, `onBackground`, `surfaceVariant`, `onSurfaceVariant`), use `surface`, `onSurface`, and `surfaceContainer*` roles instead
+
+---
+
+**Remember**: Material Design 3 color roles provide a semantic, accessible, and consistent color system. Always pair base roles with "on" roles, define both light and dark themes, and maintain proper contrast ratios for accessibility.
