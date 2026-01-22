@@ -1,0 +1,543 @@
+---
+description: Comprehensive guide for color theory, contrast ratios, semantic colors, accessibility standards, and dark mode implementation for websites
+alwaysApply: false
+---
+# Color Instructions for Websites
+
+> **Purpose**: This document contains clear rules and oklch value ranges for creating an accessible and comfortable color scheme for websites in light and dark modes.
+
+> **Reference**: This guide extends the [UX/UI Design Principles](../ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into color and contrast specifics
+
+## 📋 Table of Contents
+
+0. [Important: Why oklch instead of HSL](#important-why-oklch-instead-of-hsl)
+1. Core Color Principles
+    - 1.1. [Color Psychology](#11-color-psychology)
+    - 1.2. [Color Harmony](#12-color-harmony)
+    - 1.3. [60-30-10 Rule](#13-60-30-10-rule)
+2. Contrast Requirements
+    - 2.1. [Minimum Standards (WCAG AA)](#21-minimum-standards-wcag-aa)
+    - 2.2. [Recommended Standards (WCAG AAA)](#22-recommended-standards-wcag-aaa)
+    - 2.3. [How Contrast is Calculated in oklch](#23-how-contrast-is-calculated-in-oklch)
+3. Backgrounds and Surfaces
+    - 3.1. [Elevation surfaces](#31-elevation-surfaces)
+    - 3.2. [Light Mode🌞](#32-light-mode)
+    - 3.3. [Dark Mode🌑](#33-dark-mode)
+4. Text and Typography (Visual Hierarchy)
+    - 4.1. [Hierarchy through Opacity/Lightness🫧](#41-hierarchy-through-opacitylightness)
+    - 4.2. [Light Mode🌞](#42-light-mode)
+    - 4.3. [Dark Mode🌑](#43-dark-mode)
+5. Accent Colors
+    - 5.1. [Color Variations for States](#51-color-variations-for-states)
+    - 5.2. [Light Mode🌞](#52-light-mode)
+    - 5.3. [Dark Mode🌑](#53-dark-mode)
+6. [Dark Mode Adaptation Rules](#6-dark-mode-adaptation-rules)
+7. ✅ DO (Recommended Practices)
+    - 7.1. [Contrast](#71-contrast)
+    - 7.2. [Lightness Difference Rule](#72-lightness-difference-rule)
+    - 7.3. [Example](#73-example)
+8. ❌ DON'T (Anti-patterns)
+    - 8.1. [Contrast Mistakes](#81-contrast-mistakes)
+    - 8.2. [Color System Mistakes](#82-color-system-mistakes)
+    - 8.3. [Saturation Mistakes](#83-saturation-mistakes)
+    - 8.4. [Dark Mode Mistakes](#84-dark-mode-mistakes)
+    - 8.5. [Accessibility Mistakes](#85-accessibility-mistakes)
+    - 8.6. [Example](#86-example)
+9. 📝 Quick Reference
+    - 9.1. [Color Checklist](#91-color-checklist)
+    - 9.2. [Summary Table of oklch Values](#92-summary-table-of-oklch-values)
+    - 9.3. [Contrast Ratios](#93-contrast-ratios)
+    - 9.4. [Dark Mode Adaptation](#94-dark-mode-adaptation)
+10. 🔧 Tools
+    - 10.1. [Browser DevTools](#101-browser-devtools)
+    - 10.2. [Online Contrast Checkers](#102-online-contrast-checkers)
+    - 10.3. [Color Blindness Simulators](#103-color-blindness-simulators)
+---
+
+## Important: Why oklch instead of HSL
+
+**The WCAG and oklch → HSL conversion problem:**
+
+Saturation recommendations in **WCAG** and **oklch (C in numeric values)** and **HSL (S in percentages)** are not direct equivalents. This happens because:
+
+- **WCAG** uses relative luminance (Y) to calculate contrast. It does not use oklch directly, but oklch is the most close to it.
+- **oklch Chroma (C)** — is a perceptual metric that uniformly reflects perceived saturation for all hues. Equal C values look equally saturated for blue, red, or yellow
+- **HSL Saturation (S)** depends on hue and lightness — the same value `S = 50%` looks different for different colors
+
+**Rule:** When creating a color palette, **always use oklch for universal recommendations**.
+
+**Clear example:**
+
+```css
+/* All three colors have C = 0.20 in oklch and look equally moderately saturated. */
+/** But when converted to HSL, different S values result: */
+oklch(55% 0.20 250)  /* ≈ hsl(220 80% 50%) - S = 80% */
+oklch(80% 0.20 100)  /* ≈ hsl(60 50% 50%) - S = 50% */
+oklch(60% 0.20 320)  /* ≈ hsl(300 75% 50%) - S = 75% */
+```
+
+---
+
+## 1. Core Color Principles
+
+### 1.1. Color Psychology
+Colors convey meaning and emotion:
+- **Blue**: Trust, professionalism, calm (finance, healthcare)
+- **Green**: Growth, success, eco-friendly (environmental, finance)
+- **Red**: Urgency, danger, passion (errors, sales, food)
+- **Yellow/Orange**: Warning, energy, optimism (alerts, CTAs)
+- **Purple**: Luxury, creativity (premium brands)
+- **Gray**: Neutral, professional (backgrounds, text)
+
+### 1.2. Color Harmony
+- **Monochromatic**: Variations of single hue (safe, cohesive)
+- **Analogous**: Adjacent colors on wheel (harmonious)
+- **Complementary**: Opposite colors (high contrast, energetic)
+- **Triadic**: Three equidistant colors (balanced, vibrant)
+
+### 1.3. 60-30-10 Rule
+- **60%**: Dominant color (backgrounds, major areas)
+- **30%**: Secondary color (supporting elements)
+- **10%**: Accent color (CTAs, highlights)
+
+## 2. Contrast Requirements
+
+### 2.1. Minimum Standards (WCAG AA)
+
+- ✅ **Normal text** (< 18pt): contrast ≥ **4.5:1**
+- ✅ **Large text** (≥ 18pt or ≥ 14pt bold): contrast ≥ **3:1**
+- ✅ **UI components** (buttons, icons): contrast ≥ **3:1**
+- ✅ **Borders and dividers**: contrast ≥ **3:1** with adjacent background
+
+### 2.2. Recommended Standards (WCAG AAA)
+
+- ✅ **Normal text**: contrast ≥ **7:1**
+- ✅ **Large text**: contrast ≥ **4.5:1**
+- ✅ **UI elements**: contrast > **4.5:1**, especially for interactive elements (inputs, buttons, cards)
+- ✅ **Critical borders**: contrast > **4.5:1** for focus states, error states
+
+### 2.3. How Contrast is Calculated in oklch
+
+**Important:** WCAG contrast is calculated the same way for all color spaces (HSL, RGB, oklch) through **relative luminance**, not directly through color space values.
+
+However, **oklch Lightness (L)** is a perceptually uniform metric that more accurately reflects perceived brightness than HSL Lightness. This means that in oklch, the difference in Lightness more predictably corresponds to contrast than in HSL.
+
+**Rule:** Always verify the final contrast using tools (WebAIM, Chrome DevTools), even if oklch values match the recommendations below.
+
+**Example:**
+- Background `oklch(95% 0 0)` + text `oklch(15% 0 0)` = 80% difference → contrast ≈ 7.5:1 ✅
+
+## 3. Backgrounds and Surfaces
+
+Follow the [Contrast Requirements](#2-contrast-requirements).
+
+### 3.1. Elevation surfaces
+
+**Rules:**
+- Surfaces closer to the viewer should be **lighter**
+- Surfaces farther from the viewer should be **darker**
+
+**Example for dark mode:**
+- Base background: `oklch(10% 0 0)`
+- Card (level 1): `oklch(15% 0 0)`
+- Modal window (level 2): `oklch(20% 0 0)`
+- Tooltip (level 3): `oklch(25% 0 0)`
+
+### 3.2. Light Mode🌞
+
+**Rule** for Saturation (Chroma):
+- **C ≤ 0.08**
+
+#### Primary Background `primary surfaces`
+- **Parameters**: **oklch(90–100% 0–0.08 hue)**
+- **Recommendation**: Use `oklch(98% 0.02 hue)` (slightly muted white)
+
+#### Secondary Surfaces `secondary surfaces`
+- **Parameters**: **oklch(80–90% 0–0.08 hue)**
+- **Recommendation**: 5–10% lightness difference for visual separation
+- **Application**: Cards, panels, content areas
+
+#### Elevation Surfaces `tertiary surfaces`
+- **Parameters**: **oklch(70–80% 0–0.08 hue)**
+- **Application**: Modal windows, dropdown menus, tooltips
+
+### 3.3. Dark Mode🌑
+
+**Rule** for Saturation (Chroma):
+- **C ≤ 0.06**
+
+#### Primary Background `primary surfaces`
+- **Parameters**: **oklch(7–15% 0–0.06 hue)**
+- **Recommendation**: Use `oklch(10% 0 0)` (≈ `#121212`) or `oklch(12% 0.03 250)`
+
+#### Secondary Surfaces `secondary surfaces`
+- **Parameters**: **oklch(15–25% 0–0.06 hue)**
+- **Recommendation**: 5–10% lightness difference for visual separation
+- **Application**: Cards, panels, content areas
+
+#### Elevation Surfaces `tertiary surfaces`
+- **Parameters**: **oklch(20–40% 0–0.06 hue)**
+- **Recommendation**: Use white overlay with 5–16% opacity on base background `oklch(10% 0 0)`
+- **Application**: Modal windows, dropdown menus, tooltips
+
+---
+
+## 4. Text and Typography (Visual Hierarchy)
+
+Follow the [Contrast Requirements](#2-contrast-requirements).
+
+### 4.1. Hierarchy through Opacity/Lightness🫧
+
+Instead of creating many gray shades, use variations of opacity or lightness of one base color.
+
+**Example for dark theme:**
+- Primary text: `oklch(95% 0.02 0)` (slightly muted white, not pure white)
+- Secondary text: white with 80% opacity → effectively `oklch(80% 0 0)`
+- Hints: white with 60% opacity → effectively `oklch(60% 0 0)`
+
+**Advantages:**
+- Fewer color tokens to manage
+- Easier to maintain consistency
+- Simpler to adapt to different themes
+
+### 4.2. Light Mode🌞
+
+**Rule** for Saturation (Chroma):
+- **C ≤ 0.12**
+
+#### Primary Text `primary text`
+- **Parameters**: **oklch(15–30% 0–0.12 hue)**
+- **Recommendation**: Use `oklch(20% 0.05 hue)` for 4.5:1 contrast or `oklch(15% 0 hue)` for 7:1 contrast
+
+#### Secondary Text
+- **Parameters**: **oklch(20–35% 0–0.12 hue)**
+- **Application**: Captions, metadata, non-primary content
+
+#### Hints and Disabled Text
+- **Parameters**: **oklch(35–50% 0–0.12 hue)**
+- **Recommendation**: Use `oklch(40% 0.08 hue)` or primary color with reduced opacity
+
+#### Dividers `dividers`
+- **Recommendation**: White with ≈ 12% opacity `oklch(12% 0 hue)`
+
+### 4.3. Dark Mode🌑
+
+**Rule** for Saturation (Chroma):
+- **C ≤ 0.10**
+
+#### Primary Text
+- **Parameters**: **oklch(85–100% 0–0.10 hue)**
+- **Recommendation**: Use `oklch(95% 0.02 hue)` for 7:1 contrast or `oklch(90% 0 hue)` for 4.5:1 contrast
+
+#### Secondary Text `secondary text`
+- **Parameters**: **oklch(75–90% 0–0.10 hue)**
+- **Recommendation**: Use `oklch(80% 0.05 hue)` or white with ≈ 80% opacity `oklch(80% 0 0)`
+- **Application**: Captions, metadata, non-primary content
+
+#### Hints and Disabled Text `hint text`
+- **Parameters**: **oklch(50–70% 0–0.10 hue)**
+- **Recommendation**: Use `oklch(60% 0.05 hue)` or white with ≈ 60% opacity `oklch(60% 0 0)`
+
+#### Dividers `dividers`
+- **Recommendation**: White with ≈ 12% opacity `oklch(12% 0 hue)`
+
+---
+
+## 5. Accent Colors
+
+### 5.1. Color Variations for States
+- **Hover**: 10-20% darker for dark mode, lighter for light mode
+- **Active**: 20-30% darker for dark mode, lighter for light mode
+- **Focus**: Clear outline with accent color
+- **Disabled**: Reduced opacity or desaturated for dark mode, increased opacity or saturated for light mode
+- **Selected**: 10-20% lighter for dark mode, darker for light mode
+
+### 5.2. Light Mode🌞
+
+**Rule** for Saturation (Chroma):
+- **C ≥ 0.15 and C ≤ 0.40**
+
+#### Primary Accents (buttons, links, interactive elements)
+- **Parameters**: **oklch(40–60% 0.15–0.40 hue)**
+- **Application**: Primary buttons, active links, important elements
+
+#### Secondary Accents
+- **Parameters**: **oklch(50–70% 0.12–0.35 hue)**
+- **Application**: Secondary buttons, less important elements
+
+### 5.3. Dark Mode🌑
+
+**Rules** for Saturation (Chroma):
+- **C ≥ 0.12 and C ≤ 0.35**
+- should be reduced by **0.05–0.10** compared to light mode
+
+#### Primary Accents
+- **Parameters**: **oklch(70–90% 0.12–0.35 hue)**
+- **Recommendation**: Reduce chroma by **0.05–0.10** compared to light mode
+- **Application**: Primary buttons, active links, important elements
+- **Critical**: Avoid very dark (L < 60%) or very saturated (C > 0.35) tones — they are poorly visible on dark backgrounds
+
+#### Secondary Accents
+- **Parameters**: **oklch(60–80% 0.10–0.30 hue)**
+- **Application**: Secondary buttons, less important elements
+
+## 6. Dark Mode Adaptation Rules
+
+**Rules:**
+- ✅ **Not just inverting colors**
+- ✅ **Preserve Hue** — to maintain brand identity
+- ✅ **Increase Lightness** by **+20–30%**
+- ✅ **Reduce Chroma** by **0.05–0.10**
+- ✅ **Use dark grays, not pure black**
+- ✅ **Maintain** [Contrast Requirements](#2-contrast-requirements)
+
+**Example:**
+```css
+/* Light mode */
+--color-primary: oklch(50% 0.25 250);
+
+/* Dark mode */
+--color-primary: oklch(75% 0.18 250);
+/* Hue: 250 (preserved) */
+/* Chroma: 0.25 → 0.18 (reduced by 0.07) */
+/* Lightness: 50% → 75% (increased by 25%) */
+```
+
+---
+
+## 7. DO (Recommended Practices)
+
+### 7.1. Contrast
+- ✅ **Meet minimum WCAG AAА standards (4.5:1 for normal text, 3:1 for large text and UI components)** [WCAG AA](#2-contrast-requirements)
+  - ✅ **Aim for AAA when possible (7:1 for normal text, 4.5:1 for large text)**
+- ✅ **Sufficient border contrast (3:1 with adjacent background)**
+  - ✅ **Aim for AAA when possible (4.5:1 for UI elements, 4.5:1+ for critical borders)**
+- ✅ **Clear focus indicators**
+- ✅ **Test all text/background combinations with tools (WebAIM, Chrome DevTools)**
+- ✅ **Respect system color scheme preference**: Use `prefers-color-scheme` media query
+- ✅ **Reduce Chroma** by **0.05–0.10** in dark mode compared to light mode
+
+#### 7.2. Lightness Difference Rule
+- ✅ **Maintain minimum 40–50% lightness difference** between text and background
+- ✅ **Ensures sufficient visual contrast** beyond just ratio calculations
+- ✅ **Applies to both light and dark modes**
+- ✅ **Increase Lightness** by **+20–30%** in dark mode compared to light mode
+- ✅ **Include state variations for accent colors** (hover, active, focus, disabled, selected)
+
+### 7.3. Example
+
+```css
+/* ✅ Good: Recommended practices in action */
+
+:root {
+  /* Light mode - Primary text: 20% lightness, Background: 98% lightness = 78% difference ✅ */
+  --text-primary: oklch(20% 0.05 0);       /* 7:1+ contrast with background (WCAG AAA) */
+  --text-secondary: oklch(30% 0.08 0);     /* 4.5:1+ contrast (WCAG AA) */
+  --background: oklch(98% 0.02 0);         /* Slightly muted white */
+  --border-default: oklch(85% 0.05 0);     /* 3:1+ contrast with background */
+  --border-focus: oklch(50% 0.25 250);     /* 4.5:1+ contrast for critical border */
+  --accent-primary: oklch(50% 0.25 250);   /* Primary accent color */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode - Lightness increased by +25%, Chroma reduced by 0.07 ✅ */
+    --text-primary: oklch(95% 0.02 0);      /* 7:1+ contrast (was 20%, now 95% = +75%) */
+    --background: oklch(10% 0 0);           /* Dark gray, not pure black, L +20% */
+    --border-default: oklch(30% 0.05 0);    /* 3:1+ contrast with dark background */
+    --border-focus: oklch(75% 0.18 250);    /* 4.5:1+ contrast, L +25%, C -0.07 */
+  }
+}
+
+/* ✅ Text contrast: 78% lightness difference (20% vs 98%) = 7.5:1 ✅ */
+body {
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+/* ✅ Border contrast: 3:1+ for default, 4.5:1+ for focus state ✅ */
+input {
+  background: var(--background);
+  color: var(--text-primary);
+  border: 2px solid var(--border-default);  /* 3:1+ contrast */
+}
+
+input:focus {
+  border-color: var(--border-focus);      /* 4.5:1+ contrast for critical state */
+  outline: 2px solid var(--border-focus); /* Clear focus indicator ✅ */
+}
+
+/* ✅ Accent color adaptation: preserves hue, adjusts lightness and chroma ✅ */
+.button-primary {
+  background: var(--accent-primary);
+  color: oklch(100% 0 0);  /* White text on accent - verify contrast with tools */
+}
+```
+
+## 8. DON'T (Anti-patterns)
+
+#### 8.1. Contrast Mistakes
+- ❌ **Ignoring WCAG**: Don't skip contrast testing
+- ❌ **Pure black** `oklch(0% 0 0)` for backgrounds — causes harsh contrast and eye strain
+- ❌ **Pure white** `oklch(100% 0 0)` for text in dark mode — too bright
+- ❌ **Pure white on pure black** without good reason — causes discomfort
+- ❌ **Low contrast text**: Don't use light gray on white
+- ❌ **Color-only links**: Don't remove underlines without alternative
+- ❌ **Insufficient UI contrast**: Don't use subtle borders/dividers
+
+### 8.2. Color System Mistakes
+- ❌ **Too many colors**: Don't create rainbow interfaces
+- ❌ **Inconsistent usage**: Don't use colors arbitrarily
+- ❌ **No semantic meaning**: Don't make red mean "success"
+- ❌ **Pure colors**: Don't use fully saturated colors everywhere
+
+### 8.3. Saturation Mistakes
+- ❌ **High saturation (C > 0.35)** for large areas in dark mode: Creates visual vibration effect
+- ❌ **Very high saturated colors (C > 0.40)** for backgrounds in any mode: Causes eye strain and reduces readability
+- ❌ **Zero saturation (C = 0)** for accent colors: Loses color identity and makes accents indistinguishable from grays
+
+### 8.4. Dark Mode Mistakes
+- ❌ **Pure black backgrounds**: Causes eye strain — use dark grays
+- ❌ **Pure white text**: Too harsh on dark backgrounds — use off-white
+- ❌ **Just inverting colors**: Doesn't work properly — adjust lightness and saturation
+- ❌ **High saturation** for large areas in dark mode: Creates visual vibration
+- ❌ **Hue shift**: Don't change the hue of the light to dark mode
+
+### 8.5. Accessibility Mistakes
+- ❌ **Color-only indicators**: Don't use only color for status
+- ❌ **Missing labels**: Don't rely on placeholder text
+- ❌ **Disabled contrast**: Don't make disabled elements invisible
+- ❌ **No focus indicators**: Don't remove focus outlines
+
+### 8.6. Example
+
+```css
+/* ❌ Bad: Multiple anti-patterns combined */
+
+:root {
+  /* ❌ Pure black/white - causes eye strain */
+  --bg-light: oklch(0% 0 0);        /* Pure black - too harsh */
+  --text-light: oklch(100% 0 0);    /* Pure white - too bright */
+  
+  /* ❌ Low contrast text - fails WCAG AA */
+  --text-low-contrast: oklch(85% 0.05 0);  /* Too light on white background */
+  
+  /* ❌ Too many colors, no semantic meaning */
+  --color-1: oklch(50% 0.50 0);     /* Red */
+  --color-2: oklch(50% 0.50 120);   /* Green */
+  --color-3: oklch(50% 0.50 240);  /* Blue */
+  --color-4: oklch(50% 0.50 60);    /* Yellow */
+  
+  /* ❌ Zero saturation for accent - loses identity */
+  --accent-gray: oklch(50% 0 0);    /* Indistinguishable from gray */
+  
+  /* ❌ Insufficient border contrast */
+  --border-subtle: oklch(90% 0.02 0);  /* < 3:1 contrast */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* ❌ Just inverting - doesn't work properly */
+    --bg-dark: oklch(100% 0 0);     /* Pure white - wrong! */
+    --text-dark: oklch(0% 0 0);     /* Pure black - wrong! */
+    
+    /* ❌ High saturation in dark mode - creates vibration */
+    --accent-vibrant: oklch(70% 0.45 250);  /* C > 0.35 - too saturated */
+    
+    /* ❌ Hue shift - breaks brand identity */
+    --accent-shifted: oklch(75% 0.18 300);  /* Hue changed from 250 to 300 */
+  }
+}
+
+/* ❌ Low contrast text */
+.low-contrast { color: var(--text-low-contrast); }
+
+/* ❌ Insufficient border contrast */
+.card { border: 1px solid var(--border-subtle); }
+
+/* ❌ Color-only indicator - no icon/text */
+.error { color: red; }  /* Only color, no icon or label */
+
+/* ❌ No focus indicator */
+button:focus { outline: none; }  /* Removed focus outline */
+
+/* ❌ Invisible disabled state */
+button:disabled { 
+  opacity: 0.2;  /* Too low contrast - invisible */
+  color: var(--text-low-contrast);
+}
+
+/* ❌ Missing label - relies on placeholder */
+input::placeholder { color: var(--text-low-contrast); }
+```
+
+---
+
+## 9. 📝 Quick Reference
+
+### 9.1. Color Checklist
+
+Before launching, verify:
+- [ ] All colors are defined in oklch format
+- [ ] All text meets 4.5:1 contrast minimum (AA)
+- [ ] Large text meets 3:1 contrast minimum
+- [ ] UI components meet 3:1 contrast minimum
+- [ ] Links are distinguishable (underline or alternative)
+- [ ] Focus indicators are clearly visible
+- [ ] Status/errors don't rely on color alone
+- [ ] Dark mode maintains sufficient contrast
+- [ ] Tested with color blindness simulators
+- [ ] Color palette is limited (3-5 primary colors)
+- [ ] Semantic colors are consistently applied
+- [ ] Hover/focus states are clearly visible
+- [ ] Disabled states are distinguishable 
+
+
+### 9.2. Summary Table of oklch Values
+
+| Element | Light Mode | Dark Mode | Notes |
+|---------|------------|----------|-------|
+| **Primary Background** | L: 90–100%<br>C: 0–0.08 | L: 7–15%<br>C: 0–0.06 | Avoid pure black/white |
+| **Secondary Background** | L: 80–90%<br>C: 0–0.08 | L: 15–25%<br>C: 0–0.06 | 5–10% difference from primary |
+| **Elevation Background** | L: 70–80%<br>C: 0–0.08 | L: 20–40%<br>C: 0–0.06 | Elevated elements |
+| **Primary Text** | L: 15–30%<br>C: 0–0.12 | L: 85–100%<br>C: 0–0.10 | Contrast ≥ 4.5:1 (recommended 7:1) |
+| **Secondary Text** | L: 20–35%<br>C: 0–0.12 | L: 75–90%<br>C: 0–0.10 | Contrast ≥ 4.5:1 |
+| **Hint Text** | L: 35–50%<br>C: 0–0.12 | L: 50–70%<br>C: 0–0.10 | Contrast ≥ 3:1 (large text) |
+| **Primary Accent** | L: 40–60%<br>C: 0.15–0.40 | L: 70–90%<br>C: 0.12–0.35 | Reduce C by 0.05–0.10 in dark |
+| **Secondary Accent** | L: 50–70%<br>C: 0.12–0.35 | L: 60–80%<br>C: 0.10–0.30 | Less important elements |
+
+
+### 9.3. Contrast Ratios
+
+| Element Type | WCAG AA | WCAG AAA | Recommended |
+|--------------|---------|----------|-------------|
+| **Normal text** (<18pt) | 4.5:1 | 7:1 | 7:1+ |
+| **Large text** (≥18pt) | 3:1 | 4.5:1 | 4.5:1+ |
+| **UI components** | 3:1 | - | 3:1+ |
+| **Icons** | 3:1 | - | 3:1+ |
+| **Borders and dividers** | 3:1 | - | 4.5:1+ |
+| **Disabled elements** | - | - | 3:1 |
+| **Placeholder text** | - | - | 4.5:1 |
+
+### 9.4. Dark Mode Adaptation
+- Preserve Hue: **preserve the same hue** as in light mode
+- Increase Lightness by: **+20–30%**
+- Reduce Chroma by: **0.05–0.10**
+
+## 10. 🔧 Tools
+
+### 10.1. Browser DevTools
+ - Chrome DevTools: Inspect element shows contrast ratio in color picker, suggests AA/AAA compliant colors
+ - Firefox DevTools: Accessibility Inspector shows contrast issues, lists all contrast violations
+
+### 10.2. Online Contrast Checkers
+- WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
+- Coolors Contrast Checker: https://coolors.co/contrast-checker
+- Adobe Color Accessibility: https://color.adobe.com/create/color-accessibility
+
+### 10.3. Color Blindness Simulators
+- Coblis: https://www.color-blindness.com/coblis-color-blindness-simulator/
+- Chrome Extension: Colorblindly
+- Firefox Extension: Let's get color blind
+
+---
