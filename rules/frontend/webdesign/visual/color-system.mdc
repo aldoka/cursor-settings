@@ -27,7 +27,7 @@ alwaysApply: false
     - 4.1. [Hierarchy through Opacity/Lightness🫧](#41-hierarchy-through-opacitylightness)
     - 4.2. [Light Mode🌞](#42-light-mode)
     - 4.3. [Dark Mode🌑](#43-dark-mode)
-5. Accent Colors
+5. Accent and Status Colors
     - 5.1. [Color Variations for States](#51-color-variations-for-states)
     - 5.2. [Light Mode🌞](#52-light-mode)
     - 5.3. [Dark Mode🌑](#53-dark-mode)
@@ -209,7 +209,7 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 - **Parameters**: **oklch(15–30% 0–0.12 hue)**
 - **Recommendation**: Use `oklch(20% 0.05 hue)` for 4.5:1 contrast or `oklch(15% 0 hue)` for 7:1 contrast
 
-#### Secondary Text
+#### Secondary Text `secondary text`
 - **Parameters**: **oklch(20–35% 0–0.12 hue)**
 - **Application**: Captions, metadata, non-primary content
 
@@ -225,7 +225,7 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 **Rule** for Saturation (Chroma):
 - **C ≤ 0.10**
 
-#### Primary Text
+#### Primary Text `primary text`
 - **Parameters**: **oklch(85–100% 0–0.10 hue)**
 - **Recommendation**: Use `oklch(95% 0.02 hue)` for 7:1 contrast or `oklch(90% 0 hue)` for 4.5:1 contrast
 
@@ -243,27 +243,43 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 
 ---
 
-## 5. Accent Colors
+## 5. Accent and Status Colors
 
 ### 5.1. Color Variations for States
 - **Hover**: 10-20% darker for dark mode, lighter for light mode
 - **Active**: 20-30% darker for dark mode, lighter for light mode
-- **Focus**: Clear outline with accent color
+- **Focus**: 10-15% darker and slightly less saturated 0.03 – 0.05 for dark mode, 5-10% darker and no changes in saturation for light mode
 - **Disabled**: Reduced opacity or desaturated for dark mode, increased opacity or saturated for light mode
 - **Selected**: 10-20% lighter for dark mode, darker for light mode
+- **Visited**: decrease chroma by 0.03 – 0.05 for dark mode, decrease by 0.05 – 0.10 for light mode, hue could shift to tretiary accent color
 
 ### 5.2. Light Mode🌞
 
 **Rule** for Saturation (Chroma):
 - **C ≥ 0.15 and C ≤ 0.40**
 
-#### Primary Accents (buttons, links, interactive elements)
+#### Primary Accents `primary-accent`
 - **Parameters**: **oklch(40–60% 0.15–0.40 hue)**
-- **Application**: Primary buttons, active links, important elements
+- **Application**: Primary buttons, active links, interactive elements, important elements
 
-#### Secondary Accents
+#### Secondary Accents `secondary-accent`
 - **Parameters**: **oklch(50–70% 0.12–0.35 hue)**
 - **Application**: Secondary buttons, less important elements
+
+#### Success `status-success`
+- **Parameters**: **oklch(50–65% 0.20–0.40 140–160)** (green hues)
+- **Recommendation**: Use `oklch(55% 0.30 150)` for primary success states
+- **Application**: Success messages, completed states, positive feedback
+
+#### Error `status-error`
+- **Parameters**: **oklch(45–60% 0.25–0.45 0–30)** (red hues)
+- **Recommendation**: Use `oklch(50% 0.35 25)` for primary error states
+- **Application**: Error messages, destructive actions, critical alerts
+
+#### Warning `status-warning`
+- **Parameters**: **oklch(60–75% 0.25–0.45 60–90)** (yellow/orange hues)
+- **Recommendation**: Use `oklch(70% 0.35 75)` for primary warning states
+- **Application**: Warning messages, caution states, attention-required alerts
 
 ### 5.3. Dark Mode🌑
 
@@ -271,15 +287,31 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 - **C ≥ 0.12 and C ≤ 0.35**
 - should be reduced by **0.05–0.10** compared to light mode
 
-#### Primary Accents
+#### Primary Accents `primary-accent`
 - **Parameters**: **oklch(70–90% 0.12–0.35 hue)**
 - **Recommendation**: Reduce chroma by **0.05–0.10** compared to light mode
 - **Application**: Primary buttons, active links, important elements
 - **Critical**: Avoid very dark (L < 60%) or very saturated (C > 0.35) tones — they are poorly visible on dark backgrounds
 
-#### Secondary Accents
+#### Secondary Accents `secondary-accent`
 - **Parameters**: **oklch(60–80% 0.10–0.30 hue)**
 - **Application**: Secondary buttons, less important elements
+
+#### Success `status-success`
+- **Parameters**: **oklch(65–80% 0.15–0.30 140–160)** (green hues)
+- **Recommendation**: Use `oklch(70% 0.22 150)` (L +15%, C -0.08 from light mode)
+- **Application**: Success messages, completed states, positive feedback
+
+#### Error `status-error`
+- **Parameters**: **oklch(60–75% 0.20–0.35 0–30)** (red hues)
+- **Recommendation**: Use `oklch(65% 0.28 25)` (L +15%, C -0.07 from light mode)
+- **Application**: Error messages, destructive actions, critical alerts
+
+#### Warning `status-warning`
+- **Parameters**: **oklch(70–85% 0.20–0.35 60–90)** (yellow/orange hues)
+- **Recommendation**: Use `oklch(75% 0.28 75)` (L +5%, C -0.07 from light mode)
+- **Application**: Warning messages, caution states, attention-required alerts
+- **Note**: May require darker text or border for sufficient contrast
 
 ## 6. Dark Mode Adaptation Rules
 
@@ -505,6 +537,9 @@ Before launching, verify:
 | **Hint Text** | L: 35–50%<br>C: 0–0.12 | L: 50–70%<br>C: 0–0.10 | Contrast ≥ 3:1 (large text) |
 | **Primary Accent** | L: 40–60%<br>C: 0.15–0.40 | L: 70–90%<br>C: 0.12–0.35 | Reduce C by 0.05–0.10 in dark |
 | **Secondary Accent** | L: 50–70%<br>C: 0.12–0.35 | L: 60–80%<br>C: 0.10–0.30 | Less important elements |
+| **Status Success** | L: 50–65%<br>C: 0.20–0.40<br>H: 140–160 | L: 65–80%<br>C: 0.15–0.30<br>H: 140–160 | Green hues, reduce C by 0.05–0.10 in dark |
+| **Status Error** | L: 45–60%<br>C: 0.25–0.45<br>H: 0–30 | L: 60–75%<br>C: 0.20–0.35<br>H: 0–30 | Red hues, reduce C by 0.05–0.10 in dark |
+| **Status Warning** | L: 60–75%<br>C: 0.25–0.45<br>H: 60–90 | L: 70–85%<br>C: 0.20–0.35<br>H: 60–90 | Yellow/orange hues, reduce C by 0.05–0.10 in dark |
 
 
 ### 9.3. Contrast Ratios
