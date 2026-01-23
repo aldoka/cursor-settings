@@ -8,6 +8,8 @@ alwaysApply: false
 
 > **Reference**: This guide extends the [UX/UI Design Principles](../ux-ui.mdc). Make sure you're familiar with core UX/UI principles before diving into color and contrast specifics
 
+> **Related**: For a practical implementation template that uses these color rules, see [CSS System Template](../../css/css-system-template.md)
+
 ## 📋 Table of Contents
 
 0. [Important: Why oklch instead of HSL](#important-why-oklch-instead-of-hsl)
