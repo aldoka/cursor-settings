@@ -41,7 +41,35 @@ echo "Updating settings from cursor-rules repository..."
 git read-tree -mu HEAD
 git pull origin main
 
+# Check if all files and folders from selected-paths.txt exist
 echo ""
-echo "✅ Settings updated successfully!"
+echo "Checking if all selected paths exist..."
+HAS_MISSING=false
+while IFS= read -r path || [ -n "$path" ]; do
+    # Skip comments and empty lines
+    [[ "$path" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "${path// }" ]] && continue
+    
+    # Remove leading/trailing whitespace
+    path=$(echo "$path" | xargs)
+    
+    # Check if path exists (file or directory)
+    if [ ! -e "$SCRIPT_DIR/$path" ]; then
+        if [ "$HAS_MISSING" = false ]; then
+            echo "⚠️  Warning: Some selected paths are missing after update!"
+            echo ""
+            echo "Missing paths:"
+            HAS_MISSING=true
+        fi
+        echo "   - $path"
+    fi
+done < "$SELECTED_PATHS"
+
+echo ""
+if [ "$HAS_MISSING" = true ]; then
+    echo "⚠️  Settings updated, but please check the missing paths above."
+else
+    echo "✅ Settings updated successfully!"
+fi
 echo "   Rules: $SCRIPT_DIR/rules/"
 echo "   Commands: $SCRIPT_DIR/commands/"
