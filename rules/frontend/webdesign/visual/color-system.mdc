@@ -22,17 +22,15 @@ alwaysApply: false
     - 2.2. [Recommended Standards (WCAG AAA)](#22-recommended-standards-wcag-aaa)
     - 2.3. [How Contrast is Calculated in oklch](#23-how-contrast-is-calculated-in-oklch)
 3. Backgrounds and Surfaces
-    - 3.1. [Elevation surfaces](#31-elevation-surfaces)
-    - 3.2. [Light Mode🌞](#32-light-mode)
-    - 3.3. [Dark Mode🌑](#33-dark-mode)
+    - 3.1. [Light Mode🌞](#31-light-mode)
+    - 3.2. [Dark Mode🌑](#32-dark-mode)
 4. Text and Typography (Visual Hierarchy)
     - 4.1. [Hierarchy through Opacity/Lightness🫧](#41-hierarchy-through-opacitylightness)
     - 4.2. [Light Mode🌞](#42-light-mode)
     - 4.3. [Dark Mode🌑](#43-dark-mode)
 5. Accent and Status Colors
-    - 5.1. [Color Variations for States](#51-color-variations-for-states)
-    - 5.2. [Light Mode🌞](#52-light-mode)
-    - 5.3. [Dark Mode🌑](#53-dark-mode)
+    - 5.1. [Light Mode🌞](#51-light-mode)
+    - 5.2. [Dark Mode🌑](#52-dark-mode)
 6. [Dark Mode Adaptation Rules](#6-dark-mode-adaptation-rules)
 7. ✅ DO (Recommended Practices)
     - 7.1. [Contrast](#71-contrast)
@@ -133,54 +131,51 @@ However, **oklch Lightness (L)** is a perceptually uniform metric that more accu
 
 Follow the [Contrast Requirements](#2-contrast-requirements).
 
-### 3.1. Elevation surfaces
+### 3.1. Light Mode🌞
 
-**Rules:**
-- Surfaces closer to the viewer should be **lighter**
-- Surfaces farther from the viewer should be **darker**
+**Rule** for Saturation (Chroma):
+- **C ≤ 0.08**
+- **Visual hierarchy**: Primary Background → Secondary Surfaces → Elevation Surfaces
+
+#### Primary Background `primary surfaces`
+- **Parameters**: **oklch(90–99% 0–0.08 hue)**
+- **Recommendation**: Use `oklch(98% 0.02 hue)` (slightly muted white)
+
+#### Secondary Surfaces `secondary surfaces`
+- **Parameters**: **oklch(80–90% 0–0.08 hue)**
+- **Recommendation**: Calculate L as `background_primary_light - 10–20%` for visual separation (ensures result stays within 80–90% range), C: 0–0.08 (same as `background_primary_light`)
+- **Application**: Cards, panels, content areas
+
+#### Elevation Surfaces `tertiary surfaces`
+- **Parameters**: **oklch(70–80% 0–0.08 hue)**
+- **Recommendation**: Calculate L as `surface_secondary_light - 10–20%` (or `background_primary_light - 20–30%`), ensuring result stays within 70–80% range. C: 0–0.08 (same as `background_primary_light`). Surfaces closer to the viewer should be lighter, farther - darker.
+- **Application**: Modal windows, dropdown menus, tooltips
+
+### 3.2. Dark Mode🌑
+
+**Rule** for Saturation (Chroma):
+- **C ≤ 0.06**
+- **Visual hierarchy**: Primary Background → Secondary Surfaces → Elevation Surfaces
+
+#### Primary Background `primary surfaces`
+- **Parameters**: **oklch(7–15% 0–0.06 hue)**
+- **Recommendation**: Use `oklch(10% 0 0)` (≈ `#121212`) or `oklch(12% 0.03 250)`. Independent from light mode primary background, but may use the same hue for brand consistency. Hue (if used) should match brand identity and can be derived from accent colors (calculate hue from `accent_primary_light` to maintain brand coherence)
+
+#### Secondary Surfaces `secondary surfaces`
+- **Parameters**: **oklch(15–25% 0–0.06 hue)**
+- **Recommendation**: Calculate L as `background_primary_dark + 5–10%` for visual separation (ensures result stays within 15–25% range), C: 0–0.06 (same as `background_primary_dark`)
+- **Application**: Cards, panels, content areas
+
+#### Elevation Surfaces `tertiary surfaces`
+- **Parameters**: **oklch(20–40% 0–0.06 hue)**
+- **Recommendation**: Calculate L as `surface_secondary_dark + 5–15%` (or `background_primary_dark + 10–30%`), ensuring result stays within 20–40% range. C: 0–0.06 (same as `background_primary_dark`). Alternatively, use white overlay with 5–16% opacity on `background_primary_dark`. Surfaces closer to the viewer should be lighter, farther - darker.
+- **Application**: Modal windows, dropdown menus, tooltips
 
 **Example for dark mode:**
 - Base background: `oklch(10% 0 0)`
 - Card (level 1): `oklch(15% 0 0)`
 - Modal window (level 2): `oklch(20% 0 0)`
 - Tooltip (level 3): `oklch(25% 0 0)`
-
-### 3.2. Light Mode🌞
-
-**Rule** for Saturation (Chroma):
-- **C ≤ 0.08**
-
-#### Primary Background `primary surfaces`
-- **Parameters**: **oklch(90–100% 0–0.08 hue)**
-- **Recommendation**: Use `oklch(98% 0.02 hue)` (slightly muted white)
-
-#### Secondary Surfaces `secondary surfaces`
-- **Parameters**: **oklch(80–90% 0–0.08 hue)**
-- **Recommendation**: 5–10% lightness difference for visual separation
-- **Application**: Cards, panels, content areas
-
-#### Elevation Surfaces `tertiary surfaces`
-- **Parameters**: **oklch(70–80% 0–0.08 hue)**
-- **Application**: Modal windows, dropdown menus, tooltips
-
-### 3.3. Dark Mode🌑
-
-**Rule** for Saturation (Chroma):
-- **C ≤ 0.06**
-
-#### Primary Background `primary surfaces`
-- **Parameters**: **oklch(7–15% 0–0.06 hue)**
-- **Recommendation**: Use `oklch(10% 0 0)` (≈ `#121212`) or `oklch(12% 0.03 250)`
-
-#### Secondary Surfaces `secondary surfaces`
-- **Parameters**: **oklch(15–25% 0–0.06 hue)**
-- **Recommendation**: 5–10% lightness difference for visual separation
-- **Application**: Cards, panels, content areas
-
-#### Elevation Surfaces `tertiary surfaces`
-- **Parameters**: **oklch(20–40% 0–0.06 hue)**
-- **Recommendation**: Use white overlay with 5–16% opacity on base background `oklch(10% 0 0)`
-- **Application**: Modal windows, dropdown menus, tooltips
 
 ---
 
@@ -209,18 +204,20 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 
 #### Primary Text `primary text`
 - **Parameters**: **oklch(15–30% 0–0.12 hue)**
-- **Recommendation**: Use `oklch(20% 0.05 hue)` for 4.5:1 contrast or `oklch(15% 0 hue)` for 7:1 contrast
+- **Recommendation**: Calculate L as `background_primary_light - 65–75%` (for 7:1 contrast) or `-60–70%` (for 4.5:1), ensuring result stays within 15–30% range. C: 0–0.12. Use `oklch(20% 0.05 hue)` for 4.5:1 contrast or `oklch(15% 0 hue)` for 7:1 contrast. Maintain minimum 40–50% lightness difference between text and background.
 
 #### Secondary Text `secondary text`
 - **Parameters**: **oklch(20–35% 0–0.12 hue)**
+- **Recommendation**: Calculate L as `text_primary_light + 5–10%` (visually softer than primary) ensuring result stays within 20–35% range, C: 0–0.12 (same as `text_primary_light`). Ensure contrast ≥ 4.5:1 with background.
 - **Application**: Captions, metadata, non-primary content
 
 #### Hints and Disabled Text
 - **Parameters**: **oklch(35–50% 0–0.12 hue)**
-- **Recommendation**: Use `oklch(40% 0.08 hue)` or primary color with reduced opacity
+- **Recommendation**: Calculate L as `text_secondary_light + 10–20%` (even softer than secondary) ensuring result stays within 35–50% range, C: 0–0.12 (same as `text_primary_light`). Use `oklch(40% 0.08 hue)` or primary text color with reduced opacity (≈ 60–70% opacity). Derived from `text_secondary_light` by increasing lightness by 10–20%. Ensure contrast ≥ 3:1 for large text.
 
 #### Dividers `dividers`
-- **Recommendation**: White with ≈ 12% opacity `oklch(12% 0 hue)`
+- **Parameters**: **oklch(10–18% 0 0)**
+- **Recommendation**: Calculate L as `background_primary_light - 80–88%` (for 3:1+ contrast), ensuring result stays within 10–18% range. C: 0 (neutral gray). Alternatively, use `background_primary_light` with reduced opacity (≈ 12–15%). Ensure contrast ≥ 3:1 with adjacent background (WCAG 1.4.11 Non-Text Contrast).
 
 ### 4.3. Dark Mode🌑
 
@@ -228,92 +225,126 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 - **C ≤ 0.10**
 
 #### Primary Text `primary text`
-- **Parameters**: **oklch(85–100% 0–0.10 hue)**
-- **Recommendation**: Use `oklch(95% 0.02 hue)` for 7:1 contrast or `oklch(90% 0 hue)` for 4.5:1 contrast
+- **Parameters**: **oklch(85–99% 0–0.10 hue)**
+- **Recommendation**: Calculate L as `background_primary_dark + 75–90%` (for 7:1 contrast) or `+70–85%` (for 4.5:1), ensuring result stays within 85–99% range. C: 0–0.10. Use `oklch(95% 0.02 hue)` for 7:1 contrast or `oklch(90% 0 hue)` for 4.5:1 contrast. Maintain minimum 40–50% lightness difference between text and background.
 
 #### Secondary Text `secondary text`
 - **Parameters**: **oklch(75–90% 0–0.10 hue)**
-- **Recommendation**: Use `oklch(80% 0.05 hue)` or white with ≈ 80% opacity `oklch(80% 0 0)`
+- **Recommendation**: Calculate L as `text_primary_dark - 5–15%` (visually softer than primary) ensuring result stays within 75–90% range. C: 0–0.10. Use `oklch(80% 0.05 hue)` or white with ≈ 80% opacity `oklch(80% 0 0)`. Ensure contrast ≥ 4.5:1 with background.
 - **Application**: Captions, metadata, non-primary content
 
 #### Hints and Disabled Text `hint text`
 - **Parameters**: **oklch(50–70% 0–0.10 hue)**
-- **Recommendation**: Use `oklch(60% 0.05 hue)` or white with ≈ 60% opacity `oklch(60% 0 0)`
+- **Recommendation**: Calculate L as `text_secondary_dark - 15–25%` (even softer than secondary) ensuring result stays within 50–70% range. C: 0–0.10. Use `oklch(60% 0.05 hue)` or white with ≈ 60% opacity `oklch(60% 0 0)`. Ensure contrast ≥ 3:1 for large text (≥18pt or ≥14pt bold).
 
 #### Dividers `dividers`
-- **Recommendation**: White with ≈ 12% opacity `oklch(12% 0 hue)`
+- **Parameters**: **oklch(12–22% 0 0)**
+- **Recommendation**: Calculate L as `background_primary_dark + 2–12%` (for 3:1+ contrast), ensuring result stays within 12–22% range. C: 0 (neutral gray). Alternatively, use white overlay with 12–20% opacity on `background_primary_dark`. Ensure contrast ≥ 3:1 with adjacent background (WCAG 1.4.11 Non-Text Contrast).
 
 ---
 
 ## 5. Accent and Status Colors
 
-### 5.1. Color Variations for States
-- **Hover**: 10-20% darker for dark mode, lighter for light mode
-- **Active**: 20-30% darker for dark mode, lighter for light mode
-- **Focus**: 10-15% darker and slightly less saturated 0.03 – 0.05 for dark mode, 5-10% darker and no changes in saturation for light mode
-- **Disabled**: Reduced opacity or desaturated for dark mode, increased opacity or saturated for light mode
-- **Selected**: 10-20% lighter for dark mode, darker for light mode
-- **Visited**: decrease chroma by 0.03 – 0.05 for dark mode, decrease by 0.05 – 0.10 for light mode, hue could shift to tretiary accent color
+Follow the [Contrast Requirements](#2-contrast-requirements).
 
-### 5.2. Light Mode🌞
+**Dependencies Analysis:**
+- **Accent colors** must ensure contrast ≥ 4.5:1 with `background_primary` (WCAG AA for UI components, recommended AAA)
+- **Status colors** must ensure contrast ≥ 4.5:1 with `background_primary` and be visually distinct from each other
+- **Primary accents** should be more prominent than secondary accents (lower lightness, higher chroma)
+- **Status colors** should maintain semantic meaning through hue ranges while ensuring sufficient contrast
+- **Status colors must be distinguishable** from accent colors and other status colors
+- **Accent colors** should **relate to each other** for visual coherence, but **remain independent from status colors**
+
+### 5.1. Light Mode🌞
 
 **Rule** for Saturation (Chroma):
 - **C ≥ 0.15 and C ≤ 0.40**
+- **Status colors must be distinguishable** from accent colors and other status colors
+- **Accent colors** should **relate to each other** for visual coherence, but **remain independent from status colors**
+- **Error colors require higher saturation (C) than success** for immediate attention and urgency perception
 
 #### Primary Accents `primary-accent`
 - **Parameters**: **oklch(40–60% 0.15–0.40 hue)**
+- **Recommendation**: Calculate L as `background_primary_light - 38–58%` (for 4.5:1+ contrast), ensuring result stays within 40–60% range. C: 0.15–0.40. Use `oklch(50% 0.25 hue)` for primary accent. Ensure contrast ≥ 4.5:1 with `background_primary_light`.
 - **Application**: Primary buttons, active links, interactive elements, important elements
 
 #### Secondary Accents `secondary-accent`
 - **Parameters**: **oklch(50–70% 0.12–0.35 hue)**
+- **Recommendation**: Calculate L as `accent_primary_light + 5–15%` (visually softer than primary accent) or `background_primary_light - 28–48%`, ensuring result stays within 50–70% range. Calculate C as `accent_primary_light - 0.02-0.05`, enusring result stays within 0.12–0.35. Use `oklch(60% 0.20 hue)` for secondary accent. Ensure contrast ≥ 4.5:1 with `background_primary_light`. Secondary should be less prominent than primary.
 - **Application**: Secondary buttons, less important elements
 
 #### Success `status-success`
 - **Parameters**: **oklch(50–65% 0.20–0.40 140–160)** (green hues)
-- **Recommendation**: Use `oklch(55% 0.30 150)` for primary success states
+- **Recommendation**: Calculate L as `background_primary_light - 33–48%` (for 4.5:1+ contrast), ensuring result stays within 50–65% range. C: 0.20–0.40. **Hue: 140–160** (green). Use `oklch(55% 0.30 150)`. Ensure contrast ≥ 4.5:1 with `background_primary_light`. Success colors typically use moderate saturation (C: 0.20–0.30) for positive, non-alarming appearance.
 - **Application**: Success messages, completed states, positive feedback
 
 #### Error `status-error`
 - **Parameters**: **oklch(45–60% 0.25–0.45 0–30)** (red hues)
-- **Recommendation**: Use `oklch(50% 0.35 25)` for primary error states
+- **Recommendation**: Calculate L as `background_primary_light - 38–53%` (for 4.5:1+ contrast), ensuring result stays within 45–60% range. C: 0.25–0.45 (higher saturation for urgency and visibility). **Hue: 0–30** (red range for semantic meaning, includes 330–360° for red-purple). Use `oklch(50% 0.35 25)` for primary error states. Ensure contrast ≥ 4.5:1 with `background_primary_light`. Error colors require higher saturation (C: 0.30–0.40) for immediate attention and urgency perception.
 - **Application**: Error messages, destructive actions, critical alerts
 
 #### Warning `status-warning`
 - **Parameters**: **oklch(60–75% 0.25–0.45 60–90)** (yellow/orange hues)
-- **Recommendation**: Use `oklch(70% 0.35 75)` for primary warning states
+- **Recommendation**: Calculate L as `background_primary_light - 23–38%` (for 4.5:1+ contrast), ensuring result stays within 60–75% range. C: 0.25–0.45. **Hue: 60–90** (yellow/orange). Use `oklch(70% 0.35 75)`. Ensure contrast ≥ 4.5:1 with `background_primary_light`. Warning colors may require darker text or border for sufficient contrast due to higher lightness. Higher saturation (C: 0.30–0.40) helps maintain visibility.
 - **Application**: Warning messages, caution states, attention-required alerts
 
-### 5.3. Dark Mode🌑
+### Color Variations for States
+
+All state variations are relative to base (primary, secondary, success, error, warning) accent color.
+
+- **Hover**: Calculate L as `base_color - 10–20%` (darker), preserve C and hue
+- **Active**: Calculate L as `base_color - 20–30%` (darker), preserve C and hue
+- **Focus**: Calculate L as `base_color - 5–10%` (darker), preserve C and hue
+- **Disabled**: Reduce opacity or desaturate (C as `base_color - 0.05–0.10`)
+- **Selected**: Calculate L as `base_color - 10–20%` (darker), preserve C and hue
+- **Visited**: Calculate C as `base_color - 0.05–0.10` (less saturated), hue could shift to tertiary accent color
+
+### 5.2. Dark Mode🌑
 
 **Rules** for Saturation (Chroma):
 - **C ≥ 0.12 and C ≤ 0.35**
 - should be reduced by **0.05–0.10** compared to light mode
+- **Avoid very dark (L < 60%) or very saturated (C > 0.35) tones** — they are poorly visible on dark backgrounds
+- **Status colors must be distinguishable** from accent colors and other status colors
+- **Accent colors** should **relate to each other** for visual coherence, but **remain independent from status colors**
+- **Error colors require higher saturation (C) than success** for immediate attention and urgency perception
+- **Warning colors may require darker text or border** for sufficient contrast due to higher lightness
 
 #### Primary Accents `primary-accent`
 - **Parameters**: **oklch(70–90% 0.12–0.35 hue)**
-- **Recommendation**: Reduce chroma by **0.05–0.10** compared to light mode
+- **Recommendation**: Calculate L as `primary_accent_light + 20–30%`, C as `primary_accent_light - 0.05–0.10`, preserve hue. _Alternatively_, calculate L as `background_primary_dark + 60–80%`, C as `background_primary_dark - 0.05–0.10`. Ensuring result stays within ranges 70–90% for lightness and 0.12–0.35 for chroma. Use `oklch(75% 0.18 hue)`. Ensure contrast ≥ 4.5:1 with `background_primary_dark`.
 - **Application**: Primary buttons, active links, important elements
-- **Critical**: Avoid very dark (L < 60%) or very saturated (C > 0.35) tones — they are poorly visible on dark backgrounds
 
 #### Secondary Accents `secondary-accent`
 - **Parameters**: **oklch(60–80% 0.10–0.30 hue)**
+- **Recommendation**: Calculate L as `secondary_accent_light + 20–30%` or `accent_primary_dark - 5–15%`. C as `secondary_accent_light - 0.05–0.10`. _Alternatively_, calculate L as `background_primary_dark + 50–70%`, C as `background_primary_dark - 0.05–0.10`. Use `oklch(65% 0.15 hue)`. Ensure contrast ≥ 4.5:1 with `background_primary_dark`. Maintain visual hierarchy: secondary should be less prominent than primary.
 - **Application**: Secondary buttons, less important elements
 
 #### Success `status-success`
 - **Parameters**: **oklch(65–80% 0.15–0.30 140–160)** (green hues)
-- **Recommendation**: Use `oklch(70% 0.22 150)` (L +15%, C -0.08 from light mode)
+- **Recommendation**: Calculate L as `status_success_light + 15–20%`, C as `status_success_light - 0.05–0.10`, preserve hue from light mode. _Alternatively_, calculate L as `background_primary_dark + 55–70%`, C as `background_primary_dark - 0.15–0.30`. Use `oklch(70% 0.22 150)`. Ensure contrast ≥ 4.5:1 with `background_primary_dark`. Success colors in dark mode typically use moderate saturation (C: 0.15–0.25) for positive, non-alarming appearance.
 - **Application**: Success messages, completed states, positive feedback
 
 #### Error `status-error`
 - **Parameters**: **oklch(60–75% 0.20–0.35 0–30)** (red hues)
-- **Recommendation**: Use `oklch(65% 0.28 25)` (L +15%, C -0.07 from light mode)
+- **Recommendation**: Preserve hue from light mode. Calculate L as `status_error_light + 15–20%`, C as `status_error_light - 0.05–0.10`. _Alternatively_, calculate L as `background_primary_dark + 50–65%`, C as `background_primary_dark - 0.20–0.35`. Use `oklch(65% 0.28 25)`. Ensure contrast ≥ 4.5:1 with `background_primary_dark`.
 - **Application**: Error messages, destructive actions, critical alerts
 
 #### Warning `status-warning`
 - **Parameters**: **oklch(70–85% 0.20–0.35 60–90)** (yellow/orange hues)
-- **Recommendation**: Use `oklch(75% 0.28 75)` (L +5%, C -0.07 from light mode)
+- **Recommendation**: Preserve hue from light mode. Calculate L as `status_warning_light + 5–15%`, C as `status_warning_light - 0.05–0.10`. _Alternatively_, calculate L as `background_primary_dark + 60–75%`, C as `background_primary_dark - 0.20–0.35`. Use `oklch(75% 0.28 75)`. Ensure contrast ≥ 4.5:1 with `background_primary_dark`.
 - **Application**: Warning messages, caution states, attention-required alerts
-- **Note**: May require darker text or border for sufficient contrast
+
+#### Color Variations for States
+
+All state variations are relative to base (primary, secondary, success, error, warning) accent color.
+
+- **Hover**: Calculate L as `base_color + 10–20%` (lighter), preserve C and hue
+- **Active**: Calculate L as `base_color + 20–30%` (lighter), preserve C and hue
+- **Focus**: Calculate L as `base_color - 10–15%` (darker), C as `base_color - 0.03–0.05` (less saturated), preserve hue
+- **Disabled**: Reduce opacity or desaturate (C as `base_color - 0.05–0.10`)
+- **Selected**: Calculate L as `base_color + 10–20%` (lighter), preserve C and hue
+- **Visited**: Calculate C as `base_color - 0.03–0.05` (less saturated), preserve hue
 
 ## 6. Dark Mode Adaptation Rules
 
@@ -531,10 +562,10 @@ Before launching, verify:
 
 | Element | Light Mode | Dark Mode | Notes |
 |---------|------------|----------|-------|
-| **Primary Background** | L: 90–100%<br>C: 0–0.08 | L: 7–15%<br>C: 0–0.06 | Avoid pure black/white |
+| **Primary Background** | L: 90–99%<br>C: 0–0.08 | L: 7–15%<br>C: 0–0.06 | Avoid pure black/white |
 | **Secondary Background** | L: 80–90%<br>C: 0–0.08 | L: 15–25%<br>C: 0–0.06 | 5–10% difference from primary |
 | **Elevation Background** | L: 70–80%<br>C: 0–0.08 | L: 20–40%<br>C: 0–0.06 | Elevated elements |
-| **Primary Text** | L: 15–30%<br>C: 0–0.12 | L: 85–100%<br>C: 0–0.10 | Contrast ≥ 4.5:1 (recommended 7:1) |
+| **Primary Text** | L: 15–30%<br>C: 0–0.12 | L: 85-99%<br>C: 0–0.10 | Contrast ≥ 4.5:1 (recommended 7:1) |
 | **Secondary Text** | L: 20–35%<br>C: 0–0.12 | L: 75–90%<br>C: 0–0.10 | Contrast ≥ 4.5:1 |
 | **Hint Text** | L: 35–50%<br>C: 0–0.12 | L: 50–70%<br>C: 0–0.10 | Contrast ≥ 3:1 (large text) |
 | **Primary Accent** | L: 40–60%<br>C: 0.15–0.40 | L: 70–90%<br>C: 0.12–0.35 | Reduce C by 0.05–0.10 in dark |
