@@ -1,0 +1,788 @@
+---
+description: Three-layer CSS custom properties architecture - primitives, semantic, and component tokens for themeable design systems
+globs: **/variables*.css
+alwaysApply: false
+---
+# CSS Variables Architecture
+
+## 📋 Overview
+
+This rule defines a **three-layer CSS custom properties architecture** for creating maintainable, themeable design systems. The architecture separates concerns into:
+
+1. **Primitives** — Raw design tokens (colors, spacing, typography, shadows, animation)
+2. **Semantic** — Purpose-based tokens that reference primitives (color roles, elevation, motion)
+3. **Component** — Component-specific tokens that reference semantic tokens
+
+> **Reference**: This rule implements the color theory from [Color System](../webdesign/visual/color-system.mdc) and works with [CSS System Template](css-system-template.md) for project-specific values.
+
+## 📋 Table of Contents
+
+1. 🎯 Core Principles
+   - 1.1. [Three-Layer Architecture](#11-three-layer-architecture)
+   - 1.2. [Layer Dependencies](#12-layer-dependencies)
+   - 1.3. [Naming Conventions](#13-naming-conventions)
+2. 🎨 Primitive Layer
+   - 2.1. [Color Primitives](#21-color-primitives)
+   - 2.2. [Tonal Palette Structure](#22-tonal-palette-structure)
+   - 2.3. [Neutral and Neutral-Variant Colors](#23-neutral-and-neutral-variant-colors)
+   - 2.4. [Spacing and Radius Primitives](#24-spacing-and-radius-primitives)
+   - 2.5. [Typography Primitives](#25-typography-primitives)
+   - 2.6. [Shadow Primitives](#26-shadow-primitives)
+   - 2.7. [Animation Primitives](#27-animation-primitives)
+3. 🏷️ Semantic Layer
+   - 3.1. [Color Roles](#31-color-roles)
+   - 3.2. [Surface and Text Colors](#32-surface-and-text-colors)
+   - 3.3. [Status Colors](#33-status-colors)
+   - 3.4. [Link Colors](#34-link-colors)
+   - 3.5. [Elevation](#35-elevation)
+   - 3.6. [Motion](#36-motion)
+4. 🧩 Component Layer
+   - 4.1. [Component Token Structure](#41-component-token-structure)
+   - 4.2. [State Variants](#42-state-variants)
+5. 🌓 Theme Implementation
+   - 5.1. [Light and Dark Themes](#51-light-and-dark-themes)
+   - 5.2. [OKLCH Fallback](#52-oklch-fallback)
+   - 5.3. [Custom Themes](#53-custom-themes)
+   - 5.4. [Theme Switching](#54-theme-switching)
+6. ✅ DO (Recommended Practices)
+7. ❌ DON'T (Anti-patterns)
+8. 📝 Key Points
+   - 8.1. [Checklist](#81-checklist)
+   - 8.2. [Quick Reference](#82-quick-reference)
+9. 📚 References
+
+---
+
+## 1. 🎯 Core Principles
+
+### 1.1. Three-Layer Architecture
+
+1. **Component Layer**: `--button-primary-bg`, `--card-surface`, `--input-border`
+   references                     
+2. **Semantic Layer**: `--color-primary`, `--color-surface`, `--color-on-primary`
+   references                     
+3. **Primitive Layer**: `--palette-primary-40`, `--palette-neutral-95`
+
+**Purpose of each layer:**
+
+| Layer | Purpose | Changes when... |
+|-------|---------|-----------------|
+| **Primitive** | Raw color values, tonal palette | Brand colors change |
+| **Semantic** | Purpose-based roles | Theme changes (light/dark) |
+| **Component** | Component-specific styling | Component design changes |
+
+### 1.2. Layer Dependencies
+
+- **Primitives** — Standalone, no dependencies
+- **Semantic** — References only primitives
+- **Component** — References only semantic tokens (never primitives directly)
+
+### 1.3. Naming Conventions
+
+Two naming conventions are supported:
+
+#### Default (Framework-Agnostic)
+
+```css
+/* Primitives: --palette-{color}-{tone} */
+--palette-primary-40
+--palette-neutral-95
+--palette-error-50
+
+/* Semantic: --color-{role} */
+--color-primary
+--color-on-primary
+--color-surface
+--color-on-surface
+
+/* Component: --{component}-{property} or --{component}-{variant}-{property} */
+--button-bg
+--button-primary-bg
+--card-bg
+--input-border
+```
+
+#### Material Design 3 (Optional)
+
+Variable names are prefixed with `md-` for Material Design 3.
+
+```css
+/* Primitives: --md-ref-palette-{color}{tone} */
+--md-ref-palette-primary40
+--md-ref-palette-neutral95
+
+/* Semantic: --md-sys-color-{role} */
+--md-sys-color-primary
+--md-sys-color-on-primary
+--md-sys-color-surface
+
+/* Component: --md-comp-{component}-{element}-{property} */
+--md-comp-button-filled-container-color
+```
+
+---
+
+## 2. 🎨 Primitive Layer
+
+### 2.1. Color Primitives
+
+Primitives define raw color values using **tonal palettes**. Each color has 13 tones from 0 (darkest) to 100 (lightest).
+
+**Lightness** corresponds to tone number (10% for tone-10, 40% for tone-40, etc.).
+
+```css
+:root {
+  /* Primary palette: oklch(lightness chroma hue) */
+  --palette-primary-0: oklch(0% 0 hue);
+  --palette-primary-10: oklch(10% chroma hue);
+  --palette-primary-20: oklch(20% chroma hue);
+  --palette-primary-40: oklch(40% chroma hue);   /* Light: Primary */
+  --palette-primary-80: oklch(80% chroma hue);   /* Dark: Primary */
+  --palette-primary-90: oklch(90% chroma hue);
+  --palette-primary-100: oklch(100% 0 hue);
+  /* ... tones: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 92, 94, 95, 96, 99, 100 */
+}
+```
+
+### 2.2. Tonal Palette Structure
+
+Standard tones follow Material Design 3 structure (0-100 scale):
+
+| Tone | Light Mode Usage | Dark Mode Usage |
+|------|------------------|-----------------|
+| 0 | — | — |
+| 10 | OnPrimaryContainer | Surface |
+| 20 | OnPrimary | — |
+| 30 | — | PrimaryContainer |
+| 40 | **Primary** | — |
+| 50 | Outline | — |
+| 60 | — | Outline |
+| 70 | — | — |
+| 80 | — | **Primary** |
+| 90 | PrimaryContainer | OnSurface, OnPrimaryContainer |
+| 92 | SurfaceContainerLow | — |
+| 94 | SurfaceContainer | — |
+| 96 | SurfaceContainerHigh | — |
+| 99 | Surface | — |
+| 100 | OnPrimary | — |
+
+### 2.3. Neutral and Neutral-Variant Colors
+
+Two neutral palettes with very low chroma (0-0.06):
+- **Neutral** — surfaces, backgrounds, text
+- **Neutral-Variant** — outlines, dividers, subtle borders
+
+```css
+:root {
+  /* Neutral palette: surfaces and text */
+  --palette-neutral-10: oklch(10% chroma hue);   /* Dark: Surface */
+  --palette-neutral-90: oklch(90% chroma hue);   /* Dark: OnSurface */
+  --palette-neutral-94: oklch(94% chroma hue);   /* Light: SurfaceContainer */
+  
+  /* Neutral-Variant palette: outlines and dividers */
+  --palette-neutral-variant-50: oklch(50% chroma hue); /* Light: Outline */
+  --palette-neutral-variant-80: oklch(80% chroma hue); /* Light: OutlineVariant */
+}
+```
+
+### 2.4. Spacing and Radius Primitives
+
+Spacing uses a consistent scale based on a base unit (typically 4px or 8px):
+
+```css
+:root {
+  /* Base unit */
+  --spacing-unit: 8px;
+  
+  /* Spacing scale (multiples of base unit) */
+  --spacing-0: 0;
+  --spacing-px: 1px;
+  --spacing-0-5: calc(var(--spacing-unit) * 0.5);  /* 4px */
+  --spacing-1: calc(var(--spacing-unit) * 1);   /* 8px */
+  --spacing-2: calc(var(--spacing-unit) * 2);   /* 16px */
+  --spacing-8: calc(var(--spacing-unit) * 8);   /* 64px */
+  
+  /* Border radius */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* Container widths */
+  --container-xs: 320px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-prose: 65ch;
+}
+```
+
+### 2.5. Typography Primitives
+
+Typography primitives define raw font values. Font sizes use rem for accessibility (respects user's browser settings).
+
+```css
+:root {
+  /* Font families */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  
+  /* Font sizes (rem for accessibility): xs, sm, base, lg, xl, 2xl... */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  
+  /* Font weights: normal, medium, semibold, bold */
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+  
+  /* Line heights (unitless): none, tight, snug, normal, relaxed, loose */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  
+  /* Letter spacing: tighter, tight, normal, wide, wider, widest */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+}
+```
+
+### 2.6. Shadow Primitives
+
+Shadow primitives define elevation levels. Separate raw values from opacity for theme flexibility.
+
+```css
+:root {
+  /* Shadow opacity: sm (0.05), md (0.1), lg (0.15), xl (0.25) */
+  --shadow-opacity-sm: 0.05;
+  --shadow-opacity-lg: 0.15;
+  
+  /* Raw shadow definitions (offset-x offset-y blur spread): sm, md, lg, xl */
+  --shadow-raw-sm: 0 1px 2px 0;
+  --shadow-raw-lg: 0 10px 15px -3px;
+}
+```
+
+### 2.7. Animation Primitives
+
+Animation primitives define duration and easing. All animations should respect `prefers-reduced-motion`.
+
+```css
+:root {
+  /* Duration: fast (100ms), normal (200ms), slow (300ms) */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  
+  /* Easing: linear, in, out, in-out */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+---
+
+## 3. 🏷️ Semantic Layer
+
+### 3.1. Color Roles
+
+Semantic tokens define **purpose**, not appearance. Always pair base color with "on" color for content.
+
+```css
+:root {
+  /* Primary: base + on + container + on-container + states */
+  --color-primary: var(--palette-primary-40);
+  --color-on-primary: var(--palette-primary-100);
+  --color-primary-container: var(--palette-primary-90);
+  --color-on-primary-container: var(--palette-primary-10);
+  --color-primary-hover: var(--palette-primary-30);
+  --color-primary-disabled: var(--palette-neutral-80);
+  
+  /* Secondary: same pattern */
+  --color-secondary: var(--palette-secondary-40);
+  --color-on-secondary: var(--palette-secondary-100);
+}
+```
+
+### 3.2. Surface and Text Colors
+
+```css
+:root {
+  /* Surfaces */
+  --color-surface: var(--palette-neutral-99);
+  --color-on-surface: var(--palette-neutral-10);
+  /* Surface containers: lowest (100) → low (96) → default (94) → high (92) → highest (90) */
+  --color-surface-container-low: var(--palette-neutral-96);
+  --color-surface-container: var(--palette-neutral-94);
+  --color-surface-container-high: var(--palette-neutral-92);
+  
+  /* Text hierarchy */
+  --color-text-primary: var(--palette-neutral-10);
+  --color-text-secondary: var(--palette-neutral-30);
+  --color-text-hint: var(--palette-neutral-50);
+  
+  /* Outline (from neutral-variant) */
+  --color-outline: var(--palette-neutral-variant-50);
+  --color-outline-variant: var(--palette-neutral-variant-80);
+  
+  /* Focus ring — reuses primary or dedicated focus color */
+  --color-focus-ring: var(--color-primary);
+  
+  /* Overlay/Scrim */
+  --color-scrim: var(--palette-neutral-0);
+  --color-scrim-opacity: 0.32;
+}
+```
+
+### 3.3. Status Colors
+
+```css
+:root {
+  /* Status: same pattern as accents */
+  --color-success: var(--palette-success-40);
+  --color-on-success: var(--palette-success-100);
+  --color-error: var(--palette-error-40);
+  --color-on-error: var(--palette-error-100);
+  --color-warning: var(--palette-warning-40);
+  --color-on-warning: var(--palette-warning-100);
+}
+```
+
+### 3.4. Link Colors
+
+Links typically derive from primary color but may use dedicated colors. Include visited state for accessibility.
+
+```css
+:root {
+  /* Links */
+  --color-link: var(--color-primary);
+  --color-link-hover: var(--color-primary-hover);
+  --color-link-active: var(--color-primary-active);
+  --color-link-visited: var(--palette-tertiary-40);  /* or desaturated primary */
+  
+  /* On dark surfaces */
+  --color-link-on-surface: var(--color-primary);
+  --color-link-on-surface-variant: var(--palette-primary-30);
+}
+
+[data-theme="dark"] {
+  --color-link: var(--palette-primary-80);
+  --color-link-hover: var(--palette-primary-90);
+  --color-link-visited: var(--palette-tertiary-80);
+}
+```
+
+### 3.5. Elevation
+
+Elevation tokens combine shadow primitives. Dark theme uses higher opacity (0.2-0.5 vs 0.05-0.25).
+
+```css
+:root {
+  /* Elevation levels: none, sm, md, lg, xl */
+  --elevation-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --elevation-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] {
+  --elevation-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --elevation-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+```
+
+### 3.6. Motion
+
+Motion tokens define semantic transitions. All motion respects `prefers-reduced-motion`.
+
+```css
+:root {
+  /* Transitions: colors, opacity, transform, shadow */
+  --transition-colors: var(--duration-normal) var(--ease-out);
+  --transition-interactive: 
+    color var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-fast: 0ms; --duration-normal: 0ms; }
+}
+```
+
+---
+
+## 4. 🧩 Component Layer
+
+### 4.1. Component Token Structure
+
+Component tokens reference semantic tokens for specific UI elements:
+
+```css
+:root {
+  /* Pattern: --{component}-{property} or --{component}-{variant}-{property} */
+  --button-bg: var(--color-primary);
+  --button-text: var(--color-on-primary);
+  --button-secondary-bg: var(--color-secondary);
+  --card-bg: var(--color-surface-container);
+  --input-bg: var(--color-surface);
+  --input-border: var(--color-outline);
+}
+```
+
+### 4.2. State Variants
+
+```css
+:root {
+  /* Pattern: --{component}-{property}-{state} */
+  --button-bg-hover: var(--color-primary-hover);
+  --button-bg-active: var(--color-primary-active);
+  --button-bg-disabled: var(--color-primary-disabled);
+  --input-border-focus: var(--color-focus-ring);
+  --input-border-error: var(--color-error);
+  
+  /* Focus ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-focus-ring);
+}
+```
+
+---
+
+## 5. 🌓 Theme Implementation
+
+### 5.1. Light and Dark Themes
+
+**Primitives remain constant** across themes. Only **semantic layer changes**:
+
+```css
+:root {
+  /* Primitives - constant for all themes */
+  --palette-primary-40: oklch(40% chroma hue);
+  --palette-primary-80: oklch(80% chroma hue);
+}
+
+:root, [data-theme="light"] {
+  /* Semantic - light theme mapping */
+  --color-primary: var(--palette-primary-40);
+  --color-surface: var(--palette-neutral-99);
+}
+
+[data-theme="dark"] {
+  /* Semantic - dark theme: different tones, same primitives */
+  --color-primary: var(--palette-primary-80);
+  --color-surface: var(--palette-neutral-10);
+}
+
+/* System preference fallback when no data-theme set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-primary: var(--palette-primary-80);
+    --color-surface: var(--palette-neutral-10);
+  }
+}
+```
+
+### 5.2. OKLCH Fallback
+
+For browsers without oklch support, provide fallback:
+
+```css
+:root {
+  /* Fallback for older browsers */
+  --palette-primary-40: hsl(220, 80%, 50%);
+  --palette-primary-40: oklch(40% chroma hue);
+  
+  /* Or use @supports */
+}
+
+@supports (color: oklch(50% 0.2 250)) {
+  :root {
+    --palette-primary-40: oklch(40% chroma hue);
+  }
+}
+```
+
+### 5.3. Custom Themes
+
+Additional themes override semantic tokens only:
+
+```css
+[data-theme="high-contrast"] {
+  --color-primary: var(--palette-primary-30);
+  --color-surface: var(--palette-neutral-100);
+}
+```
+
+### 5.4. Theme Switching
+
+```html
+<html data-theme="light"> <!-- or "dark" -->
+```
+
+Components stay unchanged — only semantic values change per theme.
+
+---
+
+## 6. ✅ DO (Recommended Practices)
+
+### Layer Architecture
+
+```css
+/* ✅ Follow strict dependency chain: Component → Semantic → Primitive */
+--palette-primary-40: oklch(40% chroma hue);  /* Primitive */
+--color-primary: var(--palette-primary-40);   /* Semantic → Primitive */
+--button-primary-bg: var(--color-primary);    /* Component → Semantic */
+
+/* ✅ Keep primitives theme-agnostic — same values for all themes */
+:root {
+  --palette-primary-40: oklch(40% chroma hue);
+  --palette-primary-80: oklch(80% chroma hue);
+}
+
+/* ✅ Change only semantic layer for themes */
+:root { --color-primary: var(--palette-primary-40); }
+[data-theme="dark"] { --color-primary: var(--palette-primary-80); }
+```
+
+### Naming
+
+```css
+/* ✅ Name by purpose, not appearance */
+--color-primary: var(--palette-primary-40);   /* not --color-blue */
+
+/* ✅ Use consistent naming convention — default or MD3, not mixed */
+--color-primary: var(--palette-primary-40);
+--color-secondary: var(--palette-secondary-40);
+
+/* ✅ Include component name in component tokens */
+--button-bg: var(--color-primary);            /* not --primary-bg */
+--button-secondary-bg: var(--color-secondary);
+
+/* ✅ Use kebab-case for all tokens */
+--color-on-primary: var(--palette-primary-100); /* not --colorOnPrimary */
+```
+
+### Color Pairs
+
+```css
+/* ✅ Always define "on" colors for every surface/accent */
+--color-primary: var(--palette-primary-40);
+--color-on-primary: var(--palette-primary-100);
+
+/* ✅ Include container variants */
+--color-primary-container: var(--palette-primary-90);
+--color-on-primary-container: var(--palette-primary-10);
+
+/* ✅ Define all state variants for interactive colors */
+--color-primary-hover: var(--palette-primary-30);
+--color-primary-active: var(--palette-primary-20);
+--color-primary-disabled: var(--palette-neutral-80);
+```
+
+### Themes
+
+```css
+/* ✅ Support system preference with manual override fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { --color-primary: var(--palette-primary-80); }
+}
+
+/* ✅ Use data-theme attribute on <html> for theme switching */
+[data-theme="dark"] { --color-primary: var(--palette-primary-80); }
+
+/* ✅ Provide high-contrast option for accessibility */
+[data-theme="high-contrast"] { --color-outline: var(--palette-neutral-20); }
+```
+
+### Color Format
+
+```css
+/* ✅ Use oklch for primitives — perceptually uniform */
+--palette-primary-40: oklch(40% chroma hue);
+
+/* ✅ Follow tonal palette: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 92, 94, 95, 96, 99, 100 */
+--palette-primary-0: oklch(0% 0 hue);
+--palette-primary-10: oklch(10% chroma hue);
+/* ... */
+--palette-primary-100: oklch(100% 0 hue);
+
+/* ✅ Verify contrast: WCAG AA minimum (4.5:1 text, 3:1 UI) */
+```
+
+---
+
+## 7. ❌ DON'T (Anti-patterns)
+
+### Layer Violations
+
+```css
+/* ❌ Component referencing primitives directly — breaks theming */
+--button-primary-bg: var(--palette-primary-40);
+
+/* ❌ Hardcoded colors in CSS — use tokens */
+--button-primary-bg: oklch(40% chroma hue);
+```
+
+### Naming Issues
+
+```css
+/* ❌ Non-semantic names — name by purpose */
+--color-blue: oklch(50% 0.2 250);
+--dark-gray: oklch(30% 0 0);
+
+/* ❌ Mixing naming conventions in same project */
+--md-sys-color-primary: var(--palette-primary-40);
+--color-secondary: var(--palette-secondary-40);
+
+/* ❌ Inconsistent prefixes */
+--color-primary: var(--palette-primary-40);
+--clr-secondary: var(--palette-secondary-40);
+
+/* ❌ Magic numbers in names */
+--color-primary-2: oklch(60% chroma hue);
+--button-type-3-bg: var(--color-primary);
+```
+
+### Theme Issues
+
+```css
+/* ❌ Changing primitive values per theme — breaks architecture */
+[data-theme="dark"] {
+  --palette-primary-40: oklch(80% chroma hue);
+}
+
+/* ❌ Overriding component tokens for themes — override semantic only */
+[data-theme="dark"] {
+  --button-primary-bg: var(--palette-primary-80);
+}
+
+/* ❌ Using :root only for dark theme — use [data-theme] attribute */
+@media (prefers-color-scheme: dark) {
+  :root { --color-primary: var(--palette-primary-80); }
+}
+```
+
+### Color Issues
+
+```css
+/* ❌ Missing "on" colors — every surface needs content color */
+--color-primary: var(--palette-primary-40);
+/* missing --color-on-primary */
+
+/* ❌ Pure black/white for surfaces — use tones 10/99 */
+--color-surface: var(--palette-neutral-0);   /* too dark */
+--color-surface: var(--palette-neutral-100); /* too bright */
+
+/* ❌ Same chroma in dark mode — reduce by 0.05-0.10 */
+[data-theme="dark"] {
+  --color-primary: oklch(80% 0.25 hue); /* same chroma as light */
+}
+```
+
+---
+
+## 8. 📝 Key Points
+
+### 8.1. Checklist
+
+Before generating CSS variables file:
+
+**Primitives:**
+- [ ] Color palettes defined (primary, secondary, tertiary, neutral, neutral-variant, error, success, warning)
+- [ ] Tonal palette includes standard tones (0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 92, 94, 96, 99, 100)
+- [ ] Spacing primitives defined (base unit + full scale: 0, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 16)
+- [ ] Border radius primitives defined (none, xs, sm, md, lg, xl, 2xl, full)
+- [ ] Container width primitives defined (xs, sm, md, lg, xl, 2xl, prose)
+- [ ] Typography primitives defined (font-size, font-weight, line-height, letter-spacing)
+- [ ] Shadow primitives defined (opacity levels + raw values)
+- [ ] Animation primitives defined (duration + easing)
+
+**Semantic Layer:**
+- [ ] Color roles reference only primitives
+- [ ] All "on" colors defined for surfaces and accents
+- [ ] Link colors defined (including visited state)
+- [ ] Elevation tokens defined (sm, md, lg, xl)
+- [ ] Motion tokens defined (transition-interactive, transition-colors)
+- [ ] State variants defined (hover, active, focus, disabled)
+- [ ] Focus ring tokens defined
+
+**Theming:**
+- [ ] Light theme semantic mappings defined
+- [ ] Dark theme semantic mappings defined (with adjusted shadow opacity)
+- [ ] System preference (`prefers-color-scheme`) supported
+- [ ] Reduced motion (`prefers-reduced-motion`) supported
+- [ ] OKLCH fallback provided for older browsers
+
+**Quality:**
+- [ ] Component tokens reference only semantic tokens
+- [ ] Naming convention consistent throughout (default or MD3)
+- [ ] Contrast requirements met (WCAG AA minimum)
+
+### 8.2. Quick Reference
+
+**Layer Dependencies:**
+```
+Component → Semantic → Primitive
+```
+
+**Naming (Default):**
+```
+Primitives:
+  --palette-{color}-{tone}         → Color
+  --spacing-{scale}                → Spacing (0, 1, 2, 3...)
+  --radius-{size}                  → Border radius (sm, md, lg...)
+  --container-{size}               → Container width (sm, md, lg, prose)
+  --font-size-{size}               → Font size (xs, sm, base, lg...)
+  --font-weight-{name}             → Font weight (normal, medium, bold)
+  --line-height-{name}             → Line height (tight, normal, relaxed)
+  --letter-spacing-{name}          → Letter spacing (tight, normal, wide)
+  --duration-{speed}               → Animation duration (fast, normal, slow)
+  --ease-{type}                    → Easing function (in, out, in-out)
+  --shadow-raw-{size}              → Shadow definition (sm, md, lg...)
+  --shadow-opacity-{size}          → Shadow opacity (sm, md, lg...)
+
+Semantic:
+  --color-{role}                   → Color role
+  --color-link[-state]             → Link colors
+  --elevation-{level}              → Box shadow
+  --transition-{type}              → Transitions
+
+Component:
+  --{component}-{property}         → Simple
+  --{component}-{variant}-{prop}   → With variant
+```
+
+**Naming (MD3):**
+```
+--md-ref-palette-{color}{tone}           → Primitive
+--md-sys-color-{role}                    → Semantic
+--md-comp-{component}-{element}-{prop}   → Component
+```
+
+**Theme Structure:**
+```css
+:root { /* Primitives - constant */ }
+:root, [data-theme="light"] { /* Semantic - light */ }
+[data-theme="dark"] { /* Semantic - dark (shadows more opaque) */ }
+@media (prefers-color-scheme: dark) { :root:not([data-theme]) { } }
+@media (prefers-reduced-motion: reduce) { :root { /* duration: 0ms */ } }
+@supports (color: oklch(50% 0.2 250)) { /* OKLCH override */ }
+```
+
+---
+
+## 9. 📚 References
+
+### Related Rules
+- [Color System](../webdesign/visual/color-system.mdc) — Color theory, contrast requirements, oklch values
+- [Typography](../webdesign/visual/typography.mdc) — Font scales, line heights, letter spacing
+- [CSS System Template](css-system-template.md) — Project-specific design token values
+- [Visual Hierarchy](../webdesign/visual/visual-hierarchy.mdc) — Visual design principles
+- [Accessibility](../webdesign/technical/accessibility.mdc) — WCAG requirements, reduced motion
+- [Responsive Design](../webdesign/layout/responsive-design.mdc) — Breakpoints, container queries
+
+### External Resources
+- [Material Design 3 Color System](https://m3.material.io/styles/color/system)
+- [OKLCH Color Space](https://oklch.com/)
+- [Cubic Bezier Easing](https://cubic-bezier.com/)
+
+---
+
+**Remember**: The three-layer architecture ensures maintainability and scalability. Primitives define "what colors exist", semantic tokens define "what colors mean", and component tokens define "how components look". Change themes by remapping semantic tokens to different primitives — never modify primitives per theme.
