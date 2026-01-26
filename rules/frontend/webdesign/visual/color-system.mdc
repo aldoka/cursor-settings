@@ -24,10 +24,15 @@ alwaysApply: false
 3. Backgrounds and Surfaces
     - 3.1. [Light Mode🌞](#31-light-mode)
     - 3.2. [Dark Mode🌑](#32-dark-mode)
+    - 3.3. [Container Surfaces](#33-container-surfaces)
+    - 3.4. [Surface Container Hierarchy](#34-surface-container-hierarchy)
+    - 3.5. [Scrim/Overlay](#35-scrimoverlay)
 4. Text and Typography (Visual Hierarchy)
     - 4.1. [Hierarchy through Opacity/Lightness🫧](#41-hierarchy-through-opacitylightness)
     - 4.2. [Light Mode🌞](#42-light-mode)
     - 4.3. [Dark Mode🌑](#43-dark-mode)
+    - 4.4. [On-Container Text](#44-on-container-text)
+    - 4.5. [Outline](#45-outline)
 5. Accent and Status Colors
     - 5.1. [Light Mode🌞](#51-light-mode)
     - 5.2. [Dark Mode🌑](#52-dark-mode)
@@ -177,6 +182,56 @@ Follow the [Contrast Requirements](#2-contrast-requirements).
 - Modal window (level 2): `oklch(20% 0 0)`
 - Tooltip (level 3): `oklch(25% 0 0)`
 
+### 3.3. Container Surfaces
+
+Tinted backgrounds using accent colors for chips, tonal buttons, FABs, navigation rail.
+
+#### Light Mode🌞
+- **Primary container**: **oklch(85–95% 0.05–0.15 hue)**
+  - L: `background_primary_light - 5–10%`, C: `primary_accent × 0.3–0.5`, H: `= primary_accent`
+- **Secondary container**: **oklch(85–95% 0.03–0.10 hue)**
+  - L: `background_primary_light - 5–10%`, C: `secondary_accent × 0.3–0.5`, H: `= secondary_accent`
+
+#### Dark Mode🌑
+- **Primary container**: **oklch(25–35% 0.08–0.18 hue)**
+  - L: `background_primary_dark + 15–25%`, C: `primary_container_light - 0.03–0.05`, H: `= primary_accent`
+- **Secondary container**: **oklch(25–35% 0.05–0.12 hue)**
+  - L: `background_primary_dark + 15–25%`, C: `secondary_container_light - 0.03–0.05`, H: `= secondary_accent`
+
+### 3.4. Surface Container Hierarchy
+
+5-level system (Material Design 3) for creating depth without shadows.
+
+#### Light Mode🌞
+| Level | L Range | C Range |
+|-------|---------|---------|
+| Lowest | 99–100% | 0–0.02 |
+| Low | 95–97% | 0–0.04 |
+| Default | 93–95% | 0–0.04 |
+| High | 91–93% | 0–0.04 |
+| Highest | 89–91% | 0–0.04 |
+
+#### Dark Mode🌑
+| Level | L Range | C Range |
+|-------|---------|---------|
+| Lowest | 4–6% | 0–0.02 |
+| Low | 10–12% | 0–0.03 |
+| Default | 12–14% | 0–0.03 |
+| High | 15–17% | 0–0.03 |
+| Highest | 20–24% | 0–0.03 |
+
+### 3.5. Scrim/Overlay
+
+Modal backdrops, drawer overlays for blocking interactions and creating focus.
+
+#### Light Mode🌞
+- **Color**: **oklch(0–5% 0–0.02 hue)**, use `oklch(0% 0.01 0)`
+- **Opacity**: 0.25–0.50, use **0.32**
+
+#### Dark Mode🌑
+- **Color**: **oklch(0–5% 0–0.02 hue)**, use `oklch(5% 0.02 0)`
+- **Opacity**: 0.40–0.70, use **0.50** (`light_opacity + 0.10–0.30`)
+
 ---
 
 ## 4. Text and Typography (Visual Hierarchy)
@@ -240,6 +295,44 @@ Instead of creating many gray shades, use variations of opacity or lightness of 
 #### Dividers `dividers`
 - **Parameters**: **oklch(12–22% 0 0)**
 - **Recommendation**: Calculate L as `background_primary_dark + 2–12%` (for 3:1+ contrast), ensuring result stays within 12–22% range. C: 0 (neutral gray). Alternatively, use white overlay with 12–20% opacity on `background_primary_dark`. Ensure contrast ≥ 3:1 with adjacent background (WCAG 1.4.11 Non-Text Contrast).
+
+### 4.4. On-Container Text
+
+Text on tinted container surfaces (chips, tonal buttons, FABs). Uses accent hue with higher chroma than container background.
+
+#### Light Mode🌞
+- **On-primary-container**: **oklch(10–20% 0.10–0.20 hue)**
+  - L: `text_primary_light - 5–10%`, C: `primary_accent × 0.5–0.8`, H: `= primary_accent`
+  - Contrast: 4.5:1+ with `primary_container_light`
+- **On-secondary-container**: **oklch(10–20% 0.08–0.15 hue)**
+  - L: `text_primary_light - 5–10%`, C: `secondary_accent × 0.5–0.8`, H: `= secondary_accent`
+  - Contrast: 4.5:1+ with `secondary_container_light`
+
+#### Dark Mode🌑
+- **On-primary-container**: **oklch(85–95% 0.05–0.12 hue)**
+  - L: `text_primary_dark - 5–10%`, C: `primary_accent × 0.3–0.5`, H: `= primary_accent`
+  - Contrast: 4.5:1+ with `primary_container_dark`
+- **On-secondary-container**: **oklch(85–95% 0.03–0.08 hue)**
+  - L: `text_primary_dark - 5–10%`, C: `secondary_accent × 0.3–0.5`, H: `= secondary_accent`
+  - Contrast: 4.5:1+ with `secondary_container_dark`
+
+### 4.5. Outline
+
+Input borders, card outlines, button outlines, focus rings.
+
+#### Light Mode🌞
+- **Outline**: **oklch(45–55% 0.02–0.06 hue)**
+  - L: `(background_primary + text_primary) / 2` or `background_primary - 45–50%`
+  - Contrast: 3:1+ with background
+- **Outline variant**: **oklch(75–85% 0.01–0.04 hue)**
+  - L: `background_primary - 15–20%`, subtle/decorative borders
+
+#### Dark Mode🌑
+- **Outline**: **oklch(55–65% 0.02–0.05 hue)**
+  - L: `(background_primary + text_primary) / 2` or `background_primary + 45–55%`
+  - Contrast: 3:1+ with background
+- **Outline variant**: **oklch(30–40% 0.01–0.03 hue)**
+  - L: `background_primary + 20–30%`, subtle/decorative borders
 
 ---
 
@@ -573,7 +666,10 @@ Before launching, verify:
 | **Status Success** | L: 50–65%<br>C: 0.20–0.40<br>H: 140–160 | L: 65–80%<br>C: 0.15–0.30<br>H: 140–160 | Green hues, reduce C by 0.05–0.10 in dark |
 | **Status Error** | L: 45–60%<br>C: 0.25–0.45<br>H: 0–30 | L: 60–75%<br>C: 0.20–0.35<br>H: 0–30 | Red hues, reduce C by 0.05–0.10 in dark |
 | **Status Warning** | L: 60–75%<br>C: 0.25–0.45<br>H: 60–90 | L: 70–85%<br>C: 0.20–0.35<br>H: 60–90 | Yellow/orange hues, reduce C by 0.05–0.10 in dark |
-
+| **Primary Container** | L: 85–95%<br>C: 0.05–0.15 | L: 25–35%<br>C: 0.08–0.18 | Tinted surfaces for chips, FABs |
+| **On-Container Text** | L: 10–20%<br>C: 0.10–0.20 | L: 85–95%<br>C: 0.05–0.12 | Text on tinted containers |
+| **Outline** | L: 45–55%<br>C: 0.02–0.06 | L: 55–65%<br>C: 0.02–0.05 | Borders, focus rings, 3:1+ contrast |
+| **Scrim** | L: 0–5%<br>opacity: 0.32 | L: 0–5%<br>opacity: 0.50 | Modal backdrops |
 
 ### 9.3. Contrast Ratios
 

@@ -10,6 +10,8 @@ Generate a separate CSS settings file for each project based on this template.
 - [Visual Hierarchy](../webdesign/visual/visual-hierarchy.mdc) rules.
 - [Responsive Design](../webdesign/layout/responsive-design.mdc) rules.
 
+> **Implementation**: Values from this template feed into [CSS Variables Architecture](css-variables.mdc) three-layer token system (Primitives → Semantic → Component).
+
 ## 📋 Table of Contents
 
 1. Color System
@@ -20,12 +22,17 @@ Generate a separate CSS settings file for each project based on this template.
     - Backgrounds and Surfaces
       - [Primary Background](#121-primary-background)
       - [Secondary Surfaces](#122-secondary-surfaces)
-      - [Elevation Surfaces](#123-elevation-surfaces)
+      - [Container Surfaces](#123-container-surfaces)
+      - [Surface Container Hierarchy](#124-surface-container-hierarchy)
+      - [Elevation Surfaces](#125-elevation-surfaces)
+      - [Scrim/Overlay](#126-scrimoverlay)
     - Text and Typography
       - [Primary Text](#131-primary-text)
       - [Secondary Text](#132-secondary-text)
-      - [Hints and Disabled Text](#133-hints-and-disabled-text)
-     - [Dividers](#134-dividers)
+      - [On-Container Text](#133-on-container-text)
+      - [Hints and Disabled Text](#134-hints-and-disabled-text)
+      - [Dividers](#135-dividers)
+      - [Outline](#136-outline)
     - [Links](#14-links)
 2. Typography
     - [Font Sizes](#21-font-sizes)
@@ -225,34 +232,34 @@ Generate a separate CSS settings file for each project based on this template.
 #### Light Mode🌞
 - Success: oklch(`__% __ __`), use oklch(55% 0.30 150)
   - L: 50-65%, `= background_primary_light - 33–48%`
-  - C: 0.20-0.30
+  - C: 0.20-0.40, typically 0.20-0.30 for positive, non-alarming appearance
   - H: 140-160
   - Contrast: 4.5:1+ with `background_primary_light`
 - Error: oklch(`__% __ __`), use oklch(50% 0.35 25)
   - L: 45-60%, `= background_primary_light - 38–53%`
-  - C: 0.30-0.40
+  - C: 0.25-0.45, typically 0.30-0.40 for immediate attention and urgency perception
   - H: 0-30 (red range for semantic meaning, includes 330–360° for red-purple)
   - Contrast: 4.5:1+ with `background_primary_light`
 - Warning: oklch(`__% __ __`), use oklch(70% 0.35 75)
   - L: 60-75%, `= background_primary_light - 23–38%`
-  - C: 0.30-0.40
+  - C: 0.25-0.45, typically 0.30-0.40 to help maintain visibility
   - H: 60-90
   - Contrast: 4.5:1+ with `background_primary_light`
 
 #### Dark Mode🌑
 - Success: oklch(`__% __ __`), use oklch(70% 0.22 150)
   - L: 65-80%, `= status_success_light + 15–20%` or `= background_primary_dark + 55–70%`
-  - C: 0.15-0.25, `= status_success_light - 0.05–0.10`
+  - C: 0.15-0.30, `= status_success_light - 0.05–0.10`, typically 0.15-0.25 for positive, non-alarming appearance
   - H: 140-160, `= status_success_light`
   - Contrast: 4.5:1+ with `background_primary_dark`
 - Error: oklch(`__% __ __`), use oklch(65% 0.28 25)
   - L: 60-75%, `= status_error_light + 15–20%` or `= background_primary_dark + 50–65%`
-  - C: 0.20-0.30, `= status_error_light - 0.05–0.10`
+  - C: 0.20-0.35, `= status_error_light - 0.05–0.10`
   - H: 0-30, `= status_error_light`
   - Contrast: 4.5:1+ with `background_primary_dark`
 - Warning: oklch(`__% __ __`), use oklch(75% 0.28 75)
   - L: 70-85%, `= status_warning_light + 5–15%` or `= background_primary_dark + 60–75%`
-  - C: 0.20-0.30, `= status_warning_light - 0.05–0.10`
+  - C: 0.20-0.35, `= status_warning_light - 0.05–0.10`
   - H: 60-90, `= status_warning_light`
   - Contrast: 4.5:1+ with `background_primary_dark`
 
@@ -293,7 +300,72 @@ Generate a separate CSS settings file for each project based on this template.
   - L: 15-25%, `= background_primary_dark + 5–10%`
   - C: 0-0.06, `= background_primary_dark`
 
-#### 1.2.3. Elevation Surfaces
+#### 1.2.3. Container Surfaces
+
+- **Application:** chip backgrounds, filled cards, tonal buttons, FABs, navigation rail
+- Containers use lighter tones of accent colors for subtle tinted backgrounds
+
+#### Light Mode🌞
+- Primary container: oklch(`__% __ __`)
+  - L: 85-95%, `= background_primary_light - 5–10%`
+  - C: 0.05-0.15, `= primary_accent_light * 0.3–0.5`
+  - H: `= primary_accent_light`
+- Secondary container: oklch(`__% __ __`)
+  - L: 85-95%, `= background_primary_light - 5–10%`
+  - C: 0.03-0.10, `= secondary_accent_light * 0.3–0.5`
+  - H: `= secondary_accent_light`
+
+#### Dark Mode🌑
+- Primary container: oklch(`__% __ __`)
+  - L: 25-35%, `= background_primary_dark + 15–25%`
+  - C: 0.08-0.18, `= primary_container_light - 0.03–0.05`
+  - H: `= primary_accent_dark`
+- Secondary container: oklch(`__% __ __`)
+  - L: 25-35%, `= background_primary_dark + 15–25%`
+  - C: 0.05-0.12, `= secondary_container_light - 0.03–0.05`
+  - H: `= secondary_accent_dark`
+
+#### 1.2.4. Surface Container Hierarchy
+
+- **Application:** layered UI elements with subtle differentiation
+- **Pattern:** 5 levels from lowest to highest for creating depth without shadows
+- Based on Material Design 3 surface container system
+
+#### Light Mode🌞
+- Surface container lowest: oklch(`__% __ __`)
+  - L: 99-100%, `= background_primary_light + 1%` or white
+  - C: 0-0.02
+- Surface container low: oklch(`__% __ __`)
+  - L: 95-97%, `= palette_neutral_96`
+  - C: 0-0.04
+- Surface container: oklch(`__% __ __`)
+  - L: 93-95%, `= palette_neutral_94`
+  - C: 0-0.04
+- Surface container high: oklch(`__% __ __`)
+  - L: 91-93%, `= palette_neutral_92`
+  - C: 0-0.04
+- Surface container highest: oklch(`__% __ __`)
+  - L: 89-91%, `= palette_neutral_90`
+  - C: 0-0.04
+
+#### Dark Mode🌑
+- Surface container lowest: oklch(`__% __ __`)
+  - L: 4-6%, `= background_primary_dark - 4–6%`
+  - C: 0-0.02
+- Surface container low: oklch(`__% __ __`)
+  - L: 10-12%, `= palette_neutral_10`
+  - C: 0-0.03
+- Surface container: oklch(`__% __ __`)
+  - L: 12-14%, `= palette_neutral_12`
+  - C: 0-0.03
+- Surface container high: oklch(`__% __ __`)
+  - L: 15-17%, `= palette_neutral_17`
+  - C: 0-0.03
+- Surface container highest: oklch(`__% __ __`)
+  - L: 20-24%, `= palette_neutral_22`
+  - C: 0-0.03
+
+#### 1.2.5. Elevation Surfaces
 
 - **Application:** modal windows, dropdown menus, tooltips
 
@@ -306,6 +378,26 @@ Generate a separate CSS settings file for each project based on this template.
 - Elevated surface: oklch(`__% __ __`)
   - L: 20-40%, `= surface_secondary_dark + 5–15%` or `= background_primary_dark + 10–30%`
   - C: 0-0.06, `= background_primary_dark`
+
+#### 1.2.6. Scrim/Overlay
+
+- **Application:** modal backdrops, drawer overlays, blocking interactions creates focus by dimming background content
+
+#### Light Mode🌞
+- Scrim color: oklch(`__% __ __`)
+  - L: 0-5%, use 0%
+  - C: 0-0.02, use 0.01
+  - H: `= primary_accent_light` or neutral (0)
+- Scrim opacity: `______`, use 0.32
+  - Range: 0.25-0.50
+
+#### Dark Mode🌑
+- Scrim color: oklch(`__% __ __`)
+  - L: 0-5%, use 5%
+  - C: 0-0.02, use 0.02
+  - H: `= primary_accent_dark` or neutral (0)
+- Scrim opacity: `______`, use 0.50
+  - Range: 0.40-0.70, `= light_mode_scrim_opacity + 0.10–0.30`
 
 ### 1.3. Text and Typography
 
@@ -348,7 +440,36 @@ Generate a separate CSS settings file for each project based on this template.
   - C: 0-0.10
   - Contrast: 4.5:1+ with `background_primary_dark`
 
-#### 1.3.3. Hints and Disabled Text
+#### 1.3.3. On-Container Text
+
+- **Application:** text on tinted container surfaces (chips, tonal buttons, FABs)
+- Uses accent hue with higher chroma than container background
+
+#### Light Mode🌞
+- On-primary-container: oklch(`__% __ __`)
+  - L: 10-20%, `= text_primary_light - 5–10%`
+  - C: 0.10-0.20, `= primary_accent_light * 0.5–0.8`
+  - H: `= primary_accent_light`
+  - Contrast: 4.5:1+ with `primary_container_light`
+- On-secondary-container: oklch(`__% __ __`)
+  - L: 10-20%, `= text_primary_light - 5–10%`
+  - C: 0.08-0.15, `= secondary_accent_light * 0.5–0.8`
+  - H: `= secondary_accent_light`
+  - Contrast: 4.5:1+ with `secondary_container_light`
+
+#### Dark Mode🌑
+- On-primary-container: oklch(`__% __ __`)
+  - L: 85-95%, `= text_primary_dark - 5–10%`
+  - C: 0.05-0.12, `= primary_accent_dark * 0.3–0.5`
+  - H: `= primary_accent_dark`
+  - Contrast: 4.5:1+ with `primary_container_dark`
+- On-secondary-container: oklch(`__% __ __`)
+  - L: 85-95%, `= text_primary_dark - 5–10%`
+  - C: 0.03-0.08, `= secondary_accent_dark * 0.3–0.5`
+  - H: `= secondary_accent_dark`
+  - Contrast: 4.5:1+ with `secondary_container_dark`
+
+#### 1.3.4. Hints and Disabled Text
 
 - **Application:** placeholder text, disabled states, hints
 
@@ -364,7 +485,7 @@ Generate a separate CSS settings file for each project based on this template.
   - C: 0-0.10
   - Contrast: 3:1+ (for large text) with `background_primary_dark`
 
-#### 1.3.4. Dividers
+#### 1.3.5. Dividers
 
 - **Application:** borders, separators, dividers
 
@@ -379,6 +500,32 @@ Generate a separate CSS settings file for each project based on this template.
   - L: 12-22%, `= background_primary_dark + 2–12%`
   - C: 0
   - Contrast: 3:1+ with `background_primary_dark`
+
+#### 1.3.6. Outline
+
+- **Application:** input borders, card outlines, button outlines, focus rings
+
+#### Light Mode🌞
+- Outline: oklch(`__% __ __`)
+  - L: 45-55%, `= (background_primary_light + text_primary_light) / 2` or `= background_primary_light - 45–50%`
+  - C: 0.02-0.06 (slight tint from primary hue)
+  - H: `= primary_accent_light` or neutral
+  - Contrast: 3:1+ with `background_primary_light`
+- Outline variant: oklch(`__% __ __`)
+  - L: 75-85%, `= background_primary_light - 15–20%`
+  - C: 0.01-0.04
+  - H: `= outline_light`
+
+#### Dark Mode🌑
+- Outline: oklch(`__% __ __`)
+  - L: 55-65%, `= (background_primary_dark + text_primary_dark) / 2` or `= background_primary_dark + 45–55%`
+  - C: 0.02-0.05
+  - H: `= primary_accent_dark` or neutral
+  - Contrast: 3:1+ with `background_primary_dark`
+- Outline variant: oklch(`__% __ __`)
+  - L: 30-40%, `= background_primary_dark + 20–30%`
+  - C: 0.01-0.03
+  - H: `= outline_dark`
 
 ### 1.4. Links
 
@@ -744,7 +891,9 @@ Generate a separate CSS settings file for each project based on this template.
 
 ## 6. Shadows and Effects
 
-### 6.1. Box-shadow
+**Limitations:**
+- Avoid animations that may cause motion sickness
+- Don't animate more than 3-5 elements simultaneously
 
 **Group constraints:**
 - 🎨 **Background compatibility [1.2]**: Light 0.05-0.15, dark 0.3-0.4
@@ -829,12 +978,15 @@ Generate a separate CSS settings file for each project based on this template.
 
 **Group constraints:**
 - 📱 **Breakpoints [7.1]**: Changes occur at defined breakpoints
-- 👆 **Touch targets [8.4]**: Sizes don't decrease on mobile
+- 👆 **Touch targets [8.4]**: Mimimum 44x44px touch target sizes don't decrease on mobile
 - 📝 **Typography [2.1]**: Use clamp() or media queries
 - 📐 **Spacing [3.2]**: Decrease 20-30% on mobile
 - 📦 **Containers [4.1]**: Padding decreases on mobile
 - 📊 **Grid/Flexbox[4.2]:** Number of columns adapts
 
+
+**Limitations:**
+- Minimum font size: 14px on mobile (16px recommended)
 
 ## 8. Accessibility
 
