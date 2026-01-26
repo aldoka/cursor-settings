@@ -94,7 +94,7 @@ Generate a separate CSS settings file for each project based on this template.
 - **Application:** primary buttons, active links, interactive elements, important elements
 
 #### Light Mode🌞
-- Primary accent: oklch(`__% __ __`), can use oklch(50% 0.25 hue)
+- Primary accent: oklch(`__% __ __`), use oklch(50% 0.25 hue)
   - L: 40-60%, `background_primary_light - 38–58%`
   - C: 0.15-0.40
   - H: determined by brand
@@ -126,7 +126,7 @@ Generate a separate CSS settings file for each project based on this template.
   - Contrast: 4.5:1+ with `background_primary_light`
 
 #### Dark Mode🌑
-- Primary accent: oklch(`__% __ __`), can use oklch(75% 0.18 hue)
+- Primary accent: oklch(`__% __ __`), use oklch(75% 0.18 hue)
   - L: 70-90%, `primary_accent_light + 20–30%` or `background_primary_dark + 60–80%`
   - C: 0.12-0.35, `primary_accent_light - 0.05–0.10`
   - H: `= primary_accent_light`
@@ -163,7 +163,7 @@ Generate a separate CSS settings file for each project based on this template.
 - Secondary accent should be less prominent than primary.
 
 #### Light Mode🌞
-- Secondary accent: oklch(`__% __ __`), can use oklch(60% 0.20 hue)
+- Secondary accent: oklch(`__% __ __`), use oklch(60% 0.20 hue)
   - L: 50-70%, `accent_primary_light + 5–15%` or `background_primary_light - 28–48%`
   - C: 0.12-0.35, `accent_primary_light - 0.02–0.05`
   - H: determined by brand, typically related to `accent_primary_light`
@@ -190,7 +190,7 @@ Generate a separate CSS settings file for each project based on this template.
   - H: `= secondary_accent_light`
 
 #### Dark Mode🌑
-- Secondary accent: oklch(`__% __ __`), can use oklch(65% 0.15 hue)
+- Secondary accent: oklch(`__% __ __`), use oklch(65% 0.15 hue)
   - L: 60-80%, `secondary_accent_light + 20–30%` or `accent_primary_dark - 5–15%`
   - C: 0.10-0.30, `secondary_accent_light - 0.05–0.10`
   - H: `= secondary_accent_light`
@@ -223,34 +223,34 @@ Generate a separate CSS settings file for each project based on this template.
 - **Error colors** require higher saturation (C) than success for immediate attention and urgency perception.
 
 #### Light Mode🌞
-- Success: oklch(`__% __ __`), can use oklch(55% 0.30 150)
+- Success: oklch(`__% __ __`), use oklch(55% 0.30 150)
   - L: 50-65%, `= background_primary_light - 33–48%`
   - C: 0.20-0.30
   - H: 140-160
   - Contrast: 4.5:1+ with `background_primary_light`
-- Error: oklch(`__% __ __`), can use oklch(50% 0.35 25)
+- Error: oklch(`__% __ __`), use oklch(50% 0.35 25)
   - L: 45-60%, `= background_primary_light - 38–53%`
   - C: 0.30-0.40
   - H: 0-30 (red range for semantic meaning, includes 330–360° for red-purple)
   - Contrast: 4.5:1+ with `background_primary_light`
-- Warning: oklch(`__% __ __`), can use oklch(70% 0.35 75)
+- Warning: oklch(`__% __ __`), use oklch(70% 0.35 75)
   - L: 60-75%, `= background_primary_light - 23–38%`
   - C: 0.30-0.40
   - H: 60-90
   - Contrast: 4.5:1+ with `background_primary_light`
 
 #### Dark Mode🌑
-- Success: oklch(`__% __ __`), can use oklch(70% 0.22 150)
+- Success: oklch(`__% __ __`), use oklch(70% 0.22 150)
   - L: 65-80%, `= status_success_light + 15–20%` or `= background_primary_dark + 55–70%`
   - C: 0.15-0.25, `= status_success_light - 0.05–0.10`
   - H: 140-160, `= status_success_light`
   - Contrast: 4.5:1+ with `background_primary_dark`
-- Error: oklch(`__% __ __`), can use oklch(65% 0.28 25)
+- Error: oklch(`__% __ __`), use oklch(65% 0.28 25)
   - L: 60-75%, `= status_error_light + 15–20%` or `= background_primary_dark + 50–65%`
   - C: 0.20-0.30, `= status_error_light - 0.05–0.10`
   - H: 0-30, `= status_error_light`
   - Contrast: 4.5:1+ with `background_primary_dark`
-- Warning: oklch(`__% __ __`), can use oklch(75% 0.28 75)
+- Warning: oklch(`__% __ __`), use oklch(75% 0.28 75)
   - L: 70-85%, `= status_warning_light + 5–15%` or `= background_primary_dark + 60–75%`
   - C: 0.20-0.30, `= status_warning_light - 0.05–0.10`
   - H: 60-90, `= status_warning_light`
@@ -270,12 +270,12 @@ Generate a separate CSS settings file for each project based on this template.
 - **Application:** main page background, base surface
 
 #### Light Mode🌞
-- Primary background: oklch(`__% __ __`), can use oklch(98% 0.02 0)
+- Primary background: oklch(`__% __ __`), use oklch(98% 0.02 0)
   - L: 90-99%
   - C: 0-0.08
 
 #### Dark Mode🌑
-- Primary background: oklch(`__% __ __`), can use oklch(10% 0 0) or oklch(12% 0.03 250)
+- Primary background: oklch(`__% __ __`), use oklch(10% 0 0) or oklch(12% 0.03 250)
   - L: 7-15%
   - C: 0-0.06
 
@@ -321,13 +321,13 @@ Generate a separate CSS settings file for each project based on this template.
 - **Application:** main content, headings, important text
 
 #### Light Mode🌞
-- Primary text: oklch(`__% __ __`), can use oklch(20% 0.05 0) for 4.5:1 or oklch(15% 0 0) for 7:1
+- Primary text: oklch(`__% __ __`), use oklch(20% 0.05 0) for 4.5:1 or oklch(15% 0 0) for 7:1
   - L: 15-30%, `= background_primary_light - 60–75%`
   - C: 0-0.12
   - Contrast: 7:1 (4.5:1+) with `background_primary_light`
 
 #### Dark Mode🌑
-- Primary text: oklch(`__% __ __`), can use oklch(95% 0.02 0) for 7:1 or oklch(90% 0 0) for 4.5:1
+- Primary text: oklch(`__% __ __`), use oklch(95% 0.02 0) for 7:1 or oklch(90% 0 0) for 4.5:1
   - L: 85-99%, `background_primary_dark + 70–90%`
   - C: 0-0.10
   - Contrast: 7:1 (4.5:1+) with `background_primary_dark`
@@ -343,7 +343,7 @@ Generate a separate CSS settings file for each project based on this template.
   - Contrast: 4.5:1+ with `background_primary_light`
 
 #### Dark Mode🌑
-- Secondary text: oklch(`__% __ __`), can use oklch(80% 0.05 0)
+- Secondary text: oklch(`__% __ __`), use oklch(80% 0.05 0)
   - L: 75-90%, `= text_primary_dark - 5–15%`
   - C: 0-0.10
   - Contrast: 4.5:1+ with `background_primary_dark`
@@ -353,13 +353,13 @@ Generate a separate CSS settings file for each project based on this template.
 - **Application:** placeholder text, disabled states, hints
 
 #### Light Mode🌞
-- Hints: oklch(`__% __ __`), can use oklch(40% 0.08 0)
+- Hints: oklch(`__% __ __`), use oklch(40% 0.08 0)
   - L: 35-50%, `= text_secondary_light + 10–20%`
   - C: 0-0.12, `= text_primary_light`
   - Contrast: 3:1+ (for large text) with `background_primary_light`
 
 #### Dark Mode🌑
-- Hints: oklch(`__% __ __`), can use oklch(60% 0.05 0)
+- Hints: oklch(`__% __ __`), use oklch(60% 0.05 0)
   - L: 50-70%, `= text_secondary_dark - 15–25%`
   - C: 0-0.10
   - Contrast: 3:1+ (for large text) with `background_primary_dark`
@@ -394,9 +394,10 @@ Generate a separate CSS settings file for each project based on this template.
 - Links typically use accent colors. All state variations are relative to base link color.
 
 #### Light Mode🌞
-- Link default: oklch(`__% __ __`), typically `= accent_primary_light`
+- Link default: oklch(`__% __ __`)
   - L: 40-60%, `= background_primary_light - 38–58%`
   - C: 0.15-0.40
+  - H: `= accent_primary_light`
   - Contrast: 4.5:1+ with `background_primary_light`
 - Link hover: oklch(`__% __ __`)
   - L: `= link_default_light - 10–20%`
@@ -416,9 +417,10 @@ Generate a separate CSS settings file for each project based on this template.
   - H: `= link_default_light`
 
 #### Dark Mode🌑
-- Link default: oklch(`__% __ __`), typically `= accent_primary_dark`
+- Link default: oklch(`__% __ __`)
   - L: 70-90%, `= link_default_light + 20–30%` or `= background_primary_dark + 60–80%`
   - C: 0.12-0.35, `= link_default_light - 0.05–0.10`
+  - H: `= accent_primary_dark`
   - Contrast: 4.5:1+ with `background_primary_dark`
 - Link hover: oklch(`__% __ __`)
   - L: `= link_default_dark + 10–20%`
@@ -491,7 +493,7 @@ Generate a separate CSS settings file for each project based on this template.
 - **Application:** headings, body text, captions, labels
 - **Hierarchy:** H1 > H2 > H3 > H4 > Body > Small > Tiny
 
-- H1: `______`rem, can use `3rem`
+- H1: `______`rem, use `3rem`
   - Range: `2.5rem` - `4rem`
   - Use: page titles, main headings
 - H2: `______`rem
@@ -503,7 +505,7 @@ Generate a separate CSS settings file for each project based on this template.
 - H4: `______`rem
   - Range: `1.25rem` - `1.875rem`
   - Use: minor headings
-- Body: `______`rem, can use `1rem` (16px)
+- Body: `______`rem, use `1rem` (16px)
   - Range: `0.875rem` - `1.125rem`
   - Use: main content, paragraphs
 - Small: `______`rem
@@ -767,7 +769,7 @@ Generate a separate CSS settings file for each project based on this template.
 
 **CSS Best Practices:**
 - Use `rgba()` for shadows (transparency)
-- Can use `hsla()` for colored shadows
+- use `hsla()` for colored shadows
 
 ### 6.2. Text-shadow
 
@@ -881,8 +883,8 @@ Generate a separate CSS settings file for each project based on this template.
 
 
 **Recommendations:**
-- **For contrast calculation** can use online calculator (e.g., https://webaim.org/resources/contrastchecker/)
-- **For text color scheme determination** can use online generator (e.g., https://colorscheme.ru/)
+- **For contrast calculation** use online calculator (e.g., https://webaim.org/resources/contrastchecker/)
+- **For text color scheme determination** use online generator (e.g., https://colorscheme.ru/)
 
 **Limitations:**
 - Test all color combinations with contrast tools
@@ -915,7 +917,7 @@ Generate a separate CSS settings file for each project based on this template.
 
 **CSS Best Practices:**
 - Use `px` for touch target sizes (fixed values)
-- Can use `min-height` and `min-width` to ensure minimum sizes
+- use `min-height` and `min-width` to ensure minimum sizes
 - **Padding:** Small elements may need increased padding
 
 ---
