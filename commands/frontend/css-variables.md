@@ -9,7 +9,7 @@ Generate CSS variables file based on the three-layer architecture (primitives â†
 This command generates a `variables.css` (or `_variables.scss`) file following the three-layer CSS custom properties architecture.
 
 **Before generation, determine:**
-1. **Settings source**: Location of filled design system settings (css-system-template.md copy)
+1. **Settings source**: Location of filled design system settings (copy of css-system-template.md)
 2. **Naming style**: Standard (default) or M3 (Material Design 3)
 3. **Output format**: CSS (default) or SCSS
 4. **Output location**: Where to save the generated file
@@ -18,13 +18,13 @@ This command generates a `variables.css` (or `_variables.scss`) file following t
 
 ### Step 1: Prepare Design System Settings
 
-Check if user has a filled css-system-template:
-- **If yes**: Read the settings file to get design token values
-- **If no**: Ask user to run `/css-settings` command first, or offer to run it
+Check if user has a filled copy of css-system-template.md:
+- **If yes**: Read the settings file to get design token values and check that all `__` placeholders are filled with values, otherwise stop and ask user to fill them.
+- **If no**: Ask user to run [css-settings](css-settings.md) command first, or offer to run it and stop until it is filled
 
 ### Step 2: Configure Generation Options
 
-Ask user to choose:
+Ask user to choose if not already chosen:
 
 **Naming Style:**
 - **Standard** (default): `--palette-primary-40`, `--color-primary`, `--button-bg`
