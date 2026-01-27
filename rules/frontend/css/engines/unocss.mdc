@@ -1,0 +1,425 @@
+---
+description: Standards and best practices for UnoCSS (v66+) — config, presets, rules, shortcuts, theme, and content extraction
+globs: "uno.config.*, unocss.config.*"
+alwaysApply: false
+---
+# UnoCSS Rule
+
+## 📋 Overview / Responsibility
+
+This rule defines standards and best practices for UnoCSS v66+ (2025+) — the instant on-demand Atomic CSS engine. It covers configuration, presets, rules, shortcuts, theme, content sources, and integration patterns. UnoCSS is preset-based and on-demand: no built-in utilities by default, CSS is generated only for classes used in the codebase.
+
+**Scope**: UnoCSS config files (`uno.config.*`, `unocss.config.*`) and everything that affects:
+- selection and order of `presets` and `transformers`
+- definition of `rules`, `shortcuts`, `variants`, `layers`, `blocklist`/`safelist`
+- structure of `theme` / `extendTheme` and relationship with CSS variable architecture
+- `content` (filesystem / inline / pipeline) and sources from which UnoCSS extracts classes.
+
+
+## 📋 Table of Contents
+
+1. 🎯 Core Principles
+   - 1.1. [Preset-based and on-demand](#11-preset-based-and-on-demand)
+   - 1.2. [Config structure](#12-config-structure)
+   - 1.3. [Rules and shortcuts](#13-rules-and-shortcuts)
+2. ✅ DO (Recommended Practices)
+   - 2.1. [Configuration](#21-configuration)
+   - 2.2. [Presets and transformers](#22-presets-and-transformers)
+   - 2.3. [Rules and shortcuts](#23-rules-and-shortcuts)
+   - 2.4. [Theme and content](#24-theme-and-content)
+3. ❌ DON'T (Forbidden Practices)
+   - 3.1. [Deprecated packages and anti-patterns](#31-deprecated-packages-and-anti-patterns)
+   - 3.2. [Config and usage mistakes](#32-config-and-usage-mistakes)
+4. 📝 Key Points
+   - 4.1. [Checklist](#41-checklist)
+   - 4.2. [Must Have](#42-must-have)
+   - 4.3. [Do](#43-do)
+   - 4.4. [Don't](#44-dont)
+5. 📚 References
+   - 5.1. [Related rules](#51-related-rules)
+   - 5.2. [Official docs](#52-official-docs)
+
+---
+
+## 1. 🎯 Core Principles
+
+### 1.1. Preset-based and on-demand
+
+- **No core utilities**: All utilities come from presets (`@unocss/preset-mini`, `@unocss/preset-wind3`, `@unocss/preset-wind4` for Tailwind 4 compatibility, etc.). Choose presets explicitly.
+- **On-demand generation**: CSS is generated only for class names found in the codebase. Unused classes produce no output.
+- **Order matters**: Later presets and later rules/shortcuts override earlier ones.
+
+### 1.2. Config structure
+
+- **Entry point**: Use `defineConfig()` from `'unocss'` and export default for `uno.config.ts` / `unocss.config.*`.
+- **Main options**: `presets`, `rules`, `shortcuts`, `theme` / `extendTheme`, `variants`, `extractors`, `content`, `transformers`, `layers`, `blocklist`, `safelist`.
+- **Content sources**: Define where UnoCSS extracts class names — `content.filesystem`, `content.inline`, `content.pipeline` (Vite/Webpack). Pipeline `include`/`exclude` filter which modules are scanned.
+
+### 1.3. Rules and shortcuts
+
+- **Rules**: Define atomic utilities. Static `['m-1', { margin: '0.25rem' }]` or dynamic `[/^m-(\\d+)$/, ([_, d]) => ({ margin: `${Number(d) / 4}rem` })]`. Use CSS property names (e.g. `'font-weight'`, not `fontWeight`).
+- **Shortcuts**: Combine several utilities into one token. Plain `{ btn: 'py-2 px-4 rounded' }` or dynamic `[/^btn-(.*)$/, ([, c]) => \`bg-${c}-500 text-white py-2 px-4\`]`.
+- **Layers**: Use `layers` and `outputToCssLayers` for cascade control and better CSS organization. Shortcuts live in `shortcutsLayer` (default `'shortcuts'`).
+
+---
+
+## 2. ✅ DO (Recommended Practices)
+
+### 2.1. Configuration
+
+✅ Use `defineConfig` and a dedicated config file (`uno.config.ts` or `unocss.config.ts`).
+
+```ts
+// ✅ uno.config.ts
+import { defineConfig } from 'unocss'
+
+export default defineConfig({
+  presets: [
+    // choose explicit presets
+  ],
+  content: {
+    filesystem: ['src'],
+    pipeline: { include: [/\.(vue|svelte|[jt]sx|html)($|\?)/] },
+  },
+})
+```
+
+```ts
+// ✅ Prefer static rule when value is fixed
+rules: [
+  ['heading-xl', { 'font-size': '2.25rem', 'line-height': '2.5rem' }],
+]
+
+// ✅ Dynamic rule only when needed
+rules: [
+  [/^gap-(\d+)$/, ([, d]) => ({ gap: `${Number(d) / 4}rem` })],
+]
+```
+
+```ts
+// ✅ Set content so extraction covers all files where utilities appear
+// Use content.pipeline.include in Vite/Webpack to include .ts/.tsx if needed (default excludes them)
+export default defineConfig({
+  content: {
+    filesystem: ['src'],
+    pipeline: { include: [/\.(vue|svelte|[jt]sx|html)($|\?)/] },
+  },
+})
+```
+
+### 2.2. Presets and transformers
+
+✅ Use official presets by current names: `@unocss/preset-mini`, `@unocss/preset-wind3`, or `@unocss/preset-wind4` (for Tailwind 4 compatibility). Add `@unocss/preset-attributify`, `@unocss/preset-icons`, `@unocss/preset-web-fonts`, `@unocss/preset-typography`, `@unocss/transformer-directives`, `@unocss/transformer-variant-group` only when the project needs them.
+
+✅ Place custom or design-system presets after base presets so they can override.
+
+```ts
+presets: [
+  presetWind3(),         // or presetWind4() — base utilities
+  presetAttributify(),
+  myDesignSystemPreset(), // overrides from here
+],
+```
+
+✅ Use `transformers` for `@apply` and variant groups only when you rely on those features.
+
+```ts
+// ✅ Minimal, explicit preset setup
+import { defineConfig } from 'unocss'
+import { presetWind3 } from '@unocss/preset-wind3'
+import { presetAttributify } from '@unocss/preset-attributify'
+
+export default defineConfig({
+  presets: [
+    presetWind3(),        // base utilities
+    presetAttributify(),  // project really uses attributify
+  ],
+})
+```
+
+### 2.3. Rules and shortcuts
+
+```ts
+// ✅ Use shortcuts for repeated combinations (buttons, cards, layout patterns)
+shortcuts: {
+  'btn': 'py-2 px-4 font-semibold rounded-lg shadow',
+  'btn-primary': 'btn bg-primary-500 text-white hover:bg-primary-600',
+}
+```
+
+```ts
+// ✅ Use dynamic shortcuts for families of utilities (e.g. btn-{color})
+shortcuts: [
+  [/^btn-(.*)$/, ([, c]) => `py-2 px-4 rounded bg-${c}-500 text-white hover:bg-${c}-600`],
+]
+```
+
+✅ In rule bodies use object syntax with CSS property names; quote names with hyphens (`'font-weight'`, `'margin-inline'`).
+
+✅ Prefer `theme` and `extendTheme` for design tokens (colors, spacing, breakpoints) so rules and shortcuts stay consistent with the design system.
+
+```ts
+// ✅ Rules and shortcuts aligned with design tokens
+export default defineConfig({
+  theme: {
+    colors: {
+      primary: 'var(--color-primary)',
+    },
+  },
+  shortcuts: {
+    'btn-primary': 'inline-flex items-center justify-center rounded-lg px-4 py-2 bg-primary text-white',
+  },
+  rules: [
+    ['elevated-card', { 'box-shadow': 'var(--shadow-elevation-2)' }],
+  ],
+})
+```
+
+### 2.4. Theme and content
+
+✅ Define design tokens in `theme` / `extendTheme` and reference them in rules/shortcuts via the context argument or theme-aware utilities from presets.
+
+✅ Store the actual token values (colors, spacing, typography) in CSS variables, and in `theme` only reference them via `var(...)` (for example, `theme.colors.primary = 'var(--color-primary')`). UnoCSS `theme` should be a thin layer over the CSS variable system, not a second source of truth for values.
+
+✅ Shape the `theme` structure (for example, `colors`, `spacing`, `breakpoints`) to match your design system and CSS variable architecture so that UnoCSS is only a thin layer over the existing tokens. See `CSS Variables Architecture` rule for details.
+
+✅ For light/dark themes, change the CSS variable values (for example, in `:root` and `.dark`) instead of splitting the same semantics into separate sets of utilities.
+
+✅ Use `blocklist` for utilities you want to forbid and optionally enable `warn` to surface misuse.
+
+```ts
+blocklist: ['float-left', 'float-right'],
+// warn: true (default) helps catch blocklisted classes
+```
+
+✅ Use `safelist` for dynamic classes that UnoCSS might not detect (e.g., classes built from user input or API responses).
+
+```ts
+safelist: [
+  'bg-red-500',     // critical error states
+  'text-green-600', // success messages
+]
+```
+
+✅ Configure `extractors` for custom file types or complex content patterns that UnoCSS doesn't handle by default.
+
+✅ Use `outputToCssLayers` for better CSS cascade control and organization.
+
+```ts
+export default defineConfig({
+  outputToCssLayers: true,  // enables @layer output
+  layers: {
+    'components': -1,  // components layer (lowest precedence)
+    'shortcuts': 0,    // shortcuts layer (default)
+    'utilities': 1,    // utilities layer (highest precedence)
+  },
+})
+```
+
+```css
+/* ✅ CSS variables as single source of truth */
+:root {
+  --color-primary: oklch(0.63 0.16 255);
+  --color-surface: oklch(0.98 0.01 250);
+}
+
+.dark {
+  --color-primary: oklch(0.75 0.18 255);
+  --color-surface: oklch(0.16 0.02 260);
+}
+```
+
+```ts
+// ✅ Theme refers to CSS variables
+export default defineConfig({
+  theme: {
+    colors: {
+      primary: 'var(--color-primary)',
+      surface: 'var(--color-surface)',
+    },
+  },
+})
+```
+
+---
+
+## 3. ❌ DON'T (Forbidden Practices)
+
+### 3.1. Deprecated packages and anti-patterns
+
+❌ Do not use deprecated presets: `@unocss/preset-wind`, `@unocss/preset-uno`. Use `@unocss/preset-wind3` or `@unocss/preset-wind4` instead.
+
+❌ Do not rely on “default” preset without declaring it — always list presets explicitly in `presets`.
+
+❌ Do not add presets/transformers “just in case”. Enable only what the project uses (e.g. attributify, icons, directives, variant-group).
+
+```ts
+// ❌ Deprecated and implicit usage
+import { defineConfig, presetUno } from 'unocss'
+import { presetWind } from '@unocss/preset-wind'
+
+export default defineConfig({
+  presets: [
+    presetUno(),  // deprecated
+    presetWind(), // deprecated
+    // relying on implicit defaults
+  ],
+})
+```
+
+```ts
+// ✅ Explicit, modern presets only
+import { defineConfig } from 'unocss'
+import { presetWind3 } from '@unocss/preset-wind3'
+
+export default defineConfig({
+  presets: [
+    presetWind3(),
+  ],
+})
+```
+
+### 3.2. Config and usage mistakes
+
+❌ Do not over-use dynamic rules when you have a small, fixed set of values — prefer explicit static rules or tokens in `theme`.
+
+```ts
+// ❌ Over-using dynamic rules for fixed set of values
+// Better to use static rules or theme tokens instead
+rules: [
+  [/^heading-(xl|lg|md)$/, ([, size]) => {
+    if (size === 'xl') return { 'font-size': '2.25rem' }
+    if (size === 'lg') return { 'font-size': '1.875rem' }
+    return { 'font-size': '1.5rem' }
+  }],
+]
+```
+
+❌ Do not use camelCase for CSS properties in rule bodies. Use CSS syntax and quote hyphenated names.
+
+```ts
+// ❌ Incorrect - using camelCase instead of CSS property names
+rules: [['bold', { fontWeight: 700 }]]
+```
+
+❌ Do not omit `content` when sources are non-standard (e.g. custom extractors, extra globs). UnoCSS needs to know which files to scan.
+
+```ts
+// ❌ Missing content for .tsx files with utilities
+export default defineConfig({
+  presets: [
+    presetWind3(),
+  ],
+  // content is left to defaults, .tsx files are not scanned
+})
+```
+
+❌ Do not use fully controlled rules (returning a raw CSS string from a rule body) unless you need to; they skip variant processing. Prefer object-based rules that keep variants working.
+
+```ts
+// ❌ Fully controlled rule that skips variants - returns raw CSS string
+rules: [
+  [
+    'fancy-border',
+    () => '.fancy-border { border: 1px dashed red; }',
+  ],
+]
+// Use object-based rules instead to maintain variant processing
+```
+
+❌ Do not duplicate design-token values in `theme` as raw values (`'#...'`, `oklch(...)`, etc.) if they are already defined in CSS variables. Use references to the variables (`var(--...)`) so there is a single source of truth.
+
+```ts
+// ❌ Duplicated color values instead of using CSS variables
+export default defineConfig({
+  theme: {
+    colors: {
+      primary: '#2f80ed',        // duplicates CSS variable
+      primaryHover: '#1c60c9',   // another literal instead of token
+    },
+  },
+})
+```
+
+❌ Do not encode light/dark differences in the markup via separate utility sets (`bg-white dark:bg-gray-900`, etc.) if you already have semantic tokens. The semantics should live in tokens and variables, not in lists of utilities.
+
+```tsx
+// ❌ Encoding light/dark directly in markup instead of using semantic tokens
+export function Panel() {
+  return (
+    <div className="bg-white text-black dark:bg-gray-900 dark:text-white p-4">
+      Content
+    </div>
+  )
+}
+```
+
+❌ Do not duplicate utility semantics in inline styles when an equivalent UnoCSS class exists. Prefer the class for consistency and tree-shaking.
+
+```tsx
+// ❌ Inline styles instead of utilities
+<button style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem' }}>
+  Click me
+</button>
+```
+
+---
+
+## 4. 📝 Key Points
+
+### 4.1. Checklist
+
+- [ ] Config uses `defineConfig` and is in `uno.config.*` or `unocss.config.*`
+- [ ] `presets` are set explicitly; no use of deprecated `preset-wind` / `preset-uno` (use `preset-wind3` or `preset-wind4` for Tailwind-like style)
+- [ ] The `presets` list is minimal and corresponds to the actual features used (no «just in case»)
+- [ ] `content` (filesystem / pipeline / inline) matches all files that contain utility classes, including `.ts`/`.tsx` if needed (through `content.pipeline.include`)
+- [ ] `safelist` includes dynamic classes that might not be detected automatically
+- [ ] `extractors` configured for custom file types if needed
+- [ ] `outputToCssLayers` enabled for better CSS organization when using layers
+- [ ] Repeated patterns use `shortcuts`; design tokens use `theme` / `extendTheme`
+- [ ] Custom rules use CSS property names and quoted hyphenated keys
+- [ ] Theme is synchronized with CSS variables: values preferably via `var(--...)`, without duplicating literals
+- [ ] Only needed presets and transformers are included
+
+### 4.2. Must Have
+
+- Explicit `presets` in config
+- `defineConfig()` as default export
+- Correct `content` so all relevant sources are extracted (filesystem + pipeline/include for non-standard sources)
+- CSS property syntax in rule bodies (CSS keys, quotes for names with hyphens)
+- Absence of deprecated presets `@unocss/preset-wind` and `@unocss/preset-uno` in new configurations
+
+### 4.3. Do
+
+- Use shortcuts for repeated multi-utility patterns
+- Prefer static rules when possible
+- Use `theme` / `extendTheme` for design tokens
+- Use `safelist` for dynamic classes not auto-detected
+- Use `outputToCssLayers` for better CSS organization
+- Use `blocklist` (and `warn`) to forbid harmful utilities
+- Order presets and rules so overrides come later
+
+### 4.4. Don't
+
+- Use deprecated `@unocss/preset-wind` or `@unocss/preset-uno`
+- Use camelCase for CSS properties in rules
+- Omit or misconfigure `content` when using non-default sources
+- Enable unused presets/transformers
+- Rely on fully controlled (raw-string) rules unless necessary
+
+---
+
+## 5. 📚 References
+
+### 5.1. Related rules
+
+- [CSS Variables Architecture](../css-variables.mdc) — design tokens and theme structure when aligning UnoCSS `theme` with CSS custom properties
+
+### 5.2. Official docs
+
+- [UnoCSS Guide](https://unocss.dev/guide/) — what is UnoCSS, config file, presets
+- [Configuring UnoCSS](https://unocss.dev/config/) — all config options
+- [Rules](https://unocss.dev/config/rules) — static/dynamic rules, symbols, ordering
+- [Shortcuts](https://unocss.dev/config/shortcuts) — shortcuts and dynamic shortcuts
+- [Presets](https://unocss.dev/presets/) — official presets (mini, wind3, wind4, attributify, icons, etc.)
+- [Integrations](https://unocss.dev/integrations/vite) — Vite, Nuxt, Astro, Webpack, CLI, PostCSS, etc.
